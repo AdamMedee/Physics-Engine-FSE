@@ -1,0 +1,58 @@
+2-D physics engine for testing scenarios (needs name)
+Make it in Java? Def not python, and Idk if any of us wanna learn new lang
+Ask Searcy about ideas???
+Also show her when done ez marks
+Group: Gary Leo Adam
+
+
+
+Controls:
+rate of time passing
+pause button
+distance scaling
+where origin is (dragging?)
+'directional gravity' (Directional can't coexist with internal)
+
+
+
+Object properties:
+internal gravity (i.e. planets)
+elastic/non elastic collisions
+friction, inclined planes
+4 material objects to determine friction between objects
+A-B, A-C, A-D, B-C, B-D, C-D
+can be shaped like circles (can roll or not), squares, or triangles
+wall objects (including floor) to contain system
+
+
+
+Set-Up:
+Scenario objects (like asteroids), would help with saving attributes like shape list
+All objects part of scenarios
+Also Physics object inherited to other things and branches down
+Store all object changes, then have method to act upon object changes
+Kind of like storing vectors acting on objects per frame, then change stuff
+Default: floor, directional down gravity, one circle object that falls and hits the floor, non elastic, regular time and a few meters up
+
+
+
+Menu System:
+Main Menu
+-Start new scenario
+-Load old scenario
+-Help
+
+Start new
+-Goes straight to new scenario set up
+with default settings
+-Save button to place current scenario (must be paused) in saved
+
+Load old
+-Pages of saved scenarios to load up
+
+Help
+-How to use it (might need a couple pages)
+-Credits button?
+
+
+

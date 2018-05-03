@@ -1,0 +1,9 @@
+First char is identity of unit, second char is first 
+or second object, third char is initial / final.
+
+Ellastic head on collision
+v1f    =    v1i * (m1 - m2) / (m1 + m2)  +  v2i * (2 * m2) / (m1 + m2)
+
+Inelastic head on collision (R = coefficient of restitution 0 <= R <= 1)
+v1f    =    v1i * (m1 - R * m2) / (m1 + m2)  +  v2i * ((1 + R) * m2) / (m1 + m2)
+
