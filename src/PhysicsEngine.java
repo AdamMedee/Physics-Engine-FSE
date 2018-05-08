@@ -9,7 +9,6 @@ import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;
 import javafx.scene.input.KeyEvent;
 import javafx.stage.Stage;
-
 import java.util.ArrayList;
 
 public class PhysicsEngine extends Application {
@@ -28,6 +27,7 @@ public class PhysicsEngine extends Application {
 
         GraphicsContext gc = canvas.getGraphicsContext2D();
 
+
         new AnimationTimer()
         {
             public void handle(long currentNanoTime)
@@ -36,6 +36,7 @@ public class PhysicsEngine extends Application {
 
             }
         }.start();
+
 
         theStage.show();
 
