@@ -1,3 +1,14 @@
+/*
+   PhysicsEngine.java                 2018 May 7th
+   Adam Mehdi, Gary Sun, Leo Chen   2018 May 7th
+
+   Where the main is located along
+   with setup of the window with java fx.
+
+   Known Bugs:
+   	everything
+ */
+
 
 import javafx.animation.AnimationTimer;
 import javafx.application.Application;

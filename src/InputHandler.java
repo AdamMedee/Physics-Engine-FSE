@@ -1,3 +1,14 @@
+/*
+   InputHandler.java                 2018 May 7th
+   Adam Mehdi, Gary Sun, Leo Chen   2018 May 7th
+
+   Class to gather user input such as
+   mouse pressed, scrolling, and key presses.
+
+   Known Bugs:
+   	everything
+ */
+
 import javafx.animation.AnimationTimer;
 import javafx.application.Application;
 import javafx.event.EventHandler;
