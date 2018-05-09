@@ -43,7 +43,7 @@ public class PhysicsEngine extends Application {
 
         String currentScreen = "MainMenu"; //Current menu being used
 
-        //Initializing the differen menues
+        //Initializing the different menus
         MainMenu mainMenu = new MainMenu();
         SelectMenu selectMenu = new SelectMenu();
         CreditsMenu creditsMenu = new CreditsMenu();
@@ -56,7 +56,7 @@ public class PhysicsEngine extends Application {
                 switch(currentScreen) {
                     case "MainMenu":
                         mainMenu.run();
-                        mainMenu.update();
+                        mainMenu.update(graphics);
                         break;
 
                     case "Credits":

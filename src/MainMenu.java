@@ -24,6 +24,8 @@ import java.util.ArrayList;
 
 public class MainMenu {
 
+    Image background = new Image("resources/images/LEOO.png");
+
     //Constructor for the menu
     public MainMenu(){
 
@@ -37,7 +39,7 @@ public class MainMenu {
 
 
     //Displayes menu to the screen
-    public void update(){
-
+    public void update(GraphicsContext graphics){
+        graphics.drawImage(background, 0, 0);
     }
 }
