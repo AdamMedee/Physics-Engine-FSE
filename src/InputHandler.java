@@ -22,13 +22,17 @@ import javafx.stage.Stage;
 import java.util.ArrayList;
 
 public class InputHandler {
-    ArrayList<String> keysPressed;
-    Scene scene;
+    ArrayList<String> keysPressed; //All keys being presses down
+    Scene scene; //Game scene
 
+
+    //Constructor
     public InputHandler(Scene scene){
         this.scene = scene;
     }
 
+
+    //
     private static void prepareActionHandlers(Scene scene)
     {
         // use a set so duplicates are not possible

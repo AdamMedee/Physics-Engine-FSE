@@ -1,10 +1,10 @@
 /*
-   MainMenu.java                 2018 May 7th
+   SelectMenu.java                  2018 May 7th
    Adam Mehdi, Gary Sun, Leo Chen   2018 May 7th
 
-   Class for the main menu
-   which is opened when the program
-   first runs.
+   Previous saved files are selected here
+   along with the option to create a new
+   file. Works with a page flipping system.
 
    Known Bugs:
    	everything
@@ -22,21 +22,17 @@ import javafx.scene.input.KeyEvent;
 import javafx.stage.Stage;
 import java.util.ArrayList;
 
-public class MainMenu {
+public class SelectMenu {
 
-    //Constructor for the menu
-    public MainMenu(){
+
+    public SelectMenu(){
 
     }
 
-
-    //Goes through the actions inputted and acts accordingly
     public void run(){
 
     }
 
-
-    //Displayes menu to the screen
     public void update(){
 
     }

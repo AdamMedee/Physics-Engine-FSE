@@ -25,31 +25,45 @@ import java.util.ArrayList;
 public class PhysicsEngine extends Application {
 
     @Override
-    public void start(Stage theStage)
+    public void start(Stage stage)
     {
-        theStage.setTitle( "L.A.G.'s Physics Engine" );
+        stage.setTitle( "L.A.G.'s Physics Engine" ); //Sets window title screen
 
         Group root = new Group();
-        Scene theScene = new Scene( root );
-        theStage.setScene( theScene );
+        Scene scene = new Scene( root );
+        stage.setScene( scene );
         Canvas canvas = new Canvas( 1280, 720 );
-
         root.getChildren().add( canvas );
 
-        GraphicsContext gc = canvas.getGraphicsContext2D();
+        GraphicsContext graphics = canvas.getGraphicsContext2D();
+
+        String currentScreen = "MainMenu";
+
+        MainMenu mainmenu = new MainMenu();
 
 
         new AnimationTimer()
         {
             public void handle(long currentNanoTime)
             {
+                switch(currentScreen) {
+                    case "MainMenu":
+                        mainmenu.run();
+                        mainmenu.update();
+                        break;
 
+                    case "Options":
+                        break;
 
+                    default:
+                        break;
+
+                }
             }
         }.start();
 
 
-        theStage.show();
+        stage.show();
 
     }
 
