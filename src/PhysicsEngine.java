@@ -29,17 +29,24 @@ public class PhysicsEngine extends Application {
     {
         stage.setTitle( "L.A.G.'s Physics Engine" ); //Sets window title screen
 
+        //Sets up window and canvas
         Group root = new Group();
         Scene scene = new Scene( root );
         stage.setScene( scene );
-        Canvas canvas = new Canvas( 1280, 720 );
+        final int WIDTH = 1280;
+        final int HEIGHT = 720;
+        Canvas canvas = new Canvas( WIDTH, HEIGHT);
         root.getChildren().add( canvas );
 
+        //For displaying stuff to screen
         GraphicsContext graphics = canvas.getGraphicsContext2D();
 
-        String currentScreen = "MainMenu";
+        String currentScreen = "MainMenu"; //Current menu being used
 
-        MainMenu mainmenu = new MainMenu();
+        //Initializing the differen menues
+        MainMenu mainMenu = new MainMenu();
+        SelectMenu selectMenu = new SelectMenu();
+        CreditsMenu creditsMenu = new CreditsMenu();
 
 
         new AnimationTimer()
@@ -48,11 +55,14 @@ public class PhysicsEngine extends Application {
             {
                 switch(currentScreen) {
                     case "MainMenu":
-                        mainmenu.run();
-                        mainmenu.update();
+                        mainMenu.run();
+                        mainMenu.update();
                         break;
 
-                    case "Options":
+                    case "Credits":
+                        break;
+
+                    case "SelectMenu":
                         break;
 
                     default:

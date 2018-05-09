@@ -32,7 +32,7 @@ public class InputHandler {
     }
 
 
-    //
+
     private static void prepareActionHandlers(Scene scene)
     {
         // use a set so duplicates are not possible
