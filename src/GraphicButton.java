@@ -25,6 +25,7 @@ import java.util.ArrayList;
 public class GraphicButton{
     int x, y, width, height;
     Image img, imgP;
+    boolean mouseOver;
     public GraphicButton(int x, int y, int width, int height, Image img, Image imgP){
         this.x = x;
         this.y = y;
@@ -34,8 +35,13 @@ public class GraphicButton{
         this.imgP = imgP;
     }
 
-    public void update(){
+    //Updates button state depending on mouse
+    public void run(){
 
+    }
+
+    public void update(GraphicsContext graphic){
+        graphic.drawImage(img, x, y);
     }
 
 

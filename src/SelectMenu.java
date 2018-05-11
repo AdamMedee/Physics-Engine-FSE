@@ -33,7 +33,7 @@ public class SelectMenu {
 
     }
 
-    public void update(){
+    public void update(GraphicsContext graphics){
 
     }
 }

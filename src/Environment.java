@@ -31,11 +31,15 @@ public class Environment {
         this.secondsPerSecond = secondsPerSecond;
     }
 
+    public Environment(){
+
+    }
+
     public void run(){
 
     }
 
-    public void update(){
+    public void update(GraphicsContext graphics){
 
     }
 
