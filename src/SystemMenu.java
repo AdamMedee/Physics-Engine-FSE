@@ -41,6 +41,9 @@ public class SystemMenu {
 
     //Displayes menu to the screen
     public void update(GraphicsContext graphics){
+        //Draws user input features
+
+        //Draws environment objects
         environment.update(graphics);
     }
 }

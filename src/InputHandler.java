@@ -19,12 +19,14 @@ import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;
 import javafx.scene.input.KeyEvent;
 import javafx.stage.Stage;
+
+import java.awt.*;
 import java.util.ArrayList;
 
 public class InputHandler {
-    ArrayList<String> keysPressed; //All keys being presses down
-    Scene scene; //Game scene
-
+    static ArrayList<String> keysPressed; //All keys being presses down
+    static Scene scene; //Game scene
+    static Point mouse; //Where the mouse location is
 
     //Constructor
     public InputHandler(Scene scene){
@@ -33,7 +35,7 @@ public class InputHandler {
 
 
 
-    private static void prepareActionHandlers(Scene scene)
+    public void prepareActionHandlers(Scene scene)
     {
         // use a set so duplicates are not possible
         ArrayList<String> keysPressed = new ArrayList<String>();
@@ -53,6 +55,16 @@ public class InputHandler {
                 keysPressed.remove(event.getCode().toString());
             }
         });
+
+        mouse = MouseInfo.getPointerInfo().getLocation();
+    }
+
+    public Point getMousePos(){
+        return mouse;
+    }
+
+    public ArrayList<String> getKeysPressed(){
+        return keysPressed;
     }
 
 
