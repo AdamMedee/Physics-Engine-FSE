@@ -19,15 +19,20 @@ import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;
 import javafx.scene.input.KeyEvent;
+import javafx.scene.shape.Circle;
 import javafx.stage.Stage;
+import java.awt.*;
+import javafx.scene.shape.Polygon;
 import java.util.ArrayList;
-import java.awt.Polygon;
+
 import javafx.geometry.Point2D;
 
 public class RigidBody{
+	private int sides;
 	private Point2D center;
 	private Polygon points;
-	//private ArrayList<Force> forces;
+	private double[] xPoints, yPoints;
+	private ArrayList<Force> forces;
 
 	private double velocity;
 	private double acceleration;
@@ -39,8 +44,8 @@ public class RigidBody{
 	private double mass;
 
 
-	public RigidBody(int[] xPoints, int[] yPoints){
-		int sides = xPoints.length;
+	public RigidBody(double[] xPoints, double[] yPoints, Group root){
+		this.sides = xPoints.length;
 
 		area = 0;
 		MOI = 0;
@@ -52,7 +57,6 @@ public class RigidBody{
 			centerX += (xPoints[i] + xPoints[(i+1) % sides]) * shoelace;
 			centerY += (yPoints[i] + yPoints[(i+1) % sides]) * shoelace;
 			MOI += ((xPoints[i] * yPoints[(i+1) % sides] + 2*xPoints[i]*yPoints[i] + 2*xPoints[(i+1) % sides]*yPoints[(i+1) % sides] + xPoints[(i+1) % sides]*yPoints[i]) * shoelace);
-
 		}
 		area = Math.abs(area / 2);
 		MOI /= 24;
@@ -61,8 +65,23 @@ public class RigidBody{
 
 
 
+		this.xPoints = xPoints;
+		this.yPoints = yPoints;
 
-		this.points = new Polygon(xPoints, yPoints, sides);
+		this.points = new Polygon();
+
+		Double[] tmpPoints = new Double[sides*2];
+		for(int i = 0; i < sides; i++){
+			tmpPoints[i*2] = xPoints[i];
+			tmpPoints[i*2+1] = yPoints[i];
+		}
+		this.points.getPoints().addAll(tmpPoints);
+		root.getChildren().add(points);
+
+		Circle circle = new Circle(centerX, centerY, 3);
+		circle.setFill(javafx.scene.paint.Color.RED);
+		root.getChildren().add(circle);
+
 		this.center = new Point2D(centerX, centerY);
 		//this.forces = {};
 		this.velocity = 0;
@@ -72,19 +91,29 @@ public class RigidBody{
 		this.area = area;
 		this.MOI = MOI;
 		this.mass = 0; //change
-
-
 	}
+
 
 	public String toString(){
 		return this.area + " " + this.center;
 	}
 
+	public void update(){
+		Double[] tmpPoints = new Double[sides*2];
+		for(int i = 0; i < sides; i++){
+			tmpPoints[i*2] = xPoints[i];
+			tmpPoints[i*2+1] = yPoints[i];
+		}
+		points = new Polygon();
+		points.getPoints().addAll(tmpPoints);
+	}
+/*
 	public static void main(String[] args){
-		int[] x = {0,4,3,1,0};
-		int[] y = {0,0,1,3,3};
+		double[] x = {0,4,3,1,0};
+		double[] y = {0,0,1,3,3};
 		RigidBody leo = new RigidBody(x,y);
 		System.out.println(leo);
 	}
+*/
 
 }

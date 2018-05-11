@@ -31,8 +31,11 @@ public class Environment {
         this.secondsPerSecond = secondsPerSecond;
     }
 
-    public Environment(){
-
+    public Environment(Group root){
+        double[] x = {100, 200, 300, 200};
+        double[] y = {200, 100, 200, 120};
+        RigidBody leo = new RigidBody(x,y, root);
+        rigidBodies.add(leo);
     }
 
     public void run(){
@@ -40,7 +43,9 @@ public class Environment {
     }
 
     public void update(GraphicsContext graphics){
-
+        for(RigidBody rigidBody : rigidBodies){
+            rigidBody.update();
+        }
     }
 
 }

@@ -12,6 +12,7 @@
 
 import javafx.animation.AnimationTimer;
 import javafx.application.Application;
+import javafx.application.Platform;
 import javafx.event.EventHandler;
 import javafx.scene.Group;
 import javafx.scene.Scene;
@@ -20,6 +21,8 @@ import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;
 import javafx.scene.input.KeyEvent;
 import javafx.stage.Stage;
+import javafx.stage.WindowEvent;
+
 import java.util.ArrayList;
 
 public class PhysicsEngine extends Application {
@@ -34,6 +37,15 @@ public class PhysicsEngine extends Application {
         Scene scene = new Scene(root);
         stage.setScene(scene);
 
+        //Stops the program when the windows closed.
+        stage.setOnCloseRequest(new EventHandler<WindowEvent>() {
+            @Override
+            public void handle(WindowEvent t) {
+                Platform.exit();
+                System.exit(0);
+            }
+        });
+
         //Making the canvas
         final int WIDTH = 1280;
         final int HEIGHT = 720;
@@ -43,11 +55,11 @@ public class PhysicsEngine extends Application {
         //For displaying stuff to screen
         GraphicsContext graphics = canvas.getGraphicsContext2D();
 
-        String currentScreen = "MainMenu"; //Current menu being used
+        String currentScreen = "SystemMenu"; //Current menu being used
 
         //Puts all the environement data from txt into arraylist of environemnt objects
         ArrayList<Environment> environmentList = new ArrayList<Environment>();
-        Environment a = new Environment();
+        Environment a = new Environment(root);
         environmentList.add(a);
 
         //Initializing the different menus
@@ -61,6 +73,7 @@ public class PhysicsEngine extends Application {
         {
             public void handle(long currentNanoTime)
             {
+
                 //Runs the menu the user has selected
                 switch(currentScreen) {
                     case "MainMenu":
@@ -81,6 +94,7 @@ public class PhysicsEngine extends Application {
                     case "SystemMenu":
                         systemMenu.run();
                         systemMenu.update(graphics);
+                        break;
 
                     default:
                         break;
@@ -92,6 +106,7 @@ public class PhysicsEngine extends Application {
 
     }
 }.start();
+
     }
 
     //Main method
