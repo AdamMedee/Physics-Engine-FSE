@@ -19,6 +19,7 @@ import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;
 import javafx.scene.input.KeyEvent;
+import javafx.scene.text.Font;
 import javafx.stage.Stage;
 import java.util.ArrayList;
 
@@ -40,6 +41,12 @@ public class MainMenu {
 
     //Displayes menu to the screen
     public void update(GraphicsContext graphics){
+
+        Font ourFont = Font.loadFont(getClass().getResourceAsStream("resources/fonts/modern.ttf"),20);
+
+        graphics.setFont(ourFont);
+        graphics.strokeText("L.A.G Physics Engine",640,360);
         graphics.drawImage(background, 0, 0);
+
     }
 }
