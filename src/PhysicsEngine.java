@@ -36,6 +36,7 @@ public class PhysicsEngine extends Application {
         Group root = new Group();
         Scene scene = new Scene(root);
         stage.setScene(scene);
+        stage.setResizable(false);
 
         //Stops the program when the windows closed.
         stage.setOnCloseRequest(new EventHandler<WindowEvent>() {
@@ -67,13 +68,20 @@ public class PhysicsEngine extends Application {
         MainMenu mainMenu = new MainMenu();
         SelectMenu selectMenu = new SelectMenu();
         CreditsMenu creditsMenu = new CreditsMenu();
-        SystemMenu systemMenu = new SystemMenu(environmentList.get(0));
+        SystemMenu systemMenu = new SystemMenu(environmentList.get(0), root);
+
+        //Gets user input
+        InputHandler inputHandler = new InputHandler(scene);
+
 
 
         new AnimationTimer()
         {
             public void handle(long currentNanoTime)
             {
+
+                inputHandler.prepareActionHandlers();
+                System.out.println(inputHandler.getMousePos());
 
                 //Runs the menu the user has selected
                 switch(currentScreen) {
