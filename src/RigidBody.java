@@ -17,6 +17,7 @@ import java.util.ArrayList;
 import javafx.geometry.Point2D;
 
 public class RigidBody{
+	//Does it work??
 	private int sides;
 	private Point2D center;
 	private Polygon polygon;
