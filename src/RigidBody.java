@@ -10,27 +10,16 @@
    	everything
  */
 
-import javafx.animation.AnimationTimer;
-import javafx.application.Application;
-import javafx.event.EventHandler;
 import javafx.scene.Group;
-import javafx.scene.Scene;
-import javafx.scene.canvas.Canvas;
-import javafx.scene.canvas.GraphicsContext;
-import javafx.scene.image.Image;
-import javafx.scene.input.KeyEvent;
 import javafx.scene.shape.Circle;
-import javafx.stage.Stage;
-import java.awt.*;
 import javafx.scene.shape.Polygon;
 import java.util.ArrayList;
-
 import javafx.geometry.Point2D;
 
 public class RigidBody{
 	private int sides;
 	private Point2D center;
-	private Polygon points;
+	private Polygon polygon;
 	private double[] xPoints, yPoints;
 	private ArrayList<Force> forces;
 
@@ -41,10 +30,13 @@ public class RigidBody{
 	private double MOI;
 
 	private double area;
-	private double mass;
+	private double mass; //Mass and density is consistent throughout the body
+	private double density;
+
+	private Circle circle;
 
 
-	public RigidBody(double[] xPoints, double[] yPoints, Group root){
+	public RigidBody(double[] xPoints, double[] yPoints, double mass, Group root){
 		this.sides = xPoints.length;
 
 		area = 0;
@@ -63,22 +55,21 @@ public class RigidBody{
 		centerX = centerX / (6 * area);
 		centerY = centerY / (6 * area);
 
-
-
 		this.xPoints = xPoints;
 		this.yPoints = yPoints;
 
-		this.points = new Polygon();
+		this.polygon = new Polygon();
 
 		Double[] tmpPoints = new Double[sides*2];
 		for(int i = 0; i < sides; i++){
 			tmpPoints[i*2] = xPoints[i];
 			tmpPoints[i*2+1] = yPoints[i];
 		}
-		this.points.getPoints().addAll(tmpPoints);
-		root.getChildren().add(points);
+		this.polygon.getPoints().addAll(tmpPoints);
+		root.getChildren().add(polygon);
 
-		Circle circle = new Circle(centerX, centerY, 3);
+		//Creates a center of mass as a circle for the polygon for testing purposes
+		this.circle = new Circle(centerX, centerY, 3);
 		circle.setFill(javafx.scene.paint.Color.RED);
 		root.getChildren().add(circle);
 
@@ -90,22 +81,22 @@ public class RigidBody{
 		this.angAccel = 0;
 		this.area = area;
 		this.MOI = MOI;
-		this.mass = 0; //change
+		this.mass = mass;
+		this.density = mass/area;
 	}
 
-
+	//Allows the rigidbody to be printed
 	public String toString(){
 		return this.area + " " + this.center;
 	}
 
+	//Updates the state of the rigidbody polygon
 	public void update(){
-		Double[] tmpPoints = new Double[sides*2];
+		polygon.getPoints().clear();
 		for(int i = 0; i < sides; i++){
-			tmpPoints[i*2] = xPoints[i];
-			tmpPoints[i*2+1] = yPoints[i];
+			polygon.getPoints().add(xPoints[i]);
+			polygon.getPoints().add(yPoints[i]);
 		}
-		points = new Polygon();
-		points.getPoints().addAll(tmpPoints);
 	}
 /*
 	public static void main(String[] args){

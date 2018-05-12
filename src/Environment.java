@@ -32,9 +32,9 @@ public class Environment {
     }
 
     public Environment(Group root){
-        double[] x = {100, 200, 300, 200};
-        double[] y = {200, 100, 200, 120};
-        RigidBody leo = new RigidBody(x,y, root);
+        double[] x = {100, 200, 300, 600, 300, 200};
+        double[] y = {300, 100, 300, 100, 320, 120};
+        RigidBody leo = new RigidBody(x,y, 10, root);
         rigidBodies.add(leo);
     }
 

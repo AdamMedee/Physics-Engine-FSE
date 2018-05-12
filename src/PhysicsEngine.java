@@ -9,7 +9,6 @@
    	everything
  */
 
-
 import javafx.animation.AnimationTimer;
 import javafx.application.Application;
 import javafx.application.Platform;
@@ -27,6 +26,7 @@ import java.util.ArrayList;
 
 public class PhysicsEngine extends Application {
 
+    //Start method which contains the entire program
     @Override
     public void start(Stage stage)
     {
@@ -58,6 +58,7 @@ public class PhysicsEngine extends Application {
         String currentScreen = "SystemMenu"; //Current menu being used
 
         //Puts all the environement data from txt into arraylist of environemnt objects
+        //(currently hardcoded for testing)
         ArrayList<Environment> environmentList = new ArrayList<Environment>();
         Environment a = new Environment(root);
         environmentList.add(a);
@@ -98,16 +99,12 @@ public class PhysicsEngine extends Application {
 
                     default:
                         break;
-
                 }
-
-
         stage.show(); //Displays everything onto the screen
-
     }
 }.start();
-
     }
+
 
     //Main method
     public static void main(String[] args) {
