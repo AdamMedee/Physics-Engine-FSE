@@ -102,7 +102,7 @@ public class PhysicsEngine extends Application {
 
         SelectMenu selectMenu = new SelectMenu();
         CreditsMenu creditsMenu = new CreditsMenu();
-        SystemMenu systemMenu = new SystemMenu(environmentList.get(0));
+        SystemMenu systemMenu = new SystemMenu(environmentList.get(0),PhysicsLayout);
 
 
 
