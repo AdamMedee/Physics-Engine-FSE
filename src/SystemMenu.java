@@ -15,6 +15,8 @@ import javafx.animation.AnimationTimer;
 import javafx.application.Application;
 import javafx.event.EventHandler;
 import javafx.scene.Group;
+import javafx.scene.control.Button;
+import javafx.scene.shape.Rectangle;
 import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
@@ -26,10 +28,43 @@ import java.util.ArrayList;
 public class SystemMenu {
 
     Environment environment; //The environment being used
+    String selected; //System, Object, or Information are the three options
+
+    //Shape graphics
+    Rectangle BGrect;
+    Rectangle BGborder;
+
+    //Buttons on the screen
+
 
     //Constructor for the menu
-    public SystemMenu(Environment environment){
+    public SystemMenu(Environment environment, Group root){
+        //Environment being run
         this.environment = environment;
+
+        //Buttons to change the selected var
+        Button systemB = new Button("System");
+        systemB.setPrefSize(150, 30);
+        systemB.setLayoutX(980);
+        systemB.setLayoutY(0);
+        root.getChildren().add(systemB);
+        Button objectB = new Button("Objects");
+        objectB.setPrefSize(150, 30);
+        objectB.setLayoutX(1130);
+        objectB.setLayoutY(0);
+        root.getChildren().add(objectB);
+
+        //Adds graphics and buttons to root
+        //Background and background border
+        BGrect = new Rectangle(980, 28, 300, 692);
+        BGrect.setFill(javafx.scene.paint.Color.rgb(200, 76, 76));
+        //BGrect.setOpacity(0.3);
+        BGborder = new Rectangle(979, 0, 2, 720);
+        BGborder.setFill(javafx.scene.paint.Color.BLACK);
+        root.getChildren().add(BGrect);
+        root.getChildren().add(BGborder);
+
+
     }
 
 

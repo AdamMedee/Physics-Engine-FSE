@@ -35,7 +35,7 @@ public class InputHandler {
 
 
 
-    public void prepareActionHandlers(Scene scene)
+    public void prepareActionHandlers()
     {
         // use a set so duplicates are not possible
         ArrayList<String> keysPressed = new ArrayList<String>();
