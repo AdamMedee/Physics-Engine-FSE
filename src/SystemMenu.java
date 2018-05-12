@@ -40,7 +40,9 @@ public class SystemMenu {
 
 
     //Displayes menu to the screen
-    public void update(GraphicsContext graphics){
+    public void update(Group src){
+        Canvas canvas = new Canvas(1280,720);
+        GraphicsContext graphics = canvas.getGraphicsContext2D();
         //Draws user input features
 
         //Draws environment objects

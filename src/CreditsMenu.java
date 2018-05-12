@@ -32,7 +32,7 @@ public class CreditsMenu {
 
     }
 
-    public void update(GraphicsContext graphics){
+    public void update(Group src,GraphicsContext graphics){
 
     }
 }

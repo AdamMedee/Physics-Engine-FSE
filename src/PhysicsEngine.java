@@ -12,30 +12,37 @@
 import javafx.animation.AnimationTimer;
 import javafx.application.Application;
 import javafx.application.Platform;
+import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.control.Button;
 import javafx.scene.image.Image;
 import javafx.scene.input.KeyEvent;
+import javafx.scene.layout.StackPane;
+import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
 
 import java.util.ArrayList;
 
 public class PhysicsEngine extends Application {
+    public Stage window;
+    Scene MainMenuScene,PhysicsScene;
+    Group MainMenuLayout = new Group(), PhysicsLayout = new Group();
 
+    String currentScreen = "MainMenu"; //Current menu being used
     //Start method which contains the entire program
     @Override
     public void start(Stage stage)
     {
+        window = stage;
+
+
         stage.setTitle( "L.A.G.'s Physics Engine" ); //Sets window title screen
 
-        //Sets up java fx essentials
-        Group root = new Group();
-        Scene scene = new Scene(root);
-        stage.setScene(scene);
 
         //Stops the program when the windows closed.
         stage.setOnCloseRequest(new EventHandler<WindowEvent>() {
@@ -46,28 +53,57 @@ public class PhysicsEngine extends Application {
             }
         });
 
+        // ----- Main Menu Initialization
+
+        MainMenu mainMenu = new MainMenu();
+        mainMenu.update(MainMenuLayout);
+        Button button1 = new Button("Demo");
+        button1.setTranslateX(640);
+        button1.setTranslateY(360);
+        button1.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent actionEvent) {
+                window.setScene(PhysicsScene);
+                currentScreen = "SystemMenu";
+
+            }
+        });
+
+        MainMenuLayout.getChildren().add(button1);
+        MainMenuScene = new Scene(MainMenuLayout,1280,720);
+
+        // --------------------------
         //Making the canvas
         final int WIDTH = 1280;
         final int HEIGHT = 720;
-        Canvas canvas = new Canvas(WIDTH, HEIGHT);
-        root.getChildren().add(canvas); //Adds canvas to program
+        //Canvas canvas = new Canvas(WIDTH, HEIGHT);
+        //root.getChildren().add(canvas); //Adds canvas to program
+
+
+        // We will add canvas to each individual Group/layout
 
         //For displaying stuff to screen
-        GraphicsContext graphics = canvas.getGraphicsContext2D();
+        //GraphicsContext graphics = canvas.getGraphicsContext2D();
 
-        String currentScreen = "SystemMenu"; //Current menu being used
+
 
         //Puts all the environement data from txt into arraylist of environemnt objects
         //(currently hardcoded for testing)
         ArrayList<Environment> environmentList = new ArrayList<Environment>();
-        Environment a = new Environment(root);
+
+
+
+
+        Environment a = new Environment(PhysicsLayout);
         environmentList.add(a);
 
+        PhysicsScene = new Scene(PhysicsLayout,1280,720);
         //Initializing the different menus
-        MainMenu mainMenu = new MainMenu();
+
         SelectMenu selectMenu = new SelectMenu();
         CreditsMenu creditsMenu = new CreditsMenu();
         SystemMenu systemMenu = new SystemMenu(environmentList.get(0));
+
 
 
         new AnimationTimer()
@@ -79,30 +115,41 @@ public class PhysicsEngine extends Application {
                 switch(currentScreen) {
                     case "MainMenu":
                         mainMenu.run();
-                        mainMenu.update(graphics);
+                        //mainMenu.update(MainMenuLayout);
                         break;
 
                     case "CreditsMenu":
-                        creditsMenu.run();
-                        creditsMenu.update(graphics);
+                        //creditsMenu.run();
+                        //creditsMenu.update(root,graphics);
                         break;
 
                     case "SelectMenu":
-                        selectMenu.run();
-                        selectMenu.update(graphics);
+                        //selectMenu.run();
+                        //selectMenu.update(root,graphics);
                         break;
 
                     case "SystemMenu":
-                        systemMenu.run();
-                        systemMenu.update(graphics);
+                        //systemMenu.run();
+                        //systemMenu.update(root,graphics);
                         break;
 
                     default:
                         break;
                 }
-        stage.show(); //Displays everything onto the screen
+
+
+
+
+
     }
+
 }.start();
+
+
+
+        //Sets up java fx essentials
+        window.setScene(MainMenuScene);
+        window.show(); //Displays everything onto the screen
     }
 
 
