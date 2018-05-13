@@ -11,6 +11,7 @@
    	everything
  */
 
+import javafx.application.Application;
 import javafx.animation.AnimationTimer;
 import javafx.application.Application;
 import javafx.event.ActionEvent;
@@ -45,9 +46,13 @@ public class SystemMenu {
 
         //Buttons to change the selected var
         Button systemB = new Button("System");
+        systemB.setOnAction(e -> {
+
+        });
         systemB.setPrefSize(150, 30);
         systemB.setLayoutX(980);
         systemB.setLayoutY(0);
+        //systemB.setStyle();
         root.getChildren().add(systemB);
 
         Button objectB = new Button("Objects");
@@ -67,8 +72,8 @@ public class SystemMenu {
         root.getChildren().add(BGborder);
 
         Button back = new Button("Back");
-        back.setTranslateX(20);
-        back.setTranslateY(20);
+        back.setLayoutX(20);
+        back.setLayoutY(20);
         back.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {

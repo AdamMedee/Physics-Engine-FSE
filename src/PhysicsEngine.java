@@ -59,20 +59,21 @@ public class PhysicsEngine extends Application {
         MainMenu mainMenu = new MainMenu();
         mainMenu.update(MainMenuLayout);
         Button button1 = new Button("Demo");
-        button1.setTranslateX(640);
-        button1.setTranslateY(360);
+        button1.setLayoutX(640);
+        button1.setLayoutY(360);
         button1.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent actionEvent) {
                 window.setScene(PhysicsScene);
                 currentScreen = "SystemMenu";
+                setUserAgentStylesheet(STYLESHEET_MODENA);
 
             }
         });
 
         Button button2 = new Button("Credits");
-        button2.setTranslateX(640);
-        button2.setTranslateY(540);
+        button2.setLayoutX(640);
+        button2.setLayoutY(540);
 
         button2.setOnAction(new EventHandler<ActionEvent>(){
             @Override
@@ -86,6 +87,9 @@ public class PhysicsEngine extends Application {
         MainMenuLayout.getChildren().add(button1);
         MainMenuLayout.getChildren().add(button2);
         MainMenuScene = new Scene(MainMenuLayout,1280,720);
+
+        MainMenuScene.getStylesheets().add("resources/Garu.css");
+
 
         // --------------------------
         //Making the canvas
