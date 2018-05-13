@@ -29,12 +29,13 @@ import javafx.stage.WindowEvent;
 import java.util.ArrayList;
 
 public class PhysicsEngine extends Application {
-    public Stage window;
-    Scene MainMenuScene,PhysicsScene;
-    Group MainMenuLayout = new Group(), PhysicsLayout = new Group();
+    public static Stage window;
+    static Scene MainMenuScene,PhysicsScene, CreditsScene;
+    Group MainMenuLayout = new Group(), PhysicsLayout = new Group(), CreditsLayout = new Group();
 
-    String currentScreen = "MainMenu"; //Current menu being used
+    static String currentScreen = "MainMenu"; //Current menu being used
     //Start method which contains the entire program
+
     @Override
     public void start(Stage stage)
     {
@@ -69,7 +70,21 @@ public class PhysicsEngine extends Application {
             }
         });
 
+        Button button2 = new Button("Credits");
+        button2.setTranslateX(640);
+        button2.setTranslateY(540);
+
+        button2.setOnAction(new EventHandler<ActionEvent>(){
+            @Override
+            public void handle(ActionEvent actionEvent){
+                window.setScene(CreditsScene);
+                currentScreen = "CreditsMenu";
+            }
+        });
+
+
         MainMenuLayout.getChildren().add(button1);
+        MainMenuLayout.getChildren().add(button2);
         MainMenuScene = new Scene(MainMenuLayout,1280,720);
 
         // --------------------------
@@ -98,10 +113,11 @@ public class PhysicsEngine extends Application {
         environmentList.add(a);
 
         PhysicsScene = new Scene(PhysicsLayout,1280,720);
+        CreditsScene = new Scene(CreditsLayout, 1280, 720);
         //Initializing the different menus
 
         SelectMenu selectMenu = new SelectMenu();
-        CreditsMenu creditsMenu = new CreditsMenu();
+        CreditsMenu creditsMenu = new CreditsMenu(CreditsLayout);
         SystemMenu systemMenu = new SystemMenu(environmentList.get(0),PhysicsLayout);
 
 
@@ -119,8 +135,8 @@ public class PhysicsEngine extends Application {
                         break;
 
                     case "CreditsMenu":
-                        //creditsMenu.run();
-                        //creditsMenu.update(root,graphics);
+                        creditsMenu.run();
+                        creditsMenu.update(CreditsLayout);
                         break;
 
                     case "SelectMenu":
@@ -145,13 +161,10 @@ public class PhysicsEngine extends Application {
 
 }.start();
 
-
-
         //Sets up java fx essentials
         window.setScene(MainMenuScene);
         window.show(); //Displays everything onto the screen
     }
-
 
     //Main method
     public static void main(String[] args) {

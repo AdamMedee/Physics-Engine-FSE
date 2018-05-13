@@ -13,6 +13,7 @@
 
 import javafx.animation.AnimationTimer;
 import javafx.application.Application;
+import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.Group;
 import javafx.scene.control.Button;
@@ -48,6 +49,7 @@ public class SystemMenu {
         systemB.setLayoutX(980);
         systemB.setLayoutY(0);
         root.getChildren().add(systemB);
+
         Button objectB = new Button("Objects");
         objectB.setPrefSize(150, 30);
         objectB.setLayoutX(1130);
@@ -64,6 +66,17 @@ public class SystemMenu {
         root.getChildren().add(BGrect);
         root.getChildren().add(BGborder);
 
+        Button back = new Button("Back");
+        back.setTranslateX(20);
+        back.setTranslateY(20);
+        back.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                PhysicsEngine.window.setScene(PhysicsEngine.MainMenuScene);
+                PhysicsEngine.currentScreen = "MainMenu";
+            }
+        });
+        root.getChildren().add(back);
 
     }
 
