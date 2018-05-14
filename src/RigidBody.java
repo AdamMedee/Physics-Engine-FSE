@@ -92,14 +92,17 @@ public class RigidBody{
 	}
 
 	//Updates the state of the rigidbody polygon
-	public void update(){
-		translate(1,0);
+	public void update(Point2D newCenter){
+		//translate(1,0);
 		polygon.getPoints().clear();
 		for(int i = 0; i < sides; i++){
 			polygon.getPoints().add(xPoints[i] );
 			polygon.getPoints().add(yPoints[i]);
 		}
+		center = newCenter;
 	}
+
+	//Moves the coordinates of the polygon over by dx and dy
 	public void translate(double dx, double dy){
 		double[] newXP = new double[sides];
 		double[] newYP = new double[sides];
@@ -107,7 +110,6 @@ public class RigidBody{
 			newXP[i] = xPoints[i] + dx;
 			newYP[i] = yPoints[i] + dy;
 		}
-		center = new Point2D(center.getX() + dx, center.getY() + dy);
-
+		this.update(new Point2D(center.getX() + dx, center.getY() + dy));
 	}
 }

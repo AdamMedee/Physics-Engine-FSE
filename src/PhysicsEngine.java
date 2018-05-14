@@ -25,12 +25,12 @@ import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
-
 import java.util.ArrayList;
 
 public class PhysicsEngine extends Application {
     public static Stage window;
-    static Scene MainMenuScene,PhysicsScene, CreditsScene;
+    //Scenes and groups for all the different menues
+    static Scene MainMenuScene, PhysicsScene, CreditsScene;
     Group MainMenuLayout = new Group(), PhysicsLayout = new Group(), CreditsLayout = new Group();
 
     static String currentScreen = "MainMenu"; //Current menu being used
@@ -44,7 +44,6 @@ public class PhysicsEngine extends Application {
 
         stage.setTitle( "L.A.G.'s Physics Engine" ); //Sets window title screen
 
-
         //Stops the program when the windows closed.
         stage.setOnCloseRequest(new EventHandler<WindowEvent>() {
             @Override
@@ -55,6 +54,13 @@ public class PhysicsEngine extends Application {
         });
 
         // ----- Main Menu Initialization
+        //STEPS:
+        //Make scene menu and group in contructor
+        //Clicking button changes which scene is set
+        //Method to return scene object
+        //Set scene in menu classes with button clicks
+        //.run() returns string
+        //currentScreen = mainMenu.run();
 
         MainMenu mainMenu = new MainMenu();
         mainMenu.update(MainMenuLayout);
@@ -67,9 +73,9 @@ public class PhysicsEngine extends Application {
                 window.setScene(PhysicsScene);
                 currentScreen = "SystemMenu";
                 setUserAgentStylesheet(STYLESHEET_MODENA);
-
             }
         });
+        MainMenuLayout.getChildren().add(button1);
 
         Button button2 = new Button("Credits");
         button2.setLayoutX(640);
@@ -82,12 +88,8 @@ public class PhysicsEngine extends Application {
                 currentScreen = "CreditsMenu";
             }
         });
-
-
-        MainMenuLayout.getChildren().add(button1);
         MainMenuLayout.getChildren().add(button2);
         MainMenuScene = new Scene(MainMenuLayout,1280,720);
-
         MainMenuScene.getStylesheets().add("resources/Garu.css");
 
 
@@ -109,17 +111,13 @@ public class PhysicsEngine extends Application {
         //Puts all the environement data from txt into arraylist of environemnt objects
         //(currently hardcoded for testing)
         ArrayList<Environment> environmentList = new ArrayList<Environment>();
-
-
-
-
         Environment a = new Environment(PhysicsLayout);
         environmentList.add(a);
 
         PhysicsScene = new Scene(PhysicsLayout,1280,720);
         CreditsScene = new Scene(CreditsLayout, 1280, 720);
-        //Initializing the different menus
 
+        //Initializing the different menus
         SelectMenu selectMenu = new SelectMenu();
         CreditsMenu creditsMenu = new CreditsMenu(CreditsLayout);
         SystemMenu systemMenu = new SystemMenu(environmentList.get(0),PhysicsLayout);

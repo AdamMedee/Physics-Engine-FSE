@@ -38,14 +38,15 @@ public class Environment {
         rigidBodies.add(leo);
     }
 
+    //Goes through all rigid body interactions
     public void run(){
-
+        for(RigidBody rigidBody : rigidBodies){
+            rigidBody.translate(2, 3);
+        }
     }
 
     public void update(GraphicsContext graphics){
-        for(RigidBody rigidBody : rigidBodies){
-            rigidBody.update();
-        }
+
     }
 
 }

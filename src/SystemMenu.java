@@ -64,7 +64,7 @@ public class SystemMenu {
         //Adds graphics and buttons to root
         //Background and background border
         BGrect = new Rectangle(980, 28, 300, 692);
-        BGrect.setFill(javafx.scene.paint.Color.rgb(200, 76, 76));
+        BGrect.setFill(javafx.scene.paint.Color.rgb(100, 46, 0));
         //BGrect.setOpacity(0.3);
         BGborder = new Rectangle(979, 0, 2, 720);
         BGborder.setFill(javafx.scene.paint.Color.BLACK);
