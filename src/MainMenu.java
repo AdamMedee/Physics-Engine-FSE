@@ -70,8 +70,22 @@ public class MainMenu {
                 //temp = "CreditsMenu";
             }
         });
+
+        Canvas canvas = new Canvas(1280,720);
+        GraphicsContext graphics = canvas.getGraphicsContext2D();
+        Font ourFont = Font.loadFont(getClass().getResourceAsStream("resources/fonts/modern.ttf"),72);
+
+        graphics.setFont(ourFont);
+        graphics.strokeText("L.A.G Physics Engine",250,100);
+
+        graphics.drawImage(background, 0, 0);
+
+        MainMenuLayout.getChildren().add(canvas);
         MainMenuLayout.getChildren().add(button1);
         MainMenuLayout.getChildren().add(button2);
+
+
+
         MainMenuScene = new Scene(MainMenuLayout,1280,720);
         //MainMenuLayout.getChildren().addAll(button1,button2);
 
@@ -93,16 +107,8 @@ public class MainMenu {
 
     //Displayes menu to the screen
     public void update(){
-        Group src = MainMenuLayout;
-        Canvas canvas = new Canvas(1280,720);
-        GraphicsContext graphics = canvas.getGraphicsContext2D();
-        Font ourFont = Font.loadFont(getClass().getResourceAsStream("resources/fonts/modern.ttf"),72);
 
-        graphics.setFont(ourFont);
-        graphics.strokeText("L.A.G Physics Engine",250,100);
-        
-        graphics.drawImage(background, 0, 0);
-        src.getChildren().add(canvas);
+
 
     }
 

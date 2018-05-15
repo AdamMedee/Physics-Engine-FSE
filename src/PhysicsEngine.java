@@ -76,7 +76,7 @@ public class PhysicsEngine extends Application {
         //currentScreen = mainMenu.run();
 
 
-        mainMenu.update();
+        //mainMenu.update();
 
 
 
