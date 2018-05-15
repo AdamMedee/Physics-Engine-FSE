@@ -37,7 +37,7 @@ public class RigidBody{
 	private Circle circle;
 
 
-	public RigidBody(double[] xPoints, double[] yPoints, double mass, Group root){
+	public RigidBody(double[] xPoints, double[] yPoints, double mass,Group root){
 		this.sides = xPoints.length;
 
 		area = 0;

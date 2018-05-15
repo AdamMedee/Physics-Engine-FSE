@@ -11,9 +11,6 @@
    	everything
  */
 
-import javafx.application.Application;
-import javafx.animation.AnimationTimer;
-import javafx.application.Application;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.Group;
@@ -22,10 +19,6 @@ import javafx.scene.shape.Rectangle;
 import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
-import javafx.scene.image.Image;
-import javafx.scene.input.KeyEvent;
-import javafx.stage.Stage;
-import java.util.ArrayList;
 
 public class SystemMenu {
 
@@ -45,15 +38,15 @@ public class SystemMenu {
     // Graphics Initialization
 
     public Scene PhysicsScene;
-    public Group PhysicsLayout;
+    public Group SystemLayout;
     public Button systemB,objectB,back;
 
 
     //Constructor for the menu
     public SystemMenu(Environment environment){
-        PhysicsLayout = new Group();
-        PhysicsScene = new Scene(PhysicsLayout,1280,720);
-        Group root = PhysicsLayout;
+        SystemLayout = new Group();
+        PhysicsScene = new Scene(SystemLayout,1280,720);
+        Group root = SystemLayout;
 
         //Environment being run
         this.environment = environment;
@@ -113,6 +106,6 @@ public class SystemMenu {
         //Draws user input features
 
         //Draws environment objects
-        environment.update(graphics);
+        environment.update();
     }
 }

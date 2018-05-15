@@ -26,17 +26,25 @@ public class Environment {
     double secondsPerSecond; //How quickly the system passes through time
     ArrayList<RigidBody> rigidBodies = new ArrayList<RigidBody>(); //Contains physical rigid bodies
 
+    public Group EnvironmentLayout;
 
+    public void setGroup (Group src)
+    {
+        this.EnvironmentLayout = src;
+
+    }
     public Environment(double secondsPerSecond){
         this.secondsPerSecond = secondsPerSecond;
     }
 
-    public Environment(Group root){
+    public Environment(){
         double[] x = {100, 200, 300, 600, 300, 200};
         double[] y = {300, 100, 300, 100, 320, 120};
-        RigidBody leo = new RigidBody(x,y, 10, root);
+        RigidBody leo = new RigidBody(x,y, 10,this.EnvironmentLayout);
         rigidBodies.add(leo);
     }
+
+
 
     //Goes through all rigid body interactions
     public void run(){
@@ -45,7 +53,7 @@ public class Environment {
         }
     }
 
-    public void update(GraphicsContext graphics){
+    public void update(){
 
     }
 

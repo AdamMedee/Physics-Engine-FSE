@@ -100,7 +100,7 @@ public class PhysicsEngine extends Application {
         //Puts all the environement data from txt into arraylist of environemnt objects
         //(currently hardcoded for testing)
         ArrayList<Environment> environmentList = new ArrayList<Environment>();
-        Environment a = new Environment(PhysicsLayout);
+        Environment a = new Environment();
         environmentList.add(a);
 
 
@@ -111,7 +111,9 @@ public class PhysicsEngine extends Application {
         CreditsMenu creditsMenu = new CreditsMenu(CreditsLayout);
         systemMenu = new SystemMenu(environmentList.get(0));
 
-
+        //Sets up java fx essentials
+        window.setScene(mainMenu.MainMenuScene);
+        window.show(); //Displays everything onto the screen
 
         new AnimationTimer()
         {
@@ -152,9 +154,7 @@ public class PhysicsEngine extends Application {
 
 }.start();
 
-        //Sets up java fx essentials
-        window.setScene(mainMenu.MainMenuScene);
-        window.show(); //Displays everything onto the screen
+
     }
 
 

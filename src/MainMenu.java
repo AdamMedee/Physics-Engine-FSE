@@ -58,8 +58,6 @@ public class MainMenu {
         button1.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent actionEvent) {
-                System.out.println("I'm running");
-                //temp = "SystemMenu";
                 PhysicsEngine.window.setScene(PhysicsEngine.systemMenu.PhysicsScene);
             }
         });
@@ -67,7 +65,7 @@ public class MainMenu {
         button2.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent actionEvent) {
-                //temp = "CreditsMenu";
+                PhysicsEngine.window.setScene(PhysicsEngine.systemMenu.)
             }
         });
 
@@ -81,6 +79,7 @@ public class MainMenu {
         graphics.drawImage(background, 0, 0);
 
         MainMenuLayout.getChildren().add(canvas);
+
         MainMenuLayout.getChildren().add(button1);
         MainMenuLayout.getChildren().add(button2);
 
