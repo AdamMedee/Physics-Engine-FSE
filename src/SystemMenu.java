@@ -39,13 +39,27 @@ public class SystemMenu {
     //Buttons on the screen
 
 
+
+
+
+    // Graphics Initialization
+
+    public Scene PhysicsScene;
+    public Group PhysicsLayout;
+    public Button systemB,objectB,back;
+
+
     //Constructor for the menu
-    public SystemMenu(Environment environment, Group root){
+    public SystemMenu(Environment environment){
+        PhysicsLayout = new Group();
+        PhysicsScene = new Scene(PhysicsLayout,1280,720);
+        Group root = PhysicsLayout;
+
         //Environment being run
         this.environment = environment;
 
         //Buttons to change the selected var
-        Button systemB = new Button("System");
+        systemB = new Button("System");
         systemB.setOnAction(e -> {
 
         });
@@ -55,7 +69,7 @@ public class SystemMenu {
         //systemB.setStyle();
         root.getChildren().add(systemB);
 
-        Button objectB = new Button("Objects");
+        objectB = new Button("Objects");
         objectB.setPrefSize(150, 30);
         objectB.setLayoutX(1130);
         objectB.setLayoutY(0);
@@ -71,13 +85,13 @@ public class SystemMenu {
         root.getChildren().add(BGrect);
         root.getChildren().add(BGborder);
 
-        Button back = new Button("Back");
+        back = new Button("Back");
         back.setLayoutX(20);
         back.setLayoutY(20);
         back.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
-                PhysicsEngine.window.setScene(PhysicsEngine.MainMenuScene);
+                PhysicsEngine.window.setScene(PhysicsEngine.mainMenu.MainMenuScene);
                 PhysicsEngine.currentScreen = "MainMenu";
             }
         });

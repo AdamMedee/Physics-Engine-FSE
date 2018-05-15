@@ -25,24 +25,37 @@ import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
+
+import javax.swing.*;
 import java.util.ArrayList;
 
 public class PhysicsEngine extends Application {
     public static Stage window;
-    //Scenes and groups for all the different menues
-    static Scene MainMenuScene, PhysicsScene, CreditsScene;
-    Group MainMenuLayout = new Group(), PhysicsLayout = new Group(), CreditsLayout = new Group();
+    static Scene CreditsScene;
+    Group PhysicsLayout = new Group(), CreditsLayout = new Group();
 
+
+
+    // -------- Menu Initialization
+    public static MainMenu mainMenu;
+    public static SystemMenu systemMenu;
+
+
+    //--------------------------------------
     static String currentScreen = "MainMenu"; //Current menu being used
     //Start method which contains the entire program
 
     @Override
     public void start(Stage stage)
     {
+
+        mainMenu = new MainMenu();
+        //systemMenu = new SystemMenu(); // Will be initialized in the start method
         window = stage;
 
 
         stage.setTitle( "L.A.G.'s Physics Engine" ); //Sets window title screen
+
 
         //Stops the program when the windows closed.
         stage.setOnCloseRequest(new EventHandler<WindowEvent>() {
@@ -62,35 +75,11 @@ public class PhysicsEngine extends Application {
         //.run() returns string
         //currentScreen = mainMenu.run();
 
-        MainMenu mainMenu = new MainMenu();
-        mainMenu.update(MainMenuLayout);
-        Button button1 = new Button("Demo");
-        button1.setLayoutX(640);
-        button1.setLayoutY(360);
-        button1.setOnAction(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent actionEvent) {
-                window.setScene(PhysicsScene);
-                currentScreen = "SystemMenu";
-                setUserAgentStylesheet(STYLESHEET_MODENA);
-            }
-        });
-        MainMenuLayout.getChildren().add(button1);
 
-        Button button2 = new Button("Credits");
-        button2.setLayoutX(640);
-        button2.setLayoutY(540);
+        mainMenu.update();
 
-        button2.setOnAction(new EventHandler<ActionEvent>(){
-            @Override
-            public void handle(ActionEvent actionEvent){
-                window.setScene(CreditsScene);
-                currentScreen = "CreditsMenu";
-            }
-        });
-        MainMenuLayout.getChildren().add(button2);
-        MainMenuScene = new Scene(MainMenuLayout,1280,720);
-        MainMenuScene.getStylesheets().add("resources/Garu.css");
+
+
 
 
         // --------------------------
@@ -114,13 +103,13 @@ public class PhysicsEngine extends Application {
         Environment a = new Environment(PhysicsLayout);
         environmentList.add(a);
 
-        PhysicsScene = new Scene(PhysicsLayout,1280,720);
+
         CreditsScene = new Scene(CreditsLayout, 1280, 720);
 
         //Initializing the different menus
         SelectMenu selectMenu = new SelectMenu();
         CreditsMenu creditsMenu = new CreditsMenu(CreditsLayout);
-        SystemMenu systemMenu = new SystemMenu(environmentList.get(0),PhysicsLayout);
+        systemMenu = new SystemMenu(environmentList.get(0));
 
 
 
@@ -132,8 +121,8 @@ public class PhysicsEngine extends Application {
                 //Runs the menu the user has selected
                 switch(currentScreen) {
                     case "MainMenu":
-                        mainMenu.run();
-                        //mainMenu.update(MainMenuLayout);
+                        //mainMenu.run();
+                        //mainMenu.update();
                         break;
 
                     case "CreditsMenu":
@@ -164,9 +153,10 @@ public class PhysicsEngine extends Application {
 }.start();
 
         //Sets up java fx essentials
-        window.setScene(MainMenuScene);
+        window.setScene(mainMenu.MainMenuScene);
         window.show(); //Displays everything onto the screen
     }
+
 
     //Main method
     public static void main(String[] args) {

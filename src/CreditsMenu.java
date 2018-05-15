@@ -26,7 +26,8 @@ import java.util.ArrayList;
 
 public class CreditsMenu {
 
-
+    public Button back;
+    public String temp;
     public CreditsMenu(Group root){
         Canvas canvas = new Canvas(1280, 720);
         GraphicsContext g = canvas.getGraphicsContext2D();
@@ -38,27 +39,32 @@ public class CreditsMenu {
 
         root.getChildren().add(canvas);
 
-        Button back = new Button("Back");
+        back = new Button("Back");
         back.setLayoutX(20);
         back.setLayoutY(20);
 
-        back.setOnAction(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent event) {
-                PhysicsEngine.window.setScene(PhysicsEngine.MainMenuScene);
-                PhysicsEngine.currentScreen = "MainMenu";
 
-            }
-        });
-
+        root.getStylesheets().add("resources/Garu.css");
         root.getChildren().add(back);
     }
 
-    public void run(){
+    public String run(){
+
+        temp = "CreditsMenu";
+        back.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+               temp = "MainMenu";
+
+            }
+        });
+        return temp;
 
     }
 
     public void update(Group root){
+
+
 
     }
 }
