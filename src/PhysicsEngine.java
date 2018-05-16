@@ -22,9 +22,6 @@ import java.util.ArrayList;
 
 public class PhysicsEngine extends Application {
     public static Stage window;
-    static Scene CreditsScene;
-    Group PhysicsLayout = new Group(), CreditsLayout = new Group();
-
 
 
     // -------- Menu Initialization
@@ -87,6 +84,7 @@ public class PhysicsEngine extends Application {
         creditsMenu = new CreditsMenu();
         systemMenu = new SystemMenu(environmentList.get(0));
 
+        //-------------------------------------------------
         //Sets up java fx essentials
         window.setScene(mainMenu.mainMenuScene);
         window.show(); //Displays everything onto the screen
