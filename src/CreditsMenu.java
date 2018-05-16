@@ -28,7 +28,12 @@ public class CreditsMenu {
 
     public Button back;
     public String temp;
-    public CreditsMenu(Group root){
+    public Scene creditsScene;
+    public Group creditsLayout;
+
+    public CreditsMenu(){
+        creditsLayout = new Group();
+        creditsScene = new Scene(creditsLayout, 1280, 720);
         Canvas canvas = new Canvas(1280, 720);
         GraphicsContext g = canvas.getGraphicsContext2D();
         Font txtFont = Font.loadFont(getClass().getResourceAsStream("resources/fonts/modern.ttf"),20);
@@ -37,15 +42,15 @@ public class CreditsMenu {
         g.strokeText("Thanks to ma boi Green for the math", 600, 40);
         g.strokeText("Adam, Gary, Leo ", 620, 100);
 
-        root.getChildren().add(canvas);
+        creditsLayout.getChildren().add(canvas);
 
         back = new Button("Back");
         back.setLayoutX(20);
         back.setLayoutY(20);
 
 
-        root.getStylesheets().add("resources/Garu.css");
-        root.getChildren().add(back);
+        creditsLayout.getStylesheets().add("resources/Garu.css");
+        creditsLayout.getChildren().add(back);
     }
 
     public String run(){

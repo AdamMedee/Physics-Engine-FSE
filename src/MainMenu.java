@@ -10,8 +10,6 @@
    	everything
  */
 
-import javafx.animation.AnimationTimer;
-import javafx.application.Application;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.Group;
@@ -20,10 +18,7 @@ import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.Button;
 import javafx.scene.image.Image;
-import javafx.scene.input.KeyEvent;
 import javafx.scene.text.Font;
-import javafx.stage.Stage;
-import java.util.ArrayList;
 
 public class MainMenu {
 
@@ -31,18 +26,18 @@ public class MainMenu {
 
 
     // Graphics
-    public Scene MainMenuScene;
-    public Group MainMenuLayout;
+    public Scene mainMenuScene;
+    public Group mainMenuLayout;
     public Button button1,button2;
 
-    public String temp = "MainMenu";
+    public String newScene;
 
     //Constructor for the menu
     public MainMenu(){
+        newScene = "MainMenu";
+        mainMenuLayout = new Group();
 
-        MainMenuLayout = new Group();
-
-       // MainMenuScene.getStylesheets().add("resources/Garu.css");
+       // mainMenuScene.getStylesheets().add("resources/Garu.css");
 
         button1 = new Button("Demo");
         button1.setLayoutX(640);
@@ -54,18 +49,20 @@ public class MainMenu {
         button2.setLayoutY(540);
 
 
-
+        //Setting button actions
         button1.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent actionEvent) {
-                PhysicsEngine.window.setScene(PhysicsEngine.systemMenu.PhysicsScene);
+                PhysicsEngine.window.setScene(PhysicsEngine.systemMenu.systemScene);
+                newScene = "SystemMenu";
             }
         });
 
         button2.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent actionEvent) {
-                PhysicsEngine.window.setScene(PhysicsEngine.systemMenu.)
+                PhysicsEngine.window.setScene(PhysicsEngine.creditsMenu.creditsScene);
+                newScene = "CreditsMenu";
             }
         });
 
@@ -78,36 +75,23 @@ public class MainMenu {
 
         graphics.drawImage(background, 0, 0);
 
-        MainMenuLayout.getChildren().add(canvas);
+        mainMenuLayout.getChildren().add(canvas);
 
-        MainMenuLayout.getChildren().add(button1);
-        MainMenuLayout.getChildren().add(button2);
+        mainMenuLayout.getChildren().add(button1);
+        mainMenuLayout.getChildren().add(button2);
 
-
-
-        MainMenuScene = new Scene(MainMenuLayout,1280,720);
-        //MainMenuLayout.getChildren().addAll(button1,button2);
-
-
-
-
-
+        mainMenuScene = new Scene(mainMenuLayout,1280,720);
     }
 
 
     //Goes through the actions inputted and acts accordingly
-    public void run(){
-
-
-
-
+    public String run(){
+        return newScene;
     }
 
 
     //Displayes menu to the screen
     public void update(){
-
-
 
     }
 

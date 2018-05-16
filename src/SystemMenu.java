@@ -17,8 +17,6 @@ import javafx.scene.Group;
 import javafx.scene.control.Button;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.Scene;
-import javafx.scene.canvas.Canvas;
-import javafx.scene.canvas.GraphicsContext;
 
 public class SystemMenu {
 
@@ -33,40 +31,41 @@ public class SystemMenu {
 
 
 
-
-
     // Graphics Initialization
-
-    public Scene PhysicsScene;
+    public Scene systemScene;
     public Group SystemLayout;
     public Button systemB,objectB,back;
+
+    private String newScene;
 
 
     //Constructor for the menu
     public SystemMenu(Environment environment){
+        newScene = "SystemMenu";
         SystemLayout = new Group();
-        PhysicsScene = new Scene(SystemLayout,1280,720);
-        Group root = SystemLayout;
+        systemScene = new Scene(SystemLayout,1280,720);
 
         //Environment being run
         this.environment = environment;
+        this.environment.setGroup(SystemLayout);
 
         //Buttons to change the selected var
         systemB = new Button("System");
         systemB.setOnAction(e -> {
 
         });
+
         systemB.setPrefSize(150, 30);
         systemB.setLayoutX(980);
         systemB.setLayoutY(0);
         //systemB.setStyle();
-        root.getChildren().add(systemB);
+        SystemLayout.getChildren().add(systemB);
 
         objectB = new Button("Objects");
         objectB.setPrefSize(150, 30);
         objectB.setLayoutX(1130);
         objectB.setLayoutY(0);
-        root.getChildren().add(objectB);
+        SystemLayout.getChildren().add(objectB);
 
         //Adds graphics and buttons to root
         //Background and background border
@@ -75,37 +74,37 @@ public class SystemMenu {
         //BGrect.setOpacity(0.3);
         BGborder = new Rectangle(979, 0, 2, 720);
         BGborder.setFill(javafx.scene.paint.Color.BLACK);
-        root.getChildren().add(BGrect);
-        root.getChildren().add(BGborder);
+        SystemLayout.getChildren().add(BGrect);
+        SystemLayout.getChildren().add(BGborder);
 
         back = new Button("Back");
         back.setLayoutX(20);
         back.setLayoutY(20);
+
         back.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
-                PhysicsEngine.window.setScene(PhysicsEngine.mainMenu.MainMenuScene);
+                PhysicsEngine.window.setScene(PhysicsEngine.mainMenu.mainMenuScene);
                 PhysicsEngine.currentScreen = "MainMenu";
+                newScene = "MainMenu";
             }
         });
-        root.getChildren().add(back);
 
+        SystemLayout.getChildren().add(back);
     }
 
 
     //Goes through the actions inputted and acts accordingly
-    public void run(){
+    public String run(){
         environment.run();
+        System.out.println(1);
+
+        return newScene;
     }
 
 
     //Displayes menu to the screen
-    public void update(Group src){
-        Canvas canvas = new Canvas(1280,720);
-        GraphicsContext graphics = canvas.getGraphicsContext2D();
-        //Draws user input features
-
-        //Draws environment objects
+    public void update(){
         environment.update();
     }
 }
