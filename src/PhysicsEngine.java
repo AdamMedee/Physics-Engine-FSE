@@ -22,8 +22,6 @@ import java.util.ArrayList;
 
 public class PhysicsEngine extends Application {
     public static Stage window;
-    static Scene CreditsScene;
-    Group PhysicsLayout = new Group(), CreditsLayout = new Group();
 
 
 
@@ -105,7 +103,7 @@ public class PhysicsEngine extends Application {
 
                     case "CreditsMenu":
                         creditsMenu.run();
-                        creditsMenu.update(CreditsLayout);
+                        //creditsMenu.update(CreditsLayout);
                         break;
 
                     case "SelectMenu":
