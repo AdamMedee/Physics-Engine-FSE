@@ -38,7 +38,7 @@ public class RigidBody{
 	private Circle circle;
 
 
-	public RigidBody(double[] xPoints, double[] yPoints, double mass, Group root){
+	public RigidBody(double[] xPoints, double[] yPoints, double mass,Group root){
 		this.sides = xPoints.length;
 
 		this.area = 0;			//Init area, Moment of inertia and Center
@@ -57,9 +57,12 @@ public class RigidBody{
 		this.MOI /= 24;
 		centerX = centerX / (6 * this.area);
 		centerY = centerY / (6 * this.area);
+
 		this.xPoints = xPoints;
 		this.yPoints = yPoints;
+
 		this.polygon = new Polygon();
+
 		Double[] tmpPoints = new Double[sides*2];
 		for(int i = 0; i < sides; i++){
 			tmpPoints[i*2] = xPoints[i];
@@ -67,6 +70,11 @@ public class RigidBody{
 		}
 		this.polygon.getPoints().addAll(tmpPoints);
 		root.getChildren().add(polygon);
+
+		//Creates a center of mass as a circle for the polygon for testing purposes
+		this.circle = new Circle(centerX, centerY, 3);
+		circle.setFill(javafx.scene.paint.Color.RED);
+		root.getChildren().add(circle);
 
 		this.center = new Point2D(centerX, centerY);
 		this.forces = new ArrayList<>();
@@ -77,11 +85,6 @@ public class RigidBody{
 		this.mass = mass;
 		this.density = mass/this.area;
 		this.restitution = 0.5;
-
-		//Creates a center of mass as a circle for the polygon for testing purposes
-		this.circle = new Circle(centerX, centerY, 3);
-		circle.setFill(javafx.scene.paint.Color.RED);
-		root.getChildren().add(circle);
 	}
 
 	//Allows the rigidbody to be printed
@@ -101,7 +104,6 @@ public class RigidBody{
 		yPoints = YP;
 	}
 
-
 	//Moves the coordinates of the polygon over by dx and dy
 	public void translate(double dx, double dy){
 		double[] newXP = new double[sides];
@@ -112,7 +114,6 @@ public class RigidBody{
 		}
 		this.update(newXP, newYP, new Point2D(center.getX() + dx, center.getY() + dy));
 	}
-
 
 	//Rotates all the points about the center of mass
 	public void rotate(double ang){
@@ -127,11 +128,15 @@ public class RigidBody{
 		this.update(newXP, newYP, this.center);
 	}
 
-
 	//Moves the rigid body based on the forces acting on it
-	public void updateForce(){
+	public void updateForce(double timeStep){
 		double netX = 0;
 		double netY = 0;
+		Point2D prevAccel = this.acceleration;
+		//Update position based previous frame's forces
+		this.translate(this.velocity.getX() * timeStep + (0.5 * prevAccel.getX() * timeStep * timeStep), this.velocity.getY() * timeStep + (0.5 * prevAccel.getX() * timeStep * timeStep));
+
+		//Calculates net force of current frame
 		for(Point2D f : forces){
 			netX += f.getX();
 			netY += f.getY();
@@ -139,44 +144,30 @@ public class RigidBody{
 		netX /= mass;	//F = ma
 		netY /= mass;
 
-		double mag = Math.sqrt(netX * netX + netY * netY);	//Magnitude and direction of acceleration; m/s^2
+		double mag = Math.sqrt(netX * netX + netY * netY);	//Magnitude and direction of new acceleration; m/s^2
 		double dir = Math.atan2(netY, netX);
 		this.acceleration = new Point2D(mag * Math.cos(dir), mag * Math.sin(dir));
+
+		Point2D avgAccel = prevAccel.add(this.acceleration);
+		avgAccel = new Point2D(avgAccel.getX() / 2, avgAccel.getY() / 2);
+		velocity.add(new Point2D(avgAccel.getX() * timeStep, avgAccel.getY() * timeStep));
+
 	}
-
-
-	//Updates the body based on acceleration
-	public void move(int timeStep){
-		Point2D vAccel = new Point2D(this.acceleration.getX() * timeStep, this.acceleration.getY() * timeStep);	//How much the velocity changes by
-		this.velocity.add(vAccel);
-
-		this.translate(this.velocity.getX() * timeStep, this.velocity.getY() * timeStep);
-	}
-
 
 	public void setRestitution(double restitution){
 		this.restitution = restitution;
 	}
-
-
 	public void setMass(double mass){
 		this.mass = mass;
 	}
-
-
 	public void addForce(Point2D force){
 		this.forces.add(force);
 	}
-
-
 	public void delForce(Point2D force){
 		if(this.forces.contains(force)){
 			this.forces.remove(force);
 		}
 	}
-
-
-	
 	/*
 	public static void main(String[] args){
 		double[] x = {1,0,-1,0};
