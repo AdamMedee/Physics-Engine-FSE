@@ -27,11 +27,12 @@ import java.util.ArrayList;
 public class CreditsMenu {
 
     public Button back;
-    public String temp;
+    public String newScene;
     public Scene creditsScene;
     public Group creditsLayout;
 
     public CreditsMenu(){
+        newScene = "CreditsMenu";
         creditsLayout = new Group();
         creditsScene = new Scene(creditsLayout, 1280, 720);
         Canvas canvas = new Canvas(1280, 720);
@@ -48,6 +49,13 @@ public class CreditsMenu {
         back.setLayoutX(20);
         back.setLayoutY(20);
 
+        back.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                newScene = "MainMenu";
+
+            }
+        });
 
         creditsLayout.getStylesheets().add("resources/Garu.css");
         creditsLayout.getChildren().add(back);
@@ -55,15 +63,9 @@ public class CreditsMenu {
 
     public String run(){
 
-        temp = "CreditsMenu";
-        back.setOnAction(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent event) {
-               temp = "MainMenu";
 
-            }
-        });
-        return temp;
+
+        return newScene;
 
     }
 

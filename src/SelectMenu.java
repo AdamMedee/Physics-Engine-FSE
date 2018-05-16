@@ -24,13 +24,15 @@ import java.util.ArrayList;
 
 public class SelectMenu {
 
+    private String newScene;
 
     public SelectMenu(){
+        newScene = "SelectMenu";
 
     }
 
-    public void run(){
-
+    public String run(){
+        return newScene;
     }
 
     public void update()
