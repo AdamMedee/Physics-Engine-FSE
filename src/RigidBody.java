@@ -94,14 +94,19 @@ public class RigidBody{
 
 	//Updates the state of the rigidbody polygon
 	public void update(double[] XP, double[] YP, Point2D newCenter){
+		//Updates polygon point coords
 		polygon.getPoints().clear();
 		for(int i = 0; i < sides; i++){
 			polygon.getPoints().add(XP[i] );
 			polygon.getPoints().add(YP[i]);
 		}
-		center = newCenter;
 		xPoints = XP;
 		yPoints = YP;
+
+		//Resets center of mass for circle
+		center = newCenter;
+		circle.setCenterX(newCenter.getX());
+		circle.setCenterY(newCenter.getY());
 	}
 
 	//Moves the coordinates of the polygon over by dx and dy

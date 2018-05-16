@@ -32,21 +32,9 @@ public class CreditsMenu {
     public Group creditsLayout;
 
     public CreditsMenu(){
-        back = new Button("Back");
-        back.setLayoutX(20);
-        back.setLayoutY(20);
-
-        back.setOnAction(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent actionEvent) {
-
-                PhysicsEngine.window.setScene(PhysicsEngine.mainMenu.mainMenuScene);
-                newScene = "MainMenu";
-
-            }
-        });
         newScene = "CreditsMenu";
         creditsLayout = new Group();
+        creditsScene = new Scene(creditsLayout, 1280, 720);
         Canvas canvas = new Canvas(1280, 720);
         GraphicsContext g = canvas.getGraphicsContext2D();
         Font txtFont = Font.loadFont(getClass().getResourceAsStream("resources/fonts/modern.ttf"),20);
@@ -57,40 +45,27 @@ public class CreditsMenu {
 
         creditsLayout.getChildren().add(canvas);
 
+        back = new Button("Back");
+        back.setLayoutX(20);
+        back.setLayoutY(20);
 
-
-
-
+        back.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                PhysicsEngine.window.setScene(PhysicsEngine.mainMenu.mainMenuScene);
+                newScene = "MainMenu";
+            }
+        });
 
         creditsLayout.getStylesheets().add("resources/Garu.css");
         creditsLayout.getChildren().add(back);
-
-        creditsScene = new Scene(creditsLayout, 1280, 720);
     }
-
-//    public String run(){
-//
-//        back.setOnAction(new EventHandler<ActionEvent>() {
-//            @Override
-//            public void handle(ActionEvent event) {
-//                newScene = "MainMenu";
-//
-//            }
-//        });
-//
-//        creditsLayout.getStylesheets().add("resources/Garu.css");
-//        creditsLayout.getChildren().add(back);
-//    }
 
     public String run(){
-
-
-
         return newScene;
-
     }
 
-    public void update(Group root){
+    public void update(){
 
 
 
