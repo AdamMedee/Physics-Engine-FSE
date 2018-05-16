@@ -52,8 +52,8 @@ public class CreditsMenu {
         back.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
+                PhysicsEngine.window.setScene(PhysicsEngine.mainMenu.mainMenuScene);
                 newScene = "MainMenu";
-
             }
         });
 
@@ -62,14 +62,10 @@ public class CreditsMenu {
     }
 
     public String run(){
-
-
-
         return newScene;
-
     }
 
-    public void update(Group root){
+    public void update(){
 
 
 

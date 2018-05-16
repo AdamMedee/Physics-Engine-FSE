@@ -96,8 +96,6 @@ public class SystemMenu {
     //Goes through the actions inputted and acts accordingly
     public String run(){
         environment.run();
-        System.out.println(1);
-
         return newScene;
     }
 

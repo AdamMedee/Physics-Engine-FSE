@@ -104,12 +104,12 @@ public class PhysicsEngine extends Application {
                         break;
 
                     case "CreditsMenu":
-                        creditsMenu.run();
-                        creditsMenu.update(CreditsLayout);
+                        currentScreen = creditsMenu.run();
+                        creditsMenu.update();
                         break;
 
                     case "SelectMenu":
-                        selectMenu.run();
+                        currentScreen = selectMenu.run();
                         selectMenu.update();
                         break;
 
