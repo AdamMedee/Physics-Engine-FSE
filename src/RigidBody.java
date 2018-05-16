@@ -18,20 +18,21 @@ import java.util.Arrays;
 import javafx.geometry.Point2D;
 
 public class RigidBody{
-	private int sides;
-	private Point2D center;
-	private Polygon polygon;
-	private double[] xPoints, yPoints;
-	private ArrayList<Point2D> forces;
+	private int sides;								//# of sides
+	private Point2D center;						//Coords of center (x,y)
+	private Polygon polygon;						//Polygon defining the shape
+	private double[] xPoints, yPoints;		//Set of x coords and y coords
+	private ArrayList<Point2D> forces;		//The forces acting on the body
 
-	private double velocity;
-	private double acceleration;
-	private double spin;
-	private double angAccel;
-	private double MOI;
+	private Point2D velocity;
+	private Point2D acceleration;
+	private double spin;							//Angular velocity
+	private double angAccel;					//Angular acceleration
+	private double MOI;							//Moment of Inertia
+	private double restitution;					//Coefficient of restitution
 
 	private double area;
-	private double mass; 	//Mass and density is consistent throughout the body
+	private double mass; 							//Mass and density is consistent throughout the body
 	private double density;
 
 	private Circle circle;
@@ -77,12 +78,13 @@ public class RigidBody{
 
 		this.center = new Point2D(centerX, centerY);
 		this.forces = new ArrayList<>();
-		this.velocity = 0;
-		this.acceleration = 0;
+		this.velocity = new Point2D(0,0);
+		this.acceleration = new Point2D(0,0);
 		this.spin = 0;
 		this.angAccel = 0;
 		this.mass = mass;
 		this.density = mass/this.area;
+		this.restitution = 0.5;
 	}
 
 	//Allows the rigidbody to be printed
@@ -125,7 +127,46 @@ public class RigidBody{
 		}
 		this.update(newXP, newYP, this.center);
 	}
-/*
+
+	//Moves the rigid body based on the forces acting on it
+	public void updateForce(){
+		double netX = 0;
+		double netY = 0;
+		for(Point2D f : forces){
+			netX += f.getX();
+			netY += f.getY();
+		}
+		netX /= mass;	//F = ma
+		netY /= mass;
+
+		double mag = Math.sqrt(netX * netX + netY * netY);	//Magnitude and direction of acceleration; m/s^2
+		double dir = Math.atan2(netY, netX);
+		this.acceleration = new Point2D(mag * Math.cos(dir), mag * Math.sin(dir));
+	}
+
+	//Updates the body based on acceleration
+	public void move(int timeStep){
+		Point2D vAccel = new Point2D(this.acceleration.getX() * timeStep, this.acceleration.getY() * timeStep);	//How much the velocity changes by
+		this.velocity.add(vAccel);
+
+		this.translate(this.velocity.getX() * timeStep, this.velocity.getY() * timeStep);
+	}
+
+	public void setRestitution(double restitution){
+		this.restitution = restitution;
+	}
+	public void setMass(double mass){
+		this.mass = mass;
+	}
+	public void addForce(Point2D force){
+		this.forces.add(force);
+	}
+	public void delForce(Point2D force){
+		if(this.forces.contains(force)){
+			this.forces.remove(force);
+		}
+	}
+	/*
 	public static void main(String[] args){
 		double[] x = {1,0,-1,0};
 		double[] y = {0,1,0,-1};
@@ -137,6 +178,12 @@ public class RigidBody{
 
 		r.rotate(0.785398);
 		System.out.println(r);
+
+		r.addForce(new Point2D(0,-9.81));
+		r.move(2);
+		r.move(3);
+		System.out.println(r);
 	}
 	*/
+
 }
