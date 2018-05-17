@@ -127,8 +127,8 @@ public class RigidBody{
 		for(int i = 0; i < sides; i++){
 			double OX = xPoints[i] - center.getX();
 			double OY = yPoints[i] - center.getY();
-			newXP[i] = OX * Math.cos(ang) + OY * Math.sin(ang);
-			newYP[i] = OY * Math.cos(ang) - OX * Math.sin(ang);
+			newXP[i] = (OX * Math.cos(ang) + OY * Math.sin(ang)) + center.getX();
+			newYP[i] = (OY * Math.cos(ang) - OX * Math.sin(ang)) + center.getY();
 		}
 		this.update(newXP, newYP, this.center);
 	}
@@ -157,6 +157,10 @@ public class RigidBody{
 		avgAccel = new Point2D(avgAccel.getX() / 2, avgAccel.getY() / 2);
 		velocity.add(new Point2D(avgAccel.getX() * timeStep, avgAccel.getY() * timeStep));
 
+	}
+
+	public void doImpulse(RigidBody collided, double normal, double depth){
+		//I forget the formula :(
 	}
 
 	public void setRestitution(double restitution){
