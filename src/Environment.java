@@ -55,4 +55,9 @@ public class Environment {
         rigidBodies.add(leo);
     }
 
+    //Adds a rigidbody to the rigidbody arraylist
+    public void addRigidBody(RigidBody body){
+        rigidBodies.add(body);
+    }
+
 }

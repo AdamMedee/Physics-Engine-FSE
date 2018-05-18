@@ -51,29 +51,19 @@ public class SystemMenu {
 
         //Buttons to change the selected var
         systemB = new Button("System");
-        systemB.setOnAction(e -> {
-
-        });
-
+        systemB.setOnAction(e -> { });
         systemB.setPrefSize(150, 30);
         systemB.setLayoutX(980);
         systemB.setLayoutY(0);
         //systemB.setStyle();
-        SystemLayout.getChildren().add(systemB);
+
 
         objectB = new Button("Objects");
         objectB.setPrefSize(150, 30);
         objectB.setLayoutX(1130);
         objectB.setLayoutY(0);
-        SystemLayout.getChildren().add(objectB);
 
-        //Adds graphics and buttons to root
-        //Background and background border
-        BGrect = new Rectangle(980, 28, 300, 692);
-        BGrect.setFill(javafx.scene.paint.Color.rgb(100, 46, 0));
-        //BGrect.setOpacity(0.3);
-        BGborder = new Rectangle(979, 0, 2, 720);
-        BGborder.setFill(javafx.scene.paint.Color.BLACK);
+
 
 
         back = new Button("Back");
@@ -89,8 +79,8 @@ public class SystemMenu {
         });
 
         // Adds nodes to group
-        SystemLayout.getChildren().add(BGrect);
-        SystemLayout.getChildren().add(BGborder);
+        SystemLayout.getChildren().add(systemB);
+        SystemLayout.getChildren().add(objectB);
         SystemLayout.getChildren().add(back);
     }
 

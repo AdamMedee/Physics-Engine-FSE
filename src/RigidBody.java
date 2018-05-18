@@ -18,6 +18,8 @@ import java.util.Arrays;
 import javafx.geometry.Point2D;
 
 public class RigidBody{
+	private static int IDcounter = 0;			//Used when giving rigidbodies unique ID's
+	private int ID;								//ID to keep track of what information to show and deleting Rigidbodies from arraylist
 	private int sides;							//# of sides
 	private Point2D center;						//Coords of center (x,y)
 	private Polygon polygon;					//Polygon defining the shape
@@ -73,6 +75,7 @@ public class RigidBody{
 		this.kineticFriction = 0.1;
 		this.staticFriction = 0.2;
 		this.fixed = false;
+		this.ID = IDcounter++; //Gives a unique ID to every rigidbody
 
 		//Creates polygon shape to add to group
 		this.polygon = new Polygon();
