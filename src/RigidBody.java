@@ -18,8 +18,6 @@ import java.util.Arrays;
 import javafx.geometry.Point2D;
 
 public class RigidBody{
-	private static int IDcounter = 0;			//Used when giving rigidbodies unique ID's
-	private int ID;								//ID to keep track of what information to show and deleting Rigidbodies from arraylist
 	private int sides;							//# of sides
 	private Point2D center;						//Coords of center (x,y)
 	private Polygon polygon;					//Polygon defining the shape
@@ -75,7 +73,6 @@ public class RigidBody{
 		this.kineticFriction = 0.1;
 		this.staticFriction = 0.2;
 		this.fixed = false;
-		this.ID = IDcounter++; //Gives a unique ID to every rigidbody
 
 		//Creates polygon shape to add to group
 		this.polygon = new Polygon();
@@ -165,8 +162,23 @@ public class RigidBody{
 
 	}
 
-	public void doImpulse(RigidBody collided, double normal, double depth){
-		//I forget the formula :(
+	public static void resolveCollison(RigidBody a, RigidBody b, Point2D normal){
+		//Updates velocities of 2 bodies that have collided
+		Point2D rv = b.velocity.subtract(a.velocity);	//Relative velocity between 2 bodies
+		float normalVel = rv.dotProduct(normal)			//Find rv relative to normal vector
+
+		if(normalVel <= 0){		//Dont so anything if objects headed away from each other
+			float e = Math.min(a.restitution, b.restitution);
+			float numerator = -(1 + e) * normalVel;
+			float denom = 1/a.mass + 1/b.mass;
+			float j = numerator/denom;
+
+			//Apply impulse
+			Point2D impulse = new Point2D(normal.getX() * j, normal.getY() * j);
+			a.velocity -= 1/a.mass * impulse;	//The object doing the collision is slowed
+			b.velocity += 1/b.mass * impulse;	//The object being hit is sped up
+
+		}
 	}
 
 	public void setRestitution(double restitution){
