@@ -32,13 +32,13 @@ public class PhysicsEngine extends Application {
 
 
     //--------------------------------------
-    static String currentScreen = "MainMenu"; //Current menu being used
+    String currentScreen = "MainMenu"; //Current menu being used
 
     //Start method which contains the entire program
     @Override
     public void start(Stage stage)
     {
-        window = stage;
+        window = stage; //Creates window
         stage.setTitle( "L.A.G.'s Physics Engine" ); //Sets window title screen
 
         //Stops the program when the windows closed.
@@ -61,22 +61,14 @@ public class PhysicsEngine extends Application {
         //currentScreen = mainMenu.run();
         //mainMenu.update();
 
-
-
-        // --------------------------
         //Making the canvas
         final int WIDTH = 1280;
         final int HEIGHT = 720;
 
-
-        //Puts all the environement data from txt into arraylist of environemnt objects
-        //(currently hardcoded for testing)
+        //Puts all the environement data from txt into arraylist of environemnt objects (currently hardcoded for testing)
         ArrayList<Environment> environmentList = new ArrayList<Environment>();
         Environment a = new Environment();
         environmentList.add(a);
-
-
-
 
         //Initializing the different menus
         mainMenu = new MainMenu();
@@ -84,16 +76,15 @@ public class PhysicsEngine extends Application {
         creditsMenu = new CreditsMenu();
         systemMenu = new SystemMenu(environmentList.get(0));
 
-        //-------------------------------------------------
-        //Sets up java fx essentials
+        //Sets default scene to main menu
         window.setScene(mainMenu.mainMenuScene);
         window.show(); //Displays everything onto the screen
 
+        //Start of the game loop
         new AnimationTimer()
         {
             public void handle(long currentNanoTime)
             {
-
                 //Runs the menu the user has selected
                 switch(currentScreen) {
                     case "MainMenu":
@@ -119,17 +110,8 @@ public class PhysicsEngine extends Application {
                     default:
                         break;
                 }
-
-
-
-
-
     }
-
-}.start();
-
-
-    }
+}.start(); }
 
 
     //Main method

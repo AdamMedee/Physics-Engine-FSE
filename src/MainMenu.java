@@ -30,6 +30,7 @@ public class MainMenu {
     public Group mainMenuLayout;
     public Button button1,button2;
 
+    // Keeps track of switching between scenes
     public String newScene;
 
     //Constructor for the menu
@@ -37,8 +38,9 @@ public class MainMenu {
         newScene = "MainMenu";
         mainMenuLayout = new Group();
 
-       // mainMenuScene.getStylesheets().add("resources/Garu.css");
+       //mainMenuScene.getStylesheets().add("resources/Garu.css");
 
+        //Making and placing buttons
         button1 = new Button("Demo");
         button1.setLayoutX(640);
         button1.setLayoutY(360);
@@ -66,20 +68,22 @@ public class MainMenu {
             }
         });
 
+        //Canvas and graphics context
         Canvas canvas = new Canvas(1280,720);
         GraphicsContext graphics = canvas.getGraphicsContext2D();
-        Font ourFont = Font.loadFont(getClass().getResourceAsStream("resources/fonts/modern.ttf"),72);
 
+        //Title and background
+        Font ourFont = Font.loadFont(getClass().getResourceAsStream("resources/fonts/modern.ttf"),72);
         graphics.setFont(ourFont);
         graphics.strokeText("L.A.G Physics Engine",250,100);
-
         graphics.drawImage(background, 0, 0);
 
+        //Adds all the nodes to the layout
         mainMenuLayout.getChildren().add(canvas);
-
         mainMenuLayout.getChildren().add(button1);
         mainMenuLayout.getChildren().add(button2);
 
+        //Makes a new scene with the constructed group
         mainMenuScene = new Scene(mainMenuLayout,1280,720);
     }
 

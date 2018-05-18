@@ -18,27 +18,28 @@ import java.util.Arrays;
 import javafx.geometry.Point2D;
 
 public class RigidBody{
-	private int sides;								//# of sides
+	private int sides;							//# of sides
 	private Point2D center;						//Coords of center (x,y)
-	private Polygon polygon;						//Polygon defining the shape
-	private double[] xPoints, yPoints;		//Set of x coords and y coords
-	private ArrayList<Point2D> forces;		//The forces acting on the body
+	private Polygon polygon;					//Polygon defining the shape
+	private double[] xPoints, yPoints;			//Set of x coords and y coords
+	private ArrayList<Point2D> forces;			//The forces acting on the body
 
 	private Point2D velocity;
 	private Point2D acceleration;
-	private double spin;							//Angular velocity
+	private double spin;						//Angular velocity
 	private double angAccel;					//Angular acceleration
 	private double MOI;							//Moment of Inertia
 	private double restitution;					//Coefficient of restitution
-
-	private double area;
-	private double mass; 							//Mass and density is consistent throughout the body
+	private double kineticFriction, staticFriction;
+	private double area; 						//Constant area of the polygon
+	private double mass; 						//Mass and density is consistent throughout the body
 	private double density;
+	private boolean fixed; 						// Whether the rigid body can move
 
 	private Circle circle;
 
 
-	public RigidBody(double[] xPoints, double[] yPoints, double mass,Group root){
+	public RigidBody(double[] xPoints, double[] yPoints, double mass, Group root){
 		this.sides = xPoints.length;
 
 		this.area = 0;			//Init area, Moment of inertia and Center
@@ -58,11 +59,23 @@ public class RigidBody{
 		centerX = centerX / (6 * this.area);
 		centerY = centerY / (6 * this.area);
 
+		this.center = new Point2D(centerX, centerY);
+		this.forces = new ArrayList<>();
+		this.velocity = new Point2D(0,0);
+		this.acceleration = new Point2D(0,0);
+		this.spin = 0;
+		this.angAccel = 0;
+		this.mass = mass;
+		this.density = mass/this.area;
+		this.restitution = 0.5;
 		this.xPoints = xPoints;
 		this.yPoints = yPoints;
+		this.kineticFriction = 0.1;
+		this.staticFriction = 0.2;
+		this.fixed = false;
 
+		//Creates polygon shape to add to group
 		this.polygon = new Polygon();
-
 		Double[] tmpPoints = new Double[sides*2];
 		for(int i = 0; i < sides; i++){
 			tmpPoints[i*2] = xPoints[i];
@@ -75,16 +88,6 @@ public class RigidBody{
 		this.circle = new Circle(centerX, centerY, 3);
 		circle.setFill(javafx.scene.paint.Color.RED);
 		root.getChildren().add(circle);
-
-		this.center = new Point2D(centerX, centerY);
-		this.forces = new ArrayList<>();
-		this.velocity = new Point2D(0,0);
-		this.acceleration = new Point2D(0,0);
-		this.spin = 0;
-		this.angAccel = 0;
-		this.mass = mass;
-		this.density = mass/this.area;
-		this.restitution = 0.5;
 	}
 
 	//Allows the rigidbody to be printed

@@ -9,23 +9,16 @@
    	everything
  */
 
-import javafx.animation.AnimationTimer;
-import javafx.application.Application;
-import javafx.event.EventHandler;
 import javafx.scene.Group;
-import javafx.scene.Scene;
-import javafx.scene.canvas.Canvas;
-import javafx.scene.canvas.GraphicsContext;
-import javafx.scene.image.Image;
-import javafx.scene.input.KeyEvent;
-import javafx.stage.Stage;
+
 import java.util.ArrayList;
 
 public class Environment {
 
     double secondsPerSecond; //How quickly the system passes through time
     ArrayList<RigidBody> rigidBodies = new ArrayList<RigidBody>(); //Contains physical rigid bodies
-    public Group EnvironmentLayout;
+    public Group environmentLayout;
+
 
     public Environment(double secondsPerSecond){
         this.secondsPerSecond = secondsPerSecond;
@@ -38,7 +31,10 @@ public class Environment {
     //Goes through all rigid body interactions
     public void run(){
         for(RigidBody rigidBody : rigidBodies){
-            rigidBody.translate(2, 3);
+            //rigidBody.translate(0.3, 0.4);
+            rigidBody.rotate(0.05);
+            //s -= 0.001;
+
         }
     }
 
@@ -46,12 +42,16 @@ public class Environment {
 
     }
 
+    public Group getGroup(){
+        return environmentLayout;
+    }
+
     public void setGroup (Group src)
     {
-        this.EnvironmentLayout = src;
+        environmentLayout = src;
         double[] x = {100, 200, 300, 600, 300, 200};
         double[] y = {300, 100, 300, 100, 320, 120};
-        RigidBody leo = new RigidBody(x,y, 10, this.EnvironmentLayout);
+        RigidBody leo = new RigidBody(x,y, 10, environmentLayout);
         rigidBodies.add(leo);
     }
 

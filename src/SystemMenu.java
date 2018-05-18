@@ -74,8 +74,7 @@ public class SystemMenu {
         //BGrect.setOpacity(0.3);
         BGborder = new Rectangle(979, 0, 2, 720);
         BGborder.setFill(javafx.scene.paint.Color.BLACK);
-        SystemLayout.getChildren().add(BGrect);
-        SystemLayout.getChildren().add(BGborder);
+
 
         back = new Button("Back");
         back.setLayoutX(20);
@@ -89,6 +88,9 @@ public class SystemMenu {
             }
         });
 
+        // Adds nodes to group
+        SystemLayout.getChildren().add(BGrect);
+        SystemLayout.getChildren().add(BGborder);
         SystemLayout.getChildren().add(back);
     }
 
