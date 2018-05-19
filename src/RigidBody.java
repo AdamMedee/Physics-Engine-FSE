@@ -165,13 +165,13 @@ public class RigidBody{
 	public static void resolveCollison(RigidBody a, RigidBody b, Point2D normal){
 		//Updates velocities of 2 bodies that have collided
 		Point2D rv = b.velocity.subtract(a.velocity);	//Relative velocity between 2 bodies
-		float normalVel = rv.dotProduct(normal)			//Find rv relative to normal vector
+		double normalVel = rv.dotProduct(normal);	//Find rv relative to normal vector
 
 		if(normalVel <= 0){		//Dont so anything if objects headed away from each other
-			float e = Math.min(a.restitution, b.restitution);
-			float numerator = -(1 + e) * normalVel;
-			float denom = 1/a.mass + 1/b.mass;
-			float j = numerator/denom;
+			double e = Math.min(a.restitution, b.restitution);
+			double numerator = -(1 + e) * normalVel;
+			double denom = (1/a.mass + 1/b.mass);
+			double j = numerator/denom;
 
 			//Apply impulse
 			Point2D impulse = new Point2D(normal.getX() * j, normal.getY() * j);
