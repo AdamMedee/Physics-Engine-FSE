@@ -201,6 +201,7 @@ public class SystemMenu {
 
 
 
+
         leftPane.setPrefSize(980,720);
         tabs.setPrefSize(300,720);
 
