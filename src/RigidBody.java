@@ -175,8 +175,8 @@ public class RigidBody{
 
 			//Apply impulse
 			Point2D impulse = new Point2D(normal.getX() * j, normal.getY() * j);
-			a.velocity -= 1/a.mass * impulse;	//The object doing the collision is slowed
-			b.velocity += 1/b.mass * impulse;	//The object being hit is sped up
+			a.velocity.subtract(impulse.multiply(1.0 / a.mass));	//The object doing the collision is slowed
+			b.velocity.add(impulse.multiply(1.0 / b.mass));	        //The object being hit is sped up
 
 		}
 	}
