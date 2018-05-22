@@ -101,10 +101,12 @@ public class RigidBody{
 		root.getChildren().add(circle);
 	}
 
+
 	//Allows the rigidbody to be printed
 	public String toString(){
 		return Arrays.toString(xPoints) + " " + Arrays.toString(yPoints) + " " + this.center;
 	}
+
 
 	//Updates the state of the rigidbody polygon
 	public void update(double[] XP, double[] YP, Point2D newCenter){
@@ -123,6 +125,7 @@ public class RigidBody{
 		circle.setCenterY(newCenter.getY());
 	}
 
+
 	//Moves the coordinates of the polygon over by dx and dy
 	public void translate(double dx, double dy){
 		double[] newXP = new double[sides];
@@ -133,6 +136,7 @@ public class RigidBody{
 		}
 		this.update(newXP, newYP, new Point2D(center.getX() + dx, center.getY() + dy));
 	}
+
 
 	//Rotates all the points about the center of mass
 	public void rotate(double ang){
@@ -147,8 +151,9 @@ public class RigidBody{
 		this.update(newXP, newYP, this.center);
 	}
 
+
 	//Moves the rigid body based on the forces acting on it
-	public void updateForce(double timeStep){
+	public void updateVelocity(double timeStep){
 		double netX = 0;
 		double netY = 0;
 		Point2D prevAccel = this.acceleration;
@@ -173,6 +178,14 @@ public class RigidBody{
 
 	}
 
+
+	//Moves the rigid body based on the forces acting on it
+	public void updatePosition(double timeStep){
+		this.translate(timeStep * velocity.getX(), timeStep * velocity.getY());
+	}
+
+
+	//Updates the states of two rigid bodies colliding at a given point
 	public static void resolveCollison(RigidBody a, RigidBody b, Point2D normal){
 		//Updates velocities of 2 bodies that have collided
 		Point2D rv = b.velocity.subtract(a.velocity);	//Relative velocity between 2 bodies
@@ -188,10 +201,11 @@ public class RigidBody{
 			Point2D impulse = new Point2D(normal.getX() * j, normal.getY() * j);
 			a.velocity.subtract(impulse.multiply(1.0 / a.mass));	//The object doing the collision is slowed
 			b.velocity.add(impulse.multiply(1.0 / b.mass));	        //The object being hit is sped up
-
 		}
 	}
 
+
+	//Puts rigid body back to starting state
 	public void reset(){
 		spin = startSpin;
 		velocity = startVel;
@@ -200,20 +214,25 @@ public class RigidBody{
 		this.update(startXPoints, startYPoints, startCenter);
 	}
 
+	//Setter methods
 	public void setRestitution(double restitution){
 		this.restitution = restitution;
 	}
 	public void setMass(double mass){
 		this.mass = mass;
 	}
+
 	public void addForce(Point2D force){
 		this.forces.add(force);
 	}
+
+	//Removes force from body
 	public void delForce(Point2D force){
 		if(this.forces.contains(force)){
 			this.forces.remove(force);
 		}
 	}
+
 	/*
 	public static void main(String[] args){
 		double[] x = {1,0,-1,0};

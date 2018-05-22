@@ -9,20 +9,22 @@
    	everything
  */
 
-import javafx.scene.Group;
+import javafx.geometry.Point2D;
 import javafx.scene.layout.Pane;
+
 
 import java.util.ArrayList;
 
 public class Environment {
 
-    double secondsPerSecond; //How quickly the system passes through time
+    double simulationSpeed; //How quickly the system passes through time
     ArrayList<RigidBody> rigidBodies = new ArrayList<RigidBody>(); //Contains physical rigid bodies
     public Pane environmentLayout;
+    Point2D gravity;
 
 
     public Environment(double secondsPerSecond){
-        this.secondsPerSecond = secondsPerSecond;
+        this.simulationSpeed = secondsPerSecond;
     }
 
     public Environment(){
@@ -31,12 +33,13 @@ public class Environment {
 
     //Goes through all rigid body interactions
     public void run(){
+        //Applies all forces
         for(RigidBody rigidBody : rigidBodies){
-            //rigidBody.translate(0.3, 0.4);
-            rigidBody.rotate(0.05);
-            rigidBody.translate(0.5, 0.8);
-            //s -= 0.001;
-
+            rigidBody.addForce(gravity);
+            rigidBody.updateVelocity(simulationSpeed);
+            rigidBody.updatePosition(simulationSpeed);
+            //rigidBody.rotate(0.05);
+            //rigidBody.translate(0.5, 0.8);
         }
     }
 
@@ -64,5 +67,13 @@ public class Environment {
 
     public ArrayList<RigidBody> getRigidBodies() {
         return rigidBodies;
+    }
+
+    public void setGravity(Point2D grav){
+        gravity = grav;
+    }
+
+    public void setSimulationSpeed(double simSpeed){
+        simulationSpeed = simSpeed;
     }
 }

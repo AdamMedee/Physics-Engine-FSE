@@ -14,6 +14,7 @@
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
+import javafx.geometry.Point2D;
 import javafx.scene.Group;
 import javafx.scene.control.*;
 import javafx.scene.control.Button;
@@ -41,7 +42,7 @@ public class SystemMenu {
 
     double OriginX,OriginY;
     double ScaleVal;
-    double GravityVal;
+    double gravityVal;
     double sideForceVal;
     double speedVal;
     boolean running; //Whether the environment's been paused
@@ -60,6 +61,13 @@ public class SystemMenu {
         newScene = "SystemMenu";
         systemScene = new Scene(SystemLayout,1280,720);
         running = true;
+
+        gravityVal = 0.0981;
+        sideForceVal = 0;
+        speedVal = 1;
+
+        environment.setGravity(new Point2D(sideForceVal, gravityVal));
+        environment.setSimulationSpeed(speedVal);
 
         Pane leftPane = new Pane();
 
@@ -214,33 +222,20 @@ public class SystemMenu {
         resetBtn.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent actionEvent) {
-
                 //Takes all the text box input for environment settings and applies them
-                if (isDouble(xInput.getText()))
-                {
-                    OriginX = Double.parseDouble(xInput.getText());
-                }
-                if (isDouble(yInput.getText()))
-                {
-                    OriginY = Double.parseDouble(yInput.getText());
-                }
-                if (isDouble(scaleInput.getText()))
-                {
-                    ScaleVal = Double.parseDouble(scaleInput.getText());
-                }
-                if (isDouble(sideForceInput.getText()))
-                {
-                    sideForceVal = Double.parseDouble(scaleInput.getText());
-                }
-                if (isDouble(speedInput.getText()))
-                {
-                    speedVal = Double.parseDouble(speedInput.getText());
-                }
+                if (isDouble(xInput.getText())) OriginX = Double.parseDouble(xInput.getText());
+                if (isDouble(yInput.getText())) OriginY = Double.parseDouble(yInput.getText());
+                if (isDouble(scaleInput.getText())) ScaleVal = Double.parseDouble(scaleInput.getText());
+                if (isDouble(sideForceInput.getText())) sideForceVal = Double.parseDouble(scaleInput.getText());
+                if (isDouble(gravityInput.getText())) gravityVal = Double.parseDouble(gravityInput.getText());
+                if (isDouble(speedInput.getText())) speedVal = Double.parseDouble(speedInput.getText());
+
+                //Updates environment
+                environment.setGravity(new Point2D(sideForceVal, gravityVal));
+                environment.setSimulationSpeed(speedVal);
 
                 //Resets all rigid bodies
-                for(RigidBody body : environment.getRigidBodies()){
-                    body.reset();
-                }
+                for(RigidBody body : environment.getRigidBodies()) body.reset();
             }
         });
 
