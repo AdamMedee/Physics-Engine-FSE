@@ -156,7 +156,7 @@ public class SystemMenu {
 
         //----- Fourth Row (SideForce)
 
-        Label sideForceLabel = new Label("sideForece:");
+        Label sideForceLabel = new Label("sideForce:");
         sideForceLabel.setPrefWidth(80);
 
         TextField sideForceInput = new TextField();
@@ -189,7 +189,7 @@ public class SystemMenu {
         // ------------------------
 
 
-        HBox bottomrow = new HBox();
+        HBox bottomrow = new HBox(40);
         Button runBtn  = new Button("Run");
         runBtn.setOnAction(new EventHandler<ActionEvent>() {
             @Override
@@ -222,6 +222,12 @@ public class SystemMenu {
         resetBtn.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent actionEvent) {
+                xInput.setText("0");
+                yInput.setText("0");
+                scaleInput.setText("1");
+                gravityInput.setText("1");
+                sideForceInput.setText("0");
+                speedInput.setText("1");
 
 
             }
