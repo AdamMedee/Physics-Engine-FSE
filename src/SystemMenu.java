@@ -228,7 +228,9 @@ public class SystemMenu {
                 gravityInput.setText("1");
                 sideForceInput.setText("0");
                 speedInput.setText("1");
-
+                for(RigidBody body : environment.getRigidBodies()){
+                    body.reset();
+                }
 
             }
         });

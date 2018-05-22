@@ -34,6 +34,7 @@ public class Environment {
         for(RigidBody rigidBody : rigidBodies){
             //rigidBody.translate(0.3, 0.4);
             rigidBody.rotate(0.05);
+            rigidBody.translate(0.5, 0.8);
             //s -= 0.001;
 
         }
@@ -61,4 +62,7 @@ public class Environment {
         rigidBodies.add(body);
     }
 
+    public ArrayList<RigidBody> getRigidBodies() {
+        return rigidBodies;
+    }
 }

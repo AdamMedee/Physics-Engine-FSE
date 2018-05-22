@@ -37,6 +37,11 @@ public class RigidBody{
 	private double density;
 	private boolean fixed; 						// Whether the rigid body can move
 
+	private Point2D startCenter;				//Start position of the center of the rigidbody
+	private Point2D startVel;					//Starting velocity of the body
+	private double[] startXPoints, startYPoints;//Start polygon points
+	private double startSpin;					//Start angular velocity
+
 	private Circle circle;
 
 
@@ -61,16 +66,21 @@ public class RigidBody{
 		centerY = centerY / (6 * this.area);
 
 		this.center = new Point2D(centerX, centerY);
+		this.startCenter = center;
 		this.forces = new ArrayList<>();
 		this.velocity = new Point2D(0,0);
+		this.startVel = velocity;
 		this.acceleration = new Point2D(0,0);
 		this.spin = 0;
+		this.startSpin = spin;
 		this.angAccel = 0;
 		this.mass = mass;
 		this.density = mass/this.area;
 		this.restitution = 0.5;
 		this.xPoints = xPoints;
 		this.yPoints = yPoints;
+		this.startXPoints = xPoints;
+		this.startYPoints = yPoints;
 		this.kineticFriction = 0.1;
 		this.staticFriction = 0.2;
 		this.fixed = false;
@@ -180,6 +190,14 @@ public class RigidBody{
 			b.velocity.add(impulse.multiply(1.0 / b.mass));	        //The object being hit is sped up
 
 		}
+	}
+
+	public void reset(){
+		spin = startSpin;
+		velocity = startVel;
+		acceleration = new Point2D(0, 0);
+		angAccel = 0;
+		this.update(startXPoints, startYPoints, startCenter);
 	}
 
 	public void setRestitution(double restitution){
