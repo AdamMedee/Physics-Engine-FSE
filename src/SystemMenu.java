@@ -44,7 +44,7 @@ public class SystemMenu {
     double GravityVal;
     double sideForceVal;
     double speedVal;
-
+    boolean running; //Whether the environment's been paused
 
 
     // Graphics Initialization
@@ -59,6 +59,7 @@ public class SystemMenu {
     public SystemMenu(Environment environment){
         newScene = "SystemMenu";
         systemScene = new Scene(SystemLayout,1280,720);
+        running = true;
 
         Pane leftPane = new Pane();
 
@@ -141,7 +142,7 @@ public class SystemMenu {
 
         //-----Third Row (Gravity)---------
 
-        Label gravityLabel = new Label("Gravity:");
+        Label gravityLabel = new Label("Ver. Gravity:");
         gravityLabel.setPrefWidth(80);
 
         TextField gravityInput = new TextField();
@@ -156,7 +157,7 @@ public class SystemMenu {
 
         //----- Fourth Row (SideForce)
 
-        Label sideForceLabel = new Label("sideForce:");
+        Label sideForceLabel = new Label("Hor. Gravity:");
         sideForceLabel.setPrefWidth(80);
 
         TextField sideForceInput = new TextField();
@@ -188,12 +189,33 @@ public class SystemMenu {
         SystemPane.getChildren().add(Disclaimer1);
         // ------------------------
 
+        //Three buttons at the bottom (run, reset, clear)
+        HBox bottomrow = new HBox(30);
 
-        HBox bottomrow = new HBox(40);
-        Button runBtn  = new Button("Run");
+        //Pause button for the system
+        Button runBtn  = new Button(" Run ");
         runBtn.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent actionEvent) {
+                if(running){
+                    runBtn.setText("Pause");
+                }
+                else{
+                    runBtn.setText(" Run ");
+                }
+                running = !running;
+            }
+
+        });
+
+        //Puts all rigid bodies back to default settings
+        //Also updates environment settings
+        Button resetBtn = new Button("Reset");
+        resetBtn.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent actionEvent) {
+
+                //Takes all the text box input for environment settings and applies them
                 if (isDouble(xInput.getText()))
                 {
                     OriginX = Double.parseDouble(xInput.getText());
@@ -215,11 +237,16 @@ public class SystemMenu {
                     speedVal = Double.parseDouble(speedInput.getText());
                 }
 
+                //Resets all rigid bodies
+                for(RigidBody body : environment.getRigidBodies()){
+                    body.reset();
+                }
             }
         });
 
-        Button resetBtn = new Button("Reset");
-        resetBtn.setOnAction(new EventHandler<ActionEvent>() {
+        //Resets environment to default settings
+        Button clearBtn = new Button("Clear");
+        clearBtn.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent actionEvent) {
                 xInput.setText("0");
@@ -228,18 +255,6 @@ public class SystemMenu {
                 gravityInput.setText("1");
                 sideForceInput.setText("0");
                 speedInput.setText("1");
-                for(RigidBody body : environment.getRigidBodies()){
-                    body.reset();
-                }
-
-            }
-        });
-
-        Button clearBtn = new Button("Clear");
-        clearBtn.setOnAction(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent actionEvent) {
-
             }
         });
         bottomrow.getChildren().addAll(runBtn,resetBtn,clearBtn);
@@ -336,14 +351,15 @@ public class SystemMenu {
         }
         catch (Exception e)
         {
-
             return false;
-
         }
     }
+
     //Goes through the actions inputted and acts accordingly
     public String run(){
-        environment.run();
+        if(running) {
+            environment.run();
+        }
         return newScene;
     }
 
