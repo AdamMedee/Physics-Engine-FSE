@@ -93,7 +93,7 @@ public class SystemMenu {
 
         Label orgLabel = new Label("Origin");
 
-        orgLabel.setPrefWidth(120);
+        orgLabel.setPrefWidth(100);
         //orgLabel.setMaxWidth(60);
 
         Label xLabel = new Label("x:");
@@ -196,8 +196,23 @@ public class SystemMenu {
             public void handle(ActionEvent actionEvent) {
                 if (isDouble(xInput.getText()))
                 {
-
-
+                    OriginX = Double.parseDouble(xInput.getText());
+                }
+                if (isDouble(yInput.getText()))
+                {
+                    OriginY = Double.parseDouble(yInput.getText());
+                }
+                if (isDouble(scaleInput.getText()))
+                {
+                    ScaleVal = Double.parseDouble(scaleInput.getText());
+                }
+                if (isDouble(sideForceInput.getText()))
+                {
+                    sideForceVal = Double.parseDouble(scaleInput.getText());
+                }
+                if (isDouble(speedInput.getText()))
+                {
+                    speedVal = Double.parseDouble(speedInput.getText());
                 }
 
             }
@@ -207,6 +222,7 @@ public class SystemMenu {
         resetBtn.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent actionEvent) {
+
 
             }
         });
@@ -272,7 +288,6 @@ public class SystemMenu {
         systemB.setPrefSize(150, 30);
         systemB.setLayoutX(0);
         systemB.setLayoutY(0);
-        //systemB.setStyle();
 
 
         objectB = new Button("Objects");
@@ -313,6 +328,7 @@ public class SystemMenu {
         }
         catch (Exception e)
         {
+
             return false;
 
         }
