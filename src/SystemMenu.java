@@ -37,7 +37,13 @@ public class SystemMenu {
     Rectangle BGrect;
     Rectangle BGborder;
 
-    //Buttons on the screen
+    // Inputs we're keeping track of
+
+    double OriginX,OriginY;
+    double ScaleVal;
+    double GravityVal;
+    double sideForceVal;
+    double speedVal;
 
 
 
@@ -173,6 +179,55 @@ public class SystemMenu {
 
         SystemPane.getChildren().addAll(speedLabel,speedInput);
 
+        // -------------------------------
+        Label Disclaimer1 = new Label("                               *Lower = More Accurate");
+        Disclaimer1.setPrefWidth(300);
+        Disclaimer1.setStyle("-fx-font-size: 10;");
+
+        GridPane.setConstraints(Disclaimer1,0,5,2,1);
+        SystemPane.getChildren().add(Disclaimer1);
+        // ------------------------
+
+
+        HBox bottomrow = new HBox();
+        Button runBtn  = new Button("Run");
+        runBtn.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent actionEvent) {
+                if (isDouble(xInput.getText()))
+                {
+
+
+                }
+
+            }
+        });
+
+        Button resetBtn = new Button("Reset");
+        resetBtn.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent actionEvent) {
+
+            }
+        });
+
+        Button clearBtn = new Button("Clear");
+        clearBtn.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent actionEvent) {
+
+            }
+        });
+        bottomrow.getChildren().addAll(runBtn,resetBtn,clearBtn);
+
+        GridPane.setConstraints(bottomrow,0,6,2,4);
+
+        SystemPane.getChildren().add(bottomrow);
+
+
+
+
+
 
 //
 //        Label blkLabel2 = new Label();
@@ -249,7 +304,19 @@ public class SystemMenu {
         SystemLayout.setRight(tabs);
     }
 
+    public static boolean isDouble(String s)
+    {
+        try
+        {
+            double temp = Double.parseDouble(s);
+            return true;
+        }
+        catch (Exception e)
+        {
+            return false;
 
+        }
+    }
     //Goes through the actions inputted and acts accordingly
     public String run(){
         environment.run();
