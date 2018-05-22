@@ -11,6 +11,7 @@
  */
 
 import javafx.scene.Group;
+import javafx.scene.layout.Pane;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.Polygon;
 import java.util.ArrayList;
@@ -39,7 +40,7 @@ public class RigidBody{
 	private Circle circle;
 
 
-	public RigidBody(double[] xPoints, double[] yPoints, double mass, Group root){
+	public RigidBody(double[] xPoints, double[] yPoints, double mass, Pane root){
 		this.sides = xPoints.length;
 
 		this.area = 0;			//Init area, Moment of inertia and Center

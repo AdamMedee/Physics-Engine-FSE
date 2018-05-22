@@ -10,6 +10,7 @@
  */
 
 import javafx.scene.Group;
+import javafx.scene.layout.Pane;
 
 import java.util.ArrayList;
 
@@ -17,7 +18,7 @@ public class Environment {
 
     double secondsPerSecond; //How quickly the system passes through time
     ArrayList<RigidBody> rigidBodies = new ArrayList<RigidBody>(); //Contains physical rigid bodies
-    public Group environmentLayout;
+    public Pane environmentLayout;
 
 
     public Environment(double secondsPerSecond){
@@ -42,11 +43,11 @@ public class Environment {
 
     }
 
-    public Group getGroup(){
+    public Pane getGroup(){
         return environmentLayout;
     }
 
-    public void setGroup (Group src)
+    public void setGroup (Pane src)
     {
         environmentLayout = src;
         double[] x = {100, 200, 300, 600, 300, 200};
