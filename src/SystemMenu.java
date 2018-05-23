@@ -62,7 +62,7 @@ public class SystemMenu {
         systemScene = new Scene(SystemLayout,1280,720);
         running = true;
 
-        gravityVal = 0.0981;
+        gravityVal = 9.81;
         sideForceVal = 0;
         speedVal = 1;
 
@@ -233,9 +233,11 @@ public class SystemMenu {
                 //Updates environment
                 environment.setGravity(new Point2D(sideForceVal, gravityVal));
                 environment.setSimulationSpeed(speedVal);
+                environment.setScale(ScaleVal);
 
-                //Resets all rigid bodies
-                for(RigidBody body : environment.getRigidBodies()) body.reset();
+                environment.reset();
+
+
             }
         });
 

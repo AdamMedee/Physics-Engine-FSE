@@ -37,6 +37,7 @@ public class RigidBody{
 	private double density;
 	private boolean fixed; 						// Whether the rigid body can move
 
+	private double scale;
 	private Point2D startCenter;				//Start position of the center of the rigidbody
 	private Point2D startVel;					//Starting velocity of the body
 	private double[] startXPoints, startYPoints;//Start polygon points
@@ -84,6 +85,7 @@ public class RigidBody{
 		this.kineticFriction = 0.1;
 		this.staticFriction = 0.2;
 		this.fixed = false;
+		this.scale = 1;
 
 		//Creates polygon shape to add to group
 		this.polygon = new Polygon();
@@ -113,16 +115,16 @@ public class RigidBody{
 		//Updates polygon point coords
 		polygon.getPoints().clear();
 		for(int i = 0; i < sides; i++){
-			polygon.getPoints().add(XP[i] );
-			polygon.getPoints().add(YP[i]);
+			polygon.getPoints().add(XP[i]/scale);
+			polygon.getPoints().add(YP[i]/scale);
 		}
 		xPoints = XP;
 		yPoints = YP;
 
 		//Resets center of mass for circle
 		center = newCenter;
-		circle.setCenterX(newCenter.getX());
-		circle.setCenterY(newCenter.getY());
+		circle.setCenterX(center.getX()/scale);
+		circle.setCenterY(center.getY()/scale);
 	}
 
 
@@ -199,11 +201,12 @@ public class RigidBody{
 
 
 	//Puts rigid body back to starting state
-	public void reset(){
+	public void reset(double newScale){
 		spin = startSpin;
 		velocity = startVel;
 		acceleration = new Point2D(0, 0);
 		angAccel = 0;
+		this.setScale(newScale);
 		this.update(startXPoints, startYPoints, startCenter);
 	}
 
@@ -229,6 +232,10 @@ public class RigidBody{
 	//Clears all forces and vel from rigid body
 	public void clearForces(){
 		forces.clear();
+	}
+
+	public void setScale(double newScale) {
+		scale = newScale;
 	}
 
 	/*

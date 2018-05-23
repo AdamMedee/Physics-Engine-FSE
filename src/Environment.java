@@ -18,6 +18,7 @@ import java.util.ArrayList;
 public class Environment {
 
     double simulationSpeed; //How quickly the system passes through time
+    double scale;
     ArrayList<RigidBody> rigidBodies = new ArrayList<RigidBody>(); //Contains physical rigid bodies
     public Pane environmentLayout;
     Point2D gravity;
@@ -70,6 +71,9 @@ public class Environment {
         return rigidBodies;
     }
 
+    //Resets all rigid bodies
+    public void reset(){ for(RigidBody body : rigidBodies) body.reset(scale);}
+
     public void setGravity(Point2D grav){
         gravity = grav;
     }
@@ -77,4 +81,6 @@ public class Environment {
     public void setSimulationSpeed(double simSpeed){
         simulationSpeed = simSpeed;
     }
+
+    public void setScale(double newScale) { scale = newScale; }
 }
