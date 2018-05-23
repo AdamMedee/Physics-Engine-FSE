@@ -156,9 +156,9 @@ public class RigidBody{
 	public void updateVelocity(double timeStep){
 		double netX = 0;
 		double netY = 0;
-		Point2D prevAccel = this.acceleration;
+		Point2D prevAccel = acceleration;
 		//Update position based previous frame's forces
-		this.translate(this.velocity.getX() * timeStep + (0.5 * prevAccel.getX() * timeStep * timeStep), this.velocity.getY() * timeStep + (0.5 * prevAccel.getX() * timeStep * timeStep));
+		this.translate(velocity.getX() * timeStep + (0.5 * prevAccel.getX() * timeStep * timeStep), velocity.getY() * timeStep + (0.5 * prevAccel.getY() * timeStep * timeStep));
 
 		//Calculates net force of current frame
 		for(Point2D f : forces){
@@ -170,18 +170,11 @@ public class RigidBody{
 
 		double mag = Math.sqrt(netX * netX + netY * netY);	//Magnitude and direction of new acceleration; m/s^2
 		double dir = Math.atan2(netY, netX);
-		this.acceleration = new Point2D(mag * Math.cos(dir), mag * Math.sin(dir));
-
-		Point2D avgAccel = prevAccel.add(this.acceleration);
+		acceleration = new Point2D(mag * Math.cos(dir), mag * Math.sin(dir));
+		Point2D avgAccel = prevAccel.add(acceleration);
 		avgAccel = new Point2D(avgAccel.getX() / 2, avgAccel.getY() / 2);
-		velocity.add(new Point2D(avgAccel.getX() * timeStep, avgAccel.getY() * timeStep));
+		velocity = velocity.add(new Point2D(avgAccel.getX() * timeStep, avgAccel.getY() * timeStep));
 
-	}
-
-
-	//Moves the rigid body based on the forces acting on it
-	public void updatePosition(double timeStep){
-		this.translate(timeStep * velocity.getX(), timeStep * velocity.getY());
 	}
 
 
@@ -231,6 +224,11 @@ public class RigidBody{
 		if(this.forces.contains(force)){
 			this.forces.remove(force);
 		}
+	}
+
+	//Clears all forces and vel from rigid body
+	public void clearForces(){
+		forces.clear();
 	}
 
 	/*

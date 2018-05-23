@@ -37,7 +37,8 @@ public class Environment {
         for(RigidBody rigidBody : rigidBodies){
             rigidBody.addForce(gravity);
             rigidBody.updateVelocity(simulationSpeed);
-            rigidBody.updatePosition(simulationSpeed);
+            //rigidBody.updatePosition(simulationSpeed);
+            rigidBody.clearForces();
             //rigidBody.rotate(0.05);
             //rigidBody.translate(0.5, 0.8);
         }
@@ -56,7 +57,7 @@ public class Environment {
         environmentLayout = src;
         double[] x = {100, 200, 300, 600, 300, 200};
         double[] y = {300, 100, 300, 100, 320, 120};
-        RigidBody leo = new RigidBody(x,y, 10, environmentLayout);
+        RigidBody leo = new RigidBody(x,y, 1, environmentLayout);
         rigidBodies.add(leo);
     }
 

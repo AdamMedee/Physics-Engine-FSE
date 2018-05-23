@@ -50,17 +50,6 @@ public class PhysicsEngine extends Application {
             }
         });
 
-
-        // ----- Main Menu Initialization
-        //STEPS:
-        //Make scene menu and group in contructor
-        //Clicking button changes which scene is set
-        //Method to return scene object
-        //Set scene in menu classes with button clicks
-        //.run() returns string
-        //currentScreen = mainMenu.run();
-        //mainMenu.update();
-
         //Making the canvas
         final int WIDTH = 1280;
         final int HEIGHT = 720;
