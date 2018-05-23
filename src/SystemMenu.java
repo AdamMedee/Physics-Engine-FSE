@@ -226,7 +226,7 @@ public class SystemMenu {
                 if (isDouble(xInput.getText())) OriginX = Double.parseDouble(xInput.getText());
                 if (isDouble(yInput.getText())) OriginY = Double.parseDouble(yInput.getText());
                 if (isDouble(scaleInput.getText())) ScaleVal = Double.parseDouble(scaleInput.getText());
-                if (isDouble(sideForceInput.getText())) sideForceVal = Double.parseDouble(scaleInput.getText());
+                if (isDouble(sideForceInput.getText())) sideForceVal = Double.parseDouble(sideForceInput.getText());
                 if (isDouble(gravityInput.getText())) gravityVal = Double.parseDouble(gravityInput.getText());
                 if (isDouble(speedInput.getText())) speedVal = Double.parseDouble(speedInput.getText());
 
@@ -236,8 +236,6 @@ public class SystemMenu {
                 environment.setScale(ScaleVal);
 
                 environment.reset();
-
-
             }
         });
 

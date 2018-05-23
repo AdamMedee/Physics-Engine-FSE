@@ -10,6 +10,7 @@
    	everything
  */
 
+import javafx.collections.ObservableList;
 import javafx.scene.Group;
 import javafx.scene.layout.Pane;
 import javafx.scene.shape.Circle;
@@ -156,27 +157,25 @@ public class RigidBody{
 
 	//Moves the rigid body based on the forces acting on it
 	public void updateVelocity(double timeStep){
-		double netX = 0;
-		double netY = 0;
-		Point2D prevAccel = acceleration;
-		//Update position based previous frame's forces
-		this.translate(velocity.getX() * timeStep + (0.5 * prevAccel.getX() * timeStep * timeStep), velocity.getY() * timeStep + (0.5 * prevAccel.getY() * timeStep * timeStep));
+		if(!fixed) {
+			double netX = 0;
+			double netY = 0;
+			Point2D prevAccel = acceleration;
+			//Update position based previous frame's forces
+			this.translate(velocity.getX() * timeStep + (0.5 * prevAccel.getX() * timeStep * timeStep), velocity.getY() * timeStep + (0.5 * prevAccel.getY() * timeStep * timeStep));
 
-		//Calculates net force of current frame
-		for(Point2D f : forces){
-			netX += f.getX();
-			netY += f.getY();
+			//Calculates net force of current frame
+			for (Point2D f : forces) {
+				netX += f.getX();
+				netY += f.getY();
+			}
+			netX /= mass;    //F = ma
+			netY /= mass;
+			acceleration = new Point2D(netX, netY);
+			Point2D avgAccel = prevAccel.add(acceleration);
+			avgAccel = new Point2D(avgAccel.getX() / 2, avgAccel.getY() / 2);
+			velocity = velocity.add(new Point2D(avgAccel.getX() * timeStep, avgAccel.getY() * timeStep));
 		}
-		netX /= mass;	//F = ma
-		netY /= mass;
-
-		double mag = Math.sqrt(netX * netX + netY * netY);	//Magnitude and direction of new acceleration; m/s^2
-		double dir = Math.atan2(netY, netX);
-		acceleration = new Point2D(mag * Math.cos(dir), mag * Math.sin(dir));
-		Point2D avgAccel = prevAccel.add(acceleration);
-		avgAccel = new Point2D(avgAccel.getX() / 2, avgAccel.getY() / 2);
-		velocity = velocity.add(new Point2D(avgAccel.getX() * timeStep, avgAccel.getY() * timeStep));
-
 	}
 
 
@@ -197,6 +196,20 @@ public class RigidBody{
 			a.velocity.subtract(impulse.multiply(1.0 / a.mass));	//The object doing the collision is slowed
 			b.velocity.add(impulse.multiply(1.0 / b.mass));	        //The object being hit is sped up
 		}
+	}
+
+	//Gets the normal if two rigidbodies are colliding else null
+	public Point2D isColliding(RigidBody a, RigidBody b){
+		if(a.polygon.getBoundsInLocal().intersects(b.polygon.getBoundsInLocal())){
+			ObservableList<Double> aVertices = a.polygon.getPoints();
+			//ObservableList<Double> bVertices = b.polygon.getPoints();
+			for(int i = 0; i < a.sides*2; i+=2){
+				if(a.polygon.contains(new Point2D(aVertices.get(i), aVertices.get(i+1)))){
+					//point to line formula to get closest side and make normal (-x/y)
+				}
+			}
+		}
+		return null;
 	}
 
 

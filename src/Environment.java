@@ -24,12 +24,14 @@ public class Environment {
     Point2D gravity;
 
 
-    public Environment(double secondsPerSecond){
-        this.simulationSpeed = secondsPerSecond;
+    public Environment(double simulationSpeed){
+        this.simulationSpeed = simulationSpeed;
     }
 
     public Environment(){
-
+        simulationSpeed = 1;
+        scale = 100;
+        gravity = new Point2D(0, 9.81);
     }
 
     //Goes through all rigid body interactions
@@ -38,10 +40,7 @@ public class Environment {
         for(RigidBody rigidBody : rigidBodies){
             rigidBody.addForce(gravity);
             rigidBody.updateVelocity(simulationSpeed);
-            //rigidBody.updatePosition(simulationSpeed);
             rigidBody.clearForces();
-            //rigidBody.rotate(0.05);
-            //rigidBody.translate(0.5, 0.8);
         }
     }
 
