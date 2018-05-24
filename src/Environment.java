@@ -38,9 +38,7 @@ public class Environment {
     public void run(){
         //Applies all forces
         for(RigidBody rigidBody : rigidBodies){
-            rigidBody.addForce(gravity);
-            rigidBody.updateVelocity(simulationSpeed);
-            rigidBody.clearForces();
+            rigidBody.run(simulationSpeed, gravity, rigidBodies);
         }
     }
 
@@ -57,8 +55,12 @@ public class Environment {
         environmentLayout = src;
         double[] x = {100, 200, 300, 600, 300, 200};
         double[] y = {300, 100, 300, 100, 320, 120};
-        RigidBody leo = new RigidBody(x,y, 1, environmentLayout);
+        double[] x2 = {0, 1000, 1000, 0};
+        double[] y2 = {640, 650, 700, 700};
+        RigidBody leo = new RigidBody(x, y, 1, false, environmentLayout);
+        RigidBody leoo = new RigidBody(x2, y2, 1, true, environmentLayout);
         rigidBodies.add(leo);
+        rigidBodies.add(leoo);
     }
 
     //Adds a rigidbody to the rigidbody arraylist

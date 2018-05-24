@@ -40,6 +40,7 @@ public class PhysicsEngine extends Application {
     {
         window = stage; //Creates window
         stage.setTitle( "L.A.G.'s Physics Engine" ); //Sets window title screen
+        stage.setResizable(false);
 
         //Stops the program when the windows closed.
         stage.setOnCloseRequest(new EventHandler<WindowEvent>() {

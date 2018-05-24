@@ -247,7 +247,7 @@ public class SystemMenu {
                 xInput.setText("0");
                 yInput.setText("0");
                 scaleInput.setText("1");
-                gravityInput.setText("1");
+                gravityInput.setText("9.81");
                 sideForceInput.setText("0");
                 speedInput.setText("1");
             }

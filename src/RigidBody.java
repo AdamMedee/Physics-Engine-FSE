@@ -47,7 +47,7 @@ public class RigidBody{
 	private Circle circle;
 
 
-	public RigidBody(double[] xPoints, double[] yPoints, double mass, Pane root){
+	public RigidBody(double[] xPoints, double[] yPoints, double mass, boolean fixed, Pane root){
 		this.sides = xPoints.length;
 
 		this.area = 0;			//Init area, Moment of inertia and Center
@@ -85,7 +85,7 @@ public class RigidBody{
 		this.startYPoints = yPoints;
 		this.kineticFriction = 0.1;
 		this.staticFriction = 0.2;
-		this.fixed = false;
+		this.fixed = fixed;
 		this.scale = 1;
 
 		//Creates polygon shape to add to group
@@ -193,8 +193,9 @@ public class RigidBody{
 
 			//Apply impulse
 			Point2D impulse = new Point2D(normal.getX() * j, normal.getY() * j);
-			a.velocity.subtract(impulse.multiply(1.0 / a.mass));	//The object doing the collision is slowed
-			b.velocity.add(impulse.multiply(1.0 / b.mass));	        //The object being hit is sped up
+
+			a.velocity = a.velocity.subtract(impulse.multiply(1.0 / a.mass));	//The object doing the collision is slowed
+			b.velocity = b.velocity.add(impulse.multiply(1.0 / b.mass));	        //The object being hit is sped up
 		}
 	}
 
@@ -202,14 +203,43 @@ public class RigidBody{
 	public Point2D isColliding(RigidBody a, RigidBody b){
 		if(a.polygon.getBoundsInLocal().intersects(b.polygon.getBoundsInLocal())){
 			ObservableList<Double> aVertices = a.polygon.getPoints();
-			//ObservableList<Double> bVertices = b.polygon.getPoints();
-			for(int i = 0; i < a.sides*2; i+=2){
-				if(a.polygon.contains(new Point2D(aVertices.get(i), aVertices.get(i+1)))){
-					//point to line formula to get closest side and make normal (-x/y)
+			double shortestDist = Double.POSITIVE_INFINITY;
+			Point2D normalDirection = new Point2D(0, 0);
+			ObservableList<Double> bVertices = b.polygon.getPoints();
+
+			for(int i = 0; i < a.sides*2; i+=2){ //Goes through all a polygon vertices
+				if(b.polygon.contains(aVertices.get(i), aVertices.get(i+1))){ //Checks if vertex is in b.polygon
+					for (int j = 0; j < b.sides*2; j += 2){ //Goes through all b polygon vertices
+
+						double m = (bVertices.get((j+3)%b.sides*2)-bVertices.get(j+1))/(bVertices.get((j+2)%b.sides*2)-bVertices.get(j));
+						double c = -bVertices.get(j+1) + m * bVertices.get(j);
+						double tmpDist = Math.abs(m*aVertices.get(i) + aVertices.get(i+1) + c)/m;
+						if(tmpDist <= shortestDist){
+							shortestDist = tmpDist;
+							normalDirection = new Point2D(-m, 1); //(-m, 1)
+						}
+					}
+					System.out.println(normalDirection);
+					return normalDirection;
 				}
 			}
 		}
 		return null;
+	}
+
+	//Runs all the methods on the rigidbody
+	public void run(double simSpeed, Point2D gravity, ArrayList<RigidBody> rigidBodies){
+		addForce(gravity);
+		for(RigidBody body : rigidBodies) {
+			if(!body.equals(this)) {
+				Point2D tmpNorm = isColliding(this, body);
+				if (tmpNorm != null) {
+					resolveCollison(this, body, tmpNorm);
+				}
+			}
+		}
+		updateVelocity(simSpeed);
+		clearForces();
 	}
 
 
