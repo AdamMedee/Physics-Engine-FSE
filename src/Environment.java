@@ -31,7 +31,7 @@ public class Environment {
     public Environment(){
         simulationSpeed = 1;
         scale = 100;
-        gravity = new Point2D(0, 9.81);
+        gravity = new Point2D(0, 0);
     }
 
     //Goes through all rigid body interactions

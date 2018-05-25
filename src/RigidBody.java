@@ -70,7 +70,7 @@ public class RigidBody{
 		this.center = new Point2D(centerX, centerY);
 		this.startCenter = center;
 		this.forces = new ArrayList<>();
-		this.velocity = new Point2D(0,0);
+		this.velocity = new Point2D(0,1);
 		this.startVel = velocity;
 		this.acceleration = new Point2D(0,0);
 		this.spin = 0;
@@ -192,12 +192,10 @@ public class RigidBody{
 			double j = numerator/denom;
 
 			//Apply impulse
-			Point2D impulse = new Point2D(normal.getX() * j, normal.getY() * j);
+			Point2D impulse = new Point2D(-normal.getX() * j, normal.getY() * j);
 
-			//System.out.println(impulse);
-			a.velocity = a.velocity.subtract(impulse.multiply(1.0 / a.mass));	//The object doing the collision is slowed
-			b.velocity = b.velocity.add(impulse.multiply(1.0 / b.mass));	        //The object being hit is sped up
-			//System.out.println(a.velocity + " " + b.velocity);
+			a.velocity = a.velocity.subtract(impulse.multiply(1 / a.mass));	//The object doing the collision is slowed
+			b.velocity = b.velocity.add(impulse.multiply(1 / b.mass));	        //The object being hit is sped up
 		}
 	}
 
@@ -222,10 +220,9 @@ public class RigidBody{
 
 						if(tmpDist <= shortestDist){
 							shortestDist = tmpDist;
-							normalDirection = new Point2D((y1 - y2)/sideLen, (x2 - x1)/sideLen);
+							normalDirection = new Point2D(tmpDist*(y2 - y1)/sideLen, tmpDist*(x1 - x2)/sideLen);
 						}
 					}
-					System.out.println(normalDirection);
 					return normalDirection;
 				}
 			}
