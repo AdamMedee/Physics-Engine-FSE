@@ -194,7 +194,7 @@ public class RigidBody{
 			//Apply impulse
 			Point2D impulse = new Point2D(normal.getX() * j, normal.getY() * j);
 
-			System.out.println(impulse);
+			//System.out.println(impulse);
 			a.velocity = a.velocity.subtract(impulse.multiply(1.0 / a.mass));	//The object doing the collision is slowed
 			b.velocity = b.velocity.add(impulse.multiply(1.0 / b.mass));	        //The object being hit is sped up
 			//System.out.println(a.velocity + " " + b.velocity);
@@ -204,7 +204,7 @@ public class RigidBody{
 	//Gets the normal if two rigidbodies are colliding else null
 	public Point2D isColliding(RigidBody a, RigidBody b){
 		if(a.polygon.getBoundsInLocal().intersects(b.polygon.getBoundsInLocal())){
-			//System.out.println("Collide");
+
 			ObservableList<Double> aVertices = a.polygon.getPoints();
 			double shortestDist = Double.POSITIVE_INFINITY;
 			Point2D normalDirection = new Point2D(0, 0);
@@ -214,19 +214,18 @@ public class RigidBody{
 				if(b.polygon.contains(aVertices.get(i), aVertices.get(i+1))){ //Checks if vertex is in b.polygon
 					for (int j = 0; j < b.sides*2; j += 2){ //Goes through all b polygon vertices
 
-						double dx =bVertices.get((j+2) % b.sides*2) - bVertices.get(j);
-						double dy = bVertices.get((j+3) % b.sides*2) - bVertices.get(j+1);
-						double m = dx/dy;
-						double c = -bVertices.get(j+1) + m * bVertices.get(j);
-						//double tmpDist = Math.abs(m*aVertices.get(i) + aVertices.get(i+1) + c)/Math.sqrt(m * m + 1);
-						double tmpDist = Math.abs(m * aVertices.get(i) - aVertices.get(i+1) + bVertices.get(j+1) - m * bVertices.get(j)) / Math.sqrt(m * m + 1);
+						double x0 = aVertices.get(i); double y0 = aVertices.get(i + 1);
+						double x1 = bVertices.get(j); double y1 = bVertices.get(j + 1);
+						double x2 = bVertices.get((j+2) % (b.sides*2-1)); double y2 = bVertices.get((j+3) % (b.sides*2-1));
+						double sideLen = Math.sqrt((y2 - y1)*(y2 - y1) + (x2 - x1)*(x2 - x1));
+						double tmpDist = Math.abs((y2 - y1)*x0 - (x2 - x1)*y0 + x2*y1 - y2*x1)/sideLen;
+
 						if(tmpDist <= shortestDist){
 							shortestDist = tmpDist;
-							//normalDirection = new Point2D(- dy / Math.sqrt(dx * dx + dy * dy), dx / Math.sqrt(dx * dx + dy * dy));
-							normalDirection = new Point2D(-dx / Math.sqrt(dx * dx + dy * dy) , -dy / Math.sqrt(dx * dx + dy * dy));
+							normalDirection = new Point2D((y1 - y2)/sideLen, (x2 - x1)/sideLen);
 						}
 					}
-					//System.out.println(normalDirection);
+					System.out.println(normalDirection);
 					return normalDirection;
 				}
 			}
