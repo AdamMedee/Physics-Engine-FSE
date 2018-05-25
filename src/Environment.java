@@ -57,10 +57,15 @@ public class Environment {
         double[] y = {300, 100, 300, 100, 320, 120};
         double[] x2 = {0, 1000, 1000, 0};
         double[] y2 = {640, 650, 700, 700};
-        RigidBody leo = new RigidBody(x, y, 1, false, environmentLayout);
+        //RigidBody leo = new RigidBody(x, y, 1, false, environmentLayout);
         RigidBody leoo = new RigidBody(x2, y2, 1, true, environmentLayout);
-        rigidBodies.add(leo);
+        //rigidBodies.add(leo);
         rigidBodies.add(leoo);
+
+        double[] x3 = {400,500,600,700};
+        double [] y3 = {20,200,240,20};
+        RigidBody test = new RigidBody(x3, y3, 1, false, environmentLayout);
+        rigidBodies.add(test);
     }
 
     //Adds a rigidbody to the rigidbody arraylist

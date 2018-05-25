@@ -64,7 +64,7 @@ public class SystemMenu {
 
         gravityVal = 9.81;
         sideForceVal = 0;
-        speedVal = 1;
+        speedVal = 0.05;
 
         environment.setGravity(new Point2D(sideForceVal, gravityVal));
         environment.setSimulationSpeed(speedVal);

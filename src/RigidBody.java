@@ -185,7 +185,7 @@ public class RigidBody{
 		Point2D rv = b.velocity.subtract(a.velocity);	//Relative velocity between 2 bodies
 		double normalVel = rv.dotProduct(normal);	//Find rv relative to normal vector
 
-		if(normalVel <= 0){		//Dont so anything if objects headed away from each other
+		if(true){		//Dont so anything if objects headed away from each other
 			double e = Math.min(a.restitution, b.restitution);
 			double numerator = -(1 + e) * normalVel;
 			double denom = (1/a.mass + 1/b.mass);
@@ -194,14 +194,17 @@ public class RigidBody{
 			//Apply impulse
 			Point2D impulse = new Point2D(normal.getX() * j, normal.getY() * j);
 
+			System.out.println(impulse);
 			a.velocity = a.velocity.subtract(impulse.multiply(1.0 / a.mass));	//The object doing the collision is slowed
 			b.velocity = b.velocity.add(impulse.multiply(1.0 / b.mass));	        //The object being hit is sped up
+			//System.out.println(a.velocity + " " + b.velocity);
 		}
 	}
 
 	//Gets the normal if two rigidbodies are colliding else null
 	public Point2D isColliding(RigidBody a, RigidBody b){
 		if(a.polygon.getBoundsInLocal().intersects(b.polygon.getBoundsInLocal())){
+			//System.out.println("Collide");
 			ObservableList<Double> aVertices = a.polygon.getPoints();
 			double shortestDist = Double.POSITIVE_INFINITY;
 			Point2D normalDirection = new Point2D(0, 0);
@@ -211,15 +214,19 @@ public class RigidBody{
 				if(b.polygon.contains(aVertices.get(i), aVertices.get(i+1))){ //Checks if vertex is in b.polygon
 					for (int j = 0; j < b.sides*2; j += 2){ //Goes through all b polygon vertices
 
-						double m = (bVertices.get((j+3)%b.sides*2)-bVertices.get(j+1))/(bVertices.get((j+2)%b.sides*2)-bVertices.get(j));
+						double dx =bVertices.get((j+2) % b.sides*2) - bVertices.get(j);
+						double dy = bVertices.get((j+3) % b.sides*2) - bVertices.get(j+1);
+						double m = dx/dy;
 						double c = -bVertices.get(j+1) + m * bVertices.get(j);
-						double tmpDist = Math.abs(m*aVertices.get(i) + aVertices.get(i+1) + c)/m;
+						//double tmpDist = Math.abs(m*aVertices.get(i) + aVertices.get(i+1) + c)/Math.sqrt(m * m + 1);
+						double tmpDist = Math.abs(m * aVertices.get(i) - aVertices.get(i+1) + bVertices.get(j+1) - m * bVertices.get(j)) / Math.sqrt(m * m + 1);
 						if(tmpDist <= shortestDist){
 							shortestDist = tmpDist;
-							normalDirection = new Point2D(-m, 1); //(-m, 1)
+							//normalDirection = new Point2D(- dy / Math.sqrt(dx * dx + dy * dy), dx / Math.sqrt(dx * dx + dy * dy));
+							normalDirection = new Point2D(-dx / Math.sqrt(dx * dx + dy * dy) , -dy / Math.sqrt(dx * dx + dy * dy));
 						}
 					}
-					System.out.println(normalDirection);
+					//System.out.println(normalDirection);
 					return normalDirection;
 				}
 			}
