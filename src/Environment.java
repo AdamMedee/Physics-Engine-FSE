@@ -53,17 +53,29 @@ public class Environment {
     public void setGroup (Pane src)
     {
         environmentLayout = src;
-        double[] x = {100, 200, 300, 600, 300, 200};
-        double[] y = {300, 100, 300, 100, 320, 120};
+        double[] x = {30, 40, 50, 30};
+        double[] y = {100, 120, 130, 140};
         double[] x2 = {0, 1000, 1000, 0};
-        double[] y2 = {600, 650, 700, 700};
-        //RigidBody leo = new RigidBody(x, y, 1, false, environmentLayout);
-        RigidBody leoo = new RigidBody(x2, y2, 1, true, environmentLayout);
-        //rigidBodies.add(leo);
+        double[] y2 = {500, 700, 700, 700};
+        double[] x4 = {0, 1000, 1000, 0};
+        double[] y4 = {10, 10, 50, 50};
+        double[] x5 = {0, 10, 10, 0};
+        double[] y5 = {100, 100, 495, 495};
+        double[] x6 = {980, 1000, 1000, 980};
+        double[] y6 = {100, 100, 600, 600};
+        RigidBody leo = new RigidBody(x, y, 1, false, environmentLayout);
+        RigidBody leoo = new RigidBody(x2, y2, 5, true, environmentLayout);
+        RigidBody leooo = new RigidBody(x4, y4, 1, true, environmentLayout);
+        RigidBody leoooo = new RigidBody(x5, y5, 1, true, environmentLayout);
+        RigidBody leooooo = new RigidBody(x6, y6, 1, true, environmentLayout);
+        rigidBodies.add(leo);
         rigidBodies.add(leoo);
+        rigidBodies.add(leooo);
+        rigidBodies.add(leoooo);
+        rigidBodies.add(leooooo);
 
-        double[] x3 = {400,500,600,700};
-        double [] y3 = {20,200,240,20};
+        double[] x3 = {450,500,600,700};
+        double [] y3 = {120,200,240,120};
         RigidBody test = new RigidBody(x3, y3, 1, false, environmentLayout);
         rigidBodies.add(test);
     }

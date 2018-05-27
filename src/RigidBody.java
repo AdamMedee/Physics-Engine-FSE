@@ -76,9 +76,9 @@ public class RigidBody{
 		this.spin = 0;
 		this.startSpin = spin;
 		this.angAccel = 0;
-		this.mass = mass;
+		this.mass = fixed ? Double.POSITIVE_INFINITY: mass;
 		this.density = mass/this.area;
-		this.restitution = 0.5;
+		this.restitution = 0.95;
 		this.xPoints = xPoints;
 		this.yPoints = yPoints;
 		this.startXPoints = xPoints;
@@ -182,8 +182,12 @@ public class RigidBody{
 	//Updates the states of two rigid bodies colliding at a given point
 	public static void resolveCollison(RigidBody a, RigidBody b, Point2D normal){
 		//Updates velocities of 2 bodies that have collided
+		double penetrationDepth = normal.magnitude();
+		Point2D normalUnit = normal.normalize();
+
+
 		Point2D rv = b.velocity.subtract(a.velocity);	//Relative velocity between 2 bodies
-		double normalVel = rv.dotProduct(normal);	//Find rv relative to normal vector
+		double normalVel = rv.dotProduct(normalUnit);	//Find rv relative to normal vector
 
 		if(true){		//Dont so anything if objects headed away from each other
 			double e = Math.min(a.restitution, b.restitution);
@@ -192,10 +196,15 @@ public class RigidBody{
 			double j = numerator/denom;
 
 			//Apply impulse
-			Point2D impulse = new Point2D(-normal.getX() * j, normal.getY() * j);
+			Point2D impulse = new Point2D(normalUnit.getX() * j, normalUnit.getY() * j);
 
 			a.velocity = a.velocity.subtract(impulse.multiply(1 / a.mass));	//The object doing the collision is slowed
 			b.velocity = b.velocity.add(impulse.multiply(1 / b.mass));	        //The object being hit is sped up
+
+			final double correctPercent = 0.2;
+			Point2D correction = normalUnit.multiply(penetrationDepth / (1.0 / a.mass + 1.0 / b.mass) * correctPercent);
+			a.translate(-correction.multiply(1.0 / a.mass).getX(),  correction.multiply(1.0 / a.mass).getY());
+			b.translate(correction.multiply(1.0 / b.mass).getX(), correction.multiply(1.0 / b.mass).getY());
 		}
 	}
 

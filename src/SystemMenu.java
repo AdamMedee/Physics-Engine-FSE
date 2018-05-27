@@ -291,7 +291,8 @@ public class SystemMenu {
 
 
 
-        leftPane.setPrefSize(980,720);
+        leftPane.setPrefSize(900,720);
+        leftPane.setMaxWidth(980);
         tabs.setPrefSize(300,720);
 
         //Environment being run
