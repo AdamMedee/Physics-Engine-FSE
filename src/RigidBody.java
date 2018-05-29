@@ -11,8 +11,6 @@
  */
 
 import javafx.collections.ObservableList;
-import javafx.geometry.Point3D;
-import javafx.scene.Group;
 import javafx.scene.layout.Pane;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.Polygon;
@@ -64,7 +62,8 @@ public class RigidBody{
 			this.MOI += ((xPoints[i] * yPoints[(i+1) % sides] + 2*xPoints[i]*yPoints[i] + 2*xPoints[(i+1) % sides]*yPoints[(i+1) % sides] + xPoints[(i+1) % sides]*yPoints[i]) * shoelace);
 		}
 		this.area = Math.abs(this.area / 2);
-		this.MOI /= 24;
+		this.mass = fixed ? Double.POSITIVE_INFINITY: mass;
+		this.MOI = this.MOI*mass/this.area/24;
 		centerX = centerX / (6 * this.area);
 		centerY = centerY / (6 * this.area);
 
@@ -77,7 +76,6 @@ public class RigidBody{
 		this.spin = 0;
 		this.startSpin = spin;
 		this.angAccel = 0;
-		this.mass = fixed ? Double.POSITIVE_INFINITY: mass;
 		this.density = mass/this.area;
 		this.restitution = 0.95;
 		this.xPoints = xPoints;
@@ -143,9 +141,8 @@ public class RigidBody{
 	}
 
 
-
+	//Rotates all the points about the center of mass
 	public void rotate(double ang){
-		//Rotates all the points about the center of mass
 		double[] newXP = new double[sides];
 		double[] newYP = new double[sides];
 		for(int i = 0; i < sides; i++){
@@ -159,10 +156,11 @@ public class RigidBody{
 
 	public void updateSpin(double timeStep){
 		//System.out.println(this.spin);
-		if(true) {
+		if(!fixed) {
 			this.rotate(spin);
 		}
 	}
+
 	//Moves the rigid body based on the forces acting on it
 	public void updateVelocity(double timeStep){
 		if(!fixed) {
@@ -186,21 +184,36 @@ public class RigidBody{
 		}
 	}
 
-
-	//Updates the states of two rigid bodies colliding at a given point
-	public static void resolveCollison(RigidBody a, RigidBody b, Point2D[] info){
-		//Updates velocities of 2 bodies that have collided
-		Point2D normal = info[0];
-		Point2D vertex = info[1];	//Point of collison
-
+	//If two rigidbodies are intersecting, moves them apart
+	public static void penetrationFix(RigidBody a, RigidBody b, Point2D normal){
+		//How deep the collision point is in the object
 		double penetrationDepth = normal.magnitude();
 		Point2D normalUnit = normal.normalize();
 
+		//Pushes shapes out of each other if barely in
+		final double correctPercent = 0.5;
+		Point2D correction = normalUnit.multiply(penetrationDepth / (1.0 / a.mass + 1.0 / b.mass) * correctPercent);
+		a.translate(-correction.multiply(1.0 / a.mass).getX(),  correction.multiply(1.0 / a.mass).getY());
+		b.translate(correction.multiply(1.0 / b.mass).getX(), correction.multiply(1.0 / b.mass).getY());
+	}
+
+
+	//Updates the states of two rigid bodies colliding at a given point
+	//Will change normal and rotational velocity
+	public static void resolveCollision(RigidBody a, RigidBody b, Point2D[] info){
+		//Updates velocities of 2 bodies that have collided
+		Point2D normal = info[0];	//Vector of dist from point to side
+		Point2D vertex = info[1];	//Point of collison
+
+		//How deep the collision point is in the object
+		Point2D normalUnit = normal.normalize();
+
+		//Vector from center to vertex of collision
 		Point2D relA = vertex.subtract(a.center);
 		Point2D relB = vertex.subtract(b.center);
 
 		Point2D rv = b.velocity.subtract(a.velocity);	//Relative velocity between 2 bodies
-		double normalVel = rv.dotProduct(normalUnit);	//Find rv relative to normal vector
+		double normalVel = rv.dotProduct(normalUnit) + (relB.magnitude()*b.spin - relA.magnitude()*a.spin);	//Find rv relative to normal vector
 
 		double e = Math.min(a.restitution, b.restitution);	//How sticky the shapes are
 		double rot = det(relA, normalUnit) * det(relA, normalUnit) / a.MOI + det(relB, normalUnit) * det(relB, normalUnit) / b.MOI;
@@ -217,19 +230,13 @@ public class RigidBody{
 		//a.spin += 1/a.MOI * det(relA, normal) * normalUnit.multiply(j).magnitude();
 		//b.spin += 1/b.MOI * det(relB, normal) * normalUnit.multiply(j).magnitude();
 
-		a.spin += 1/a.MOI * det(relA, normal) * j;	//Causes objects to spin based on their MOI
-		b.spin -= 1/b.MOI * det(relB, normal) * j;
-
-		//Pushes shapes out of each other if barely in
-		final double correctPercent = 0.5;
-		Point2D correction = normalUnit.multiply(penetrationDepth / (1.0 / a.mass + 1.0 / b.mass) * correctPercent);
-		a.translate(-correction.multiply(1.0 / a.mass).getX(),  correction.multiply(1.0 / a.mass).getY());
-		b.translate(correction.multiply(1.0 / b.mass).getX(), correction.multiply(1.0 / b.mass).getY());
-
+		//Causes objects to spin based on their MOI
+		a.spin += (1/a.MOI) * det(relA, normalUnit) * j;
+		b.spin -= (1/b.MOI) * det(relB, normalUnit) * j;
 	}
 
 	//Gets the normal if two rigidbodies are colliding else null
-	public Point2D[] isColliding(RigidBody a, RigidBody b){
+	public static void isColliding(RigidBody a, RigidBody b){
 		if(a.polygon.getBoundsInLocal().intersects(b.polygon.getBoundsInLocal())){
 
 			ObservableList<Double> aVertices = a.polygon.getPoints();
@@ -237,6 +244,7 @@ public class RigidBody{
 			Point2D contact = null;
 			Point2D normalDirection = new Point2D(0, 0);
 			ObservableList<Double> bVertices = b.polygon.getPoints();
+			Point2D[] info = {normalDirection, contact};
 
 			for(int i = 0; i < a.sides*2; i+=2){ //Goes through all a polygon vertices
 				if(b.polygon.contains(aVertices.get(i), aVertices.get(i+1))){ //Checks if vertex is in b.polygon
@@ -254,12 +262,16 @@ public class RigidBody{
 							contact = new Point2D(aVertices.get(i), aVertices.get(i+1));
 						}
 					}
-					Point2D[] info =  {normalDirection, contact};
-					return info;
+					info[0] = normalDirection; info[1] = contact;
+					penetrationFix(a, b, normalDirection);
 				}
+
 			}
+			if(contact != null) {
+				resolveCollision(a, b, info);
+			}
+
 		}
-		return null;
 	}
 
 	//Runs all the methods on the rigidbody
@@ -267,10 +279,7 @@ public class RigidBody{
 		addForce(gravity);
 		for(RigidBody body : rigidBodies) {
 			if(!body.equals(this)) {
-				Point2D[] info = isColliding(this, body);
-				if (info != null) {
-					resolveCollison(this, body, info);
-				}
+				isColliding(this, body);
 			}
 		}
 		updateSpin(simSpeed);

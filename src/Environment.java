@@ -57,27 +57,36 @@ public class Environment {
         double[] y = {100, 120, 130, 140};
         double[] x2 = {0, 1000, 1000, 0};
         double[] y2 = {500, 700, 700, 700};
+        double[] x3 = {700,600,500,450};
+        double [] y3 = {120,240,200,120};
         double[] x4 = {0, 1000, 1000, 0};
         double[] y4 = {10, 10, 50, 50};
         double[] x5 = {0, 10, 10, 0};
         double[] y5 = {100, 100, 495, 495};
         double[] x6 = {980, 1000, 1000, 980};
         double[] y6 = {100, 100, 600, 600};
+        double[] x7 = {400, 900, 900, 400};
+        double[] y7 = {400, 400, 450, 450};
+        double[] x8 = {400, 600, 600, 400};
+        double[] y8 = {250, 250, 295, 295};
         RigidBody leo = new RigidBody(x, y, 1, false, environmentLayout);
         RigidBody leoo = new RigidBody(x2, y2, 5, true, environmentLayout);
+        RigidBody leoooooo = new RigidBody(x3, y3, 1, false, environmentLayout);
         RigidBody leooo = new RigidBody(x4, y4, 1, true, environmentLayout);
         RigidBody leoooo = new RigidBody(x5, y5, 1, true, environmentLayout);
         RigidBody leooooo = new RigidBody(x6, y6, 1, true, environmentLayout);
+        //RigidBody leooooooo = new RigidBody(x7, y7, 1, true, environmentLayout);
+        //RigidBody leoooooooo = new RigidBody(x8, y8, 1, false, environmentLayout);
+
         rigidBodies.add(leo);
         rigidBodies.add(leoo);
         rigidBodies.add(leooo);
         rigidBodies.add(leoooo);
         rigidBodies.add(leooooo);
+        rigidBodies.add(leoooooo);
 
-        double[] x3 = {700,600,500,450};
-        double [] y3 = {120,240,200,120};
-        RigidBody test = new RigidBody(x3, y3, 1, false, environmentLayout);
-        rigidBodies.add(test);
+        //rigidBodies.add(leooooooo);
+        //rigidBodies.add(leoooooooo);
     }
 
     //Adds a rigidbody to the rigidbody arraylist
