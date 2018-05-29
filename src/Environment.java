@@ -74,8 +74,8 @@ public class Environment {
         rigidBodies.add(leoooo);
         rigidBodies.add(leooooo);
 
-        double[] x3 = {450,500,600,700};
-        double [] y3 = {120,200,240,120};
+        double[] x3 = {700,600,500,450};
+        double [] y3 = {120,240,200,120};
         RigidBody test = new RigidBody(x3, y3, 1, false, environmentLayout);
         rigidBodies.add(test);
     }
