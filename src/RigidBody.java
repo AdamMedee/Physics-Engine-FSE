@@ -43,6 +43,9 @@ public class RigidBody{
 	private double[] startXPoints, startYPoints;//Start polygon points
 	private double startSpin;					//Start angular velocity
 
+	private Point2D tmpVel;
+	private double tmpSpin;
+
 	private Circle circle;
 
 
@@ -72,9 +75,11 @@ public class RigidBody{
 		this.forces = new ArrayList<>();
 		this.velocity = new Point2D(0,1);
 		this.startVel = velocity;
+		this.tmpVel = velocity;
 		this.acceleration = new Point2D(0,0);
 		this.spin = 0;
 		this.startSpin = spin;
+		this.tmpSpin = spin;
 		this.angAccel = 0;
 		this.density = mass/this.area;
 		this.restitution = 0.95;
@@ -185,16 +190,19 @@ public class RigidBody{
 	}
 
 	//If two rigidbodies are intersecting, moves them apart
-	public static void penetrationFix(RigidBody a, RigidBody b, Point2D normal){
+	public static void penetrationFix(RigidBody a, RigidBody b, Point2D normal, double simSpeed){
 		//How deep the collision point is in the object
-		double penetrationDepth = normal.magnitude();
+		double penetrationDepth = 0.1*normal.magnitude() - (a.velocity.dotProduct(b.velocity) + b.velocity.dotProduct(a.velocity))/200*simSpeed + 0.01;
 		Point2D normalUnit = normal.normalize();
 
 		//Pushes shapes out of each other if barely in
-		final double correctPercent = 0.5;
-		Point2D correction = normalUnit.multiply(penetrationDepth / (1.0 / a.mass + 1.0 / b.mass) * correctPercent);
-		a.translate(-correction.multiply(1.0 / a.mass).getX(),  correction.multiply(1.0 / a.mass).getY());
-		b.translate(correction.multiply(1.0 / b.mass).getX(), correction.multiply(1.0 / b.mass).getY());
+		Point2D correction = normalUnit.multiply(penetrationDepth);
+		if(!a.fixed) {
+			a.translate(-correction.getX(), correction.getY());
+		}
+		if(!b.fixed) {
+			b.translate(correction.getX(), -correction.getY());
+		}
 	}
 
 
@@ -208,15 +216,17 @@ public class RigidBody{
 		//How deep the collision point is in the object
 		Point2D normalUnit = normal.normalize();
 
+
 		//Vector from center to vertex of collision
 		Point2D relA = vertex.subtract(a.center);
 		Point2D relB = vertex.subtract(b.center);
+
 
 		Point2D rv = b.velocity.subtract(a.velocity);	//Relative velocity between 2 bodies
 		double normalVel = rv.dotProduct(normalUnit) + (relB.magnitude()*b.spin - relA.magnitude()*a.spin);	//Find rv relative to normal vector
 
 		double e = Math.min(a.restitution, b.restitution);	//How sticky the shapes are
-		double rot = det(relA, normalUnit) * det(relA, normalUnit) / a.MOI + det(relB, normalUnit) * det(relB, normalUnit) / b.MOI;
+		double rot =  0;//det(relA, normalUnit) * det(relA, normalUnit) / a.MOI + det(relB, normalUnit) * det(relB, normalUnit) / b.MOI;
 		double numerator = -(1 + e) * normalVel;
 		double denom = (1/a.mass + 1/b.mass + rot);
 		double j = numerator/denom;
@@ -225,18 +235,15 @@ public class RigidBody{
 		Point2D impulse = new Point2D(normalUnit.getX() * j, normalUnit.getY() * j);
 
 		a.velocity = a.velocity.subtract(impulse.multiply(1 / a.mass));	//The object doing the collision is slowed
-		b.velocity = b.velocity.add(impulse.multiply(1 / b.mass));	        //The object being hit is sped up
-
-		//a.spin += 1/a.MOI * det(relA, normal) * normalUnit.multiply(j).magnitude();
-		//b.spin += 1/b.MOI * det(relB, normal) * normalUnit.multiply(j).magnitude();
+		b.velocity = b.velocity.add(impulse.multiply(1 / b.mass));	    //The object being hit is sped up
 
 		//Causes objects to spin based on their MOI
-		a.spin += (1/a.MOI) * det(relA, normalUnit) * j;
-		b.spin -= (1/b.MOI) * det(relB, normalUnit) * j;
+		//a.spin += (1/a.MOI) * det(relA, normalUnit) * j;
+		//b.spin -= (1/b.MOI) * det(relB, normalUnit) * j;
 	}
 
 	//Gets the normal if two rigidbodies are colliding else null
-	public static void isColliding(RigidBody a, RigidBody b){
+	public static void isColliding(RigidBody a, RigidBody b, double simSpeed){
 		if(a.polygon.getBoundsInLocal().intersects(b.polygon.getBoundsInLocal())){
 
 			ObservableList<Double> aVertices = a.polygon.getPoints();
@@ -263,12 +270,13 @@ public class RigidBody{
 						}
 					}
 					info[0] = normalDirection; info[1] = contact;
-					penetrationFix(a, b, normalDirection);
-				}
+					penetrationFix(a, b, normalDirection, simSpeed);
+					if(contact != null) {
+						resolveCollision(a, b, info);
+					}
 
-			}
-			if(contact != null) {
-				resolveCollision(a, b, info);
+
+				}
 			}
 
 		}
@@ -276,10 +284,10 @@ public class RigidBody{
 
 	//Runs all the methods on the rigidbody
 	public void run(double simSpeed, Point2D gravity, ArrayList<RigidBody> rigidBodies){
-		addForce(gravity);
+		addForce(gravity.multiply(mass));
 		for(RigidBody body : rigidBodies) {
 			if(!body.equals(this)) {
-				isColliding(this, body);
+				isColliding(this, body, simSpeed);
 			}
 		}
 		updateSpin(simSpeed);

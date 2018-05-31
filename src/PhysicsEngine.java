@@ -39,6 +39,7 @@ public class PhysicsEngine extends Application {
     public void start(Stage stage)
     {
         window = stage; //Creates window
+        //window.setFullScreen(true);
         stage.setTitle( "L.A.G.'s Physics Engine" ); //Sets window title screen
         stage.setResizable(false);
 
