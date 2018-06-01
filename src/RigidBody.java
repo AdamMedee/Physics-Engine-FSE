@@ -65,7 +65,7 @@ public class RigidBody{
 			this.MOI += ((xPoints[i] * yPoints[(i+1) % sides] + 2*xPoints[i]*yPoints[i] + 2*xPoints[(i+1) % sides]*yPoints[(i+1) % sides] + xPoints[(i+1) % sides]*yPoints[i]) * shoelace);
 		}
 		this.area = Math.abs(this.area / 2);
-		this.mass = fixed ? Double.POSITIVE_INFINITY: mass;
+		this.mass = fixed ? Double.POSITIVE_INFINITY : mass;
 		this.MOI = this.MOI*mass/this.area/24;
 		centerX = centerX / (6 * this.area);
 		centerY = centerY / (6 * this.area);
@@ -160,7 +160,7 @@ public class RigidBody{
 	}
 
 	public void updateSpin(double timeStep){
-		//System.out.println(this.spin);
+		spin += tmpSpin;
 		if(!fixed) {
 			this.rotate(spin);
 		}
@@ -169,6 +169,7 @@ public class RigidBody{
 	//Moves the rigid body based on the forces acting on it
 	public void updateVelocity(double timeStep){
 		if(!fixed) {
+			velocity = velocity.add(tmpVel);
 			double netX = 0;
 			double netY = 0;
 			Point2D prevAccel = acceleration;
@@ -190,25 +191,23 @@ public class RigidBody{
 	}
 
 	//If two rigidbodies are intersecting, moves them apart
-	public static void penetrationFix(RigidBody a, RigidBody b, Point2D normal, double simSpeed){
+	public static void penetrationFix(RigidBody a, RigidBody b, Point2D normal, double relVel, double simSpeed){
 		//How deep the collision point is in the object
-		double penetrationDepth = 0.1*normal.magnitude() - (a.velocity.dotProduct(b.velocity) + b.velocity.dotProduct(a.velocity))/200*simSpeed + 0.01;
-		Point2D normalUnit = normal.normalize();
+		double penetrationDepth = normal.magnitude() - Math.abs(relVel)/100*simSpeed;
+
 
 		//Pushes shapes out of each other if barely in
-		Point2D correction = normalUnit.multiply(penetrationDepth);
-		if(!a.fixed) {
-			a.translate(-correction.getX(), correction.getY());
-		}
-		if(!b.fixed) {
-			b.translate(correction.getX(), -correction.getY());
-		}
+		Point2D correction = normal.normalize().multiply(penetrationDepth);
+		double aRatio = b.fixed ? 1 : (b.mass/(a.mass + b.mass));
+		double bRatio = a.fixed ? 1 : (a.mass/(a.mass + b.mass));
+		a.translate(-correction.getX() * aRatio, correction.getY() * aRatio);
+		b.translate(correction.getX() * bRatio, -correction.getY() * bRatio);
 	}
 
 
 	//Updates the states of two rigid bodies colliding at a given point
 	//Will change normal and rotational velocity
-	public static void resolveCollision(RigidBody a, RigidBody b, Point2D[] info){
+	public static void resolveCollision(RigidBody a, RigidBody b, Point2D[] info, double simSpeed){
 		//Updates velocities of 2 bodies that have collided
 		Point2D normal = info[0];	//Vector of dist from point to side
 		Point2D vertex = info[1];	//Point of collison
@@ -223,7 +222,9 @@ public class RigidBody{
 
 
 		Point2D rv = b.velocity.subtract(a.velocity);	//Relative velocity between 2 bodies
-		double normalVel = rv.dotProduct(normalUnit) + (relB.magnitude()*b.spin - relA.magnitude()*a.spin);	//Find rv relative to normal vector
+		double normalVel = rv.dotProduct(normalUnit) + Math.abs(((relA.normalize().dotProduct(relB.normalize())))*(relB.magnitude()*b.spin - relA.magnitude()*a.spin))/6280;	//Find rv relative to normal vector
+
+		penetrationFix(a, b, normal, normalVel, simSpeed);
 
 		double e = Math.min(a.restitution, b.restitution);	//How sticky the shapes are
 		double rot =  0;//det(relA, normalUnit) * det(relA, normalUnit) / a.MOI + det(relB, normalUnit) * det(relB, normalUnit) / b.MOI;
@@ -270,9 +271,8 @@ public class RigidBody{
 						}
 					}
 					info[0] = normalDirection; info[1] = contact;
-					penetrationFix(a, b, normalDirection, simSpeed);
 					if(contact != null) {
-						resolveCollision(a, b, info);
+						resolveCollision(a, b, info, simSpeed);
 					}
 
 
@@ -300,6 +300,8 @@ public class RigidBody{
 	public void reset(double newScale){
 		spin = startSpin;
 		velocity = startVel;
+		tmpSpin = 0;
+		tmpVel = new Point2D(0, 0);
 		acceleration = new Point2D(0, 0);
 		angAccel = 0;
 		this.setScale(newScale);
@@ -327,6 +329,8 @@ public class RigidBody{
 
 	//Clears all forces and vel from rigid body
 	public void clearForces(){
+		//tmpVel = new Point2D(0, 0);
+		//tmpSpin = 0;
 		forces.clear();
 	}
 
