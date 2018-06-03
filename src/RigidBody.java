@@ -32,7 +32,7 @@ public class RigidBody{
 	private double MOI;							//Moment of Inertia
 	private double restitution;					//Coefficient of restitution
 	private double kineticFriction, staticFriction;
-	private double area; 						//Constant area of the polygon
+	public double area; 						//Constant area of the polygon
 	private double mass; 						//Mass and density is consistent throughout the body
 	private double density;
 	private boolean fixed; 						// Whether the rigid body can move
@@ -109,6 +109,11 @@ public class RigidBody{
 	}
 
 
+
+	public static void draw(RigidBody obj,Pane root)
+	{
+		new RigidBody(obj.xPoints,obj.yPoints,obj.mass,obj.fixed,root);
+	}
 	//Allows the rigidbody to be printed
 	public String toString(){
 		return Arrays.toString(xPoints) + " " + Arrays.toString(yPoints) + " " + this.center;
@@ -341,5 +346,25 @@ public class RigidBody{
 	public static double det(Point2D a, Point2D b){
 		return a.getX() * b.getY() - a.getY() * b.getX();
 	}
+	public Point2D getCenter(){
+		return this.center;
+	}
+
+
+	public RigidBody clone(Pane canvas)
+	{
+		RigidBody temp = new RigidBody(this.xPoints,this.yPoints,this.mass,this.fixed,canvas);
+		return temp;
+	}
+	public double getMass()
+    {
+        return this.mass;
+    }
+
+    public int getSides()
+    {
+        return this.sides;
+
+    }
 
 }

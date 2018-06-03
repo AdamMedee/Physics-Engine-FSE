@@ -10,15 +10,22 @@
    	everything
  */
 
+import javafx.embed.swing.SwingFXUtils;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.Group;
 import javafx.scene.Scene;
+import javafx.scene.SnapshotParameters;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.Button;
 import javafx.scene.image.Image;
+import javafx.scene.image.WritableImage;
 import javafx.scene.text.Font;
+
+import javax.imageio.ImageIO;
+import java.io.File;
+import java.io.IOException;
 
 public class MainMenu {
 
@@ -77,6 +84,19 @@ public class MainMenu {
         graphics.setFont(ourFont);
         graphics.strokeText("L.A.G Physics Engine",250,100);
         graphics.drawImage(background, 0, 0);
+
+
+        final WritableImage writableImage = new WritableImage((int) canvas.getWidth(), (int) canvas.getHeight());
+        final WritableImage snapshot = canvas.snapshot(new SnapshotParameters(), writableImage);
+        File file = new File ("Ex1.png");
+        try {
+            ImageIO.write(SwingFXUtils.fromFXImage(snapshot, null), "png", file);
+        }
+        catch (Exception ex)
+        {
+
+        }
+
 
         //Adds all the nodes to the layout
         mainMenuLayout.getChildren().add(canvas);

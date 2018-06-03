@@ -23,6 +23,7 @@ public class Environment {
     public Pane environmentLayout;
     Point2D gravity;
 
+    protected static int nObjects = 0;
 
     public Environment(double simulationSpeed){
         this.simulationSpeed = simulationSpeed;

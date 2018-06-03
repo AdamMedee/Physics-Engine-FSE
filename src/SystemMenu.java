@@ -16,18 +16,22 @@ import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.geometry.Point2D;
 import javafx.scene.Group;
+import javafx.scene.canvas.Canvas;
 import javafx.scene.control.*;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
+import javafx.scene.image.WritableImage;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.Scene;
+import javafx.scene.control.ScrollPane;
+import javafx.scene.control.ScrollPane.ScrollBarPolicy;
+import javafx.stage.Stage;
 
-import java.awt.*;
 
 public class SystemMenu {
 
@@ -52,6 +56,16 @@ public class SystemMenu {
     public Scene systemScene;
     public BorderPane SystemLayout = new BorderPane();
     public Button systemB,objectB,back;
+
+
+    //------
+    //Scroll Pane----------
+    ScrollPane objectsUI =  new ScrollPane();
+
+
+
+
+
 
     private String newScene;
 
@@ -107,7 +121,7 @@ public class SystemMenu {
 
         Label xLabel = new Label("x:");
         xLabel.setMaxWidth(60);
-        xLabel.setStyle("-fx-font-size: 15");
+        //xLabel.setStyle("-fx-font-size: 15");
 
         TextField xInput = new TextField("0");
         xInput.setMaxWidth(60);
@@ -263,18 +277,13 @@ public class SystemMenu {
 
 
 
-//
-//        Label blkLabel2 = new Label();
-//        speedLabel.setPrefWidth(100);
-//
-//        Label speedDisclaimer = new Label("*Lower = More Accurate");
-//        speedDisclaimer.setStyle("-fx-font-size: 5;");
-//
-//        GridPane.setConstraints(blkLabel2,0,5);
-//        GridPane.setConstraints(speedDisclaimer,1,5);
-//
-//        SystemPane.getChildren().addAll(blkLabel2,speedDisclaimer);
-        //-------Final Buttons Row----------------
+
+
+
+
+
+
+
 
 
 
@@ -299,20 +308,139 @@ public class SystemMenu {
         this.environment = environment;
         this.environment.setGroup(leftPane);
 
+
+
+
+        //ObjectUI Initialization
+        objectsUI.setVbarPolicy(ScrollBarPolicy.ALWAYS);
+        objectsUI.setHbarPolicy(ScrollBarPolicy.AS_NEEDED);
+
+        GridPane objectPane = new GridPane();
+        objectPane.setPadding(new Insets(10,10,10,10));
+        objectPane.setVgap(8);
+        objectPane.setVgap(10);
+
+
+
+
+         //--- Iterating through every rigid body
+
+
+
+        //for (int i = 0;i<1;i++)
+        // Buttons will be affected by fixed object. Only the bottom few would right now.
+        // Uncomment the for loop on top and the comment out the for loop at the bottom to test the object customization page
+
+        for (int i = 0;i<environment.rigidBodies.size();i++)
+        {
+            Pane temp = new Pane();
+            temp.setStyle("-fx-border-color: black;-fx-border-insets: 10,10,10,10;");
+
+            // Garu is only a shallow copy. Chnages made to Garu will affect the original object.
+
+            RigidBody Garu = environment.getRigidBodies().get(i);
+            // DeepGaru is a deep copy. Changes made to DeepGaru will not affect the original object
+            RigidBody DeepGaru = Garu.clone(temp);
+
+            temp.setPrefSize(128,128);
+            if (Garu.getMass()== Double.POSITIVE_INFINITY)
+            {
+                DeepGaru.setScale(0.00000000000000001);
+            }
+            else
+            {
+                DeepGaru.setScale(0.1);
+            }
+
+            DeepGaru.translate(64-Garu.getCenter().getX(),64-Garu.getCenter().getY());
+            RigidBody.draw(DeepGaru,temp);
+
+            GridPane.setConstraints(temp,0,i*4,4,4);
+            Label MassInfo = new Label(String.format("Mass: %f",Garu.getMass()));
+            Label SidesInfo = new Label(String.format("Number of sides: %d",Garu.getSides()));
+            Label CMInfo = new Label(String.format("X: %.2f\nY: %.2f",Garu.getCenter().getX(),Garu.getCenter().getY()));
+
+            Button EditBtn = new Button("Edit");
+
+            EditBtn.setOnAction(new EventHandler<ActionEvent>() {
+                @Override
+                public void handle(ActionEvent actionEvent) {
+                    Stage newWindow = new Stage();
+                    newWindow.setTitle("Edit");
+                    GridPane EditPane = new GridPane();
+                    EditPane.setPadding(new Insets(10,10,10,10));
+                    EditPane.setVgap(8);
+                    EditPane.setVgap(10);
+
+                    Label massLabel = new Label("Mass");
+                    TextField massInput = new TextField(String.format("%.2f",Garu.getMass()));
+
+                    Label CMLabel = new Label("Center of Mass:");
+
+                    Label CMLabelx = new Label("X:");
+                    TextField CMxInput = new TextField(String.format("%.2f",Garu.getCenter().getX()));
+
+                    Label CMLabely = new Label("Y:");
+                    TextField CMyInput = new TextField(String.format("%.2f",Garu.getCenter().getY()));
+
+                    Button ApplyBtn = new Button("Apply");
+                    ApplyBtn.setOnAction(new EventHandler<ActionEvent>() {
+                        @Override
+                        public void handle(ActionEvent actionEvent) {
+                            // Only half done here
+
+                            if (isDouble(massInput.getText())) Garu.setMass(Double.parseDouble(massInput.getText()));
+                            if (isDouble(xInput.getText()))  Garu.translate(Double.parseDouble(xInput.getText())-Garu.getCenter().getX(),0);
+                            if (isDouble(yInput.getText()))  Garu.translate(Double.parseDouble(yInput.getText())-Garu.getCenter().getY(),0);
+
+                            newWindow.close();
+                        }
+                    });
+                    GridPane.setConstraints(massLabel,0,0);
+                    GridPane.setConstraints(massInput,1,0);
+                    GridPane.setConstraints(CMLabel,0,1);
+                    GridPane.setConstraints(CMLabelx,0,2);
+                    GridPane.setConstraints(CMxInput,1,2);
+                    GridPane.setConstraints(CMLabely,0,3);
+                    GridPane.setConstraints(CMyInput,1,3);
+
+                    GridPane.setConstraints(ApplyBtn,0,5);
+
+                    EditPane.getChildren().addAll(massLabel,massInput,CMLabel,CMLabelx,CMxInput,CMLabely,CMyInput,ApplyBtn);
+
+
+                    Scene editScene = new Scene(EditPane,400,720);
+                    newWindow.setScene(editScene);
+
+                    newWindow.show();
+                }
+            });
+            GridPane.setConstraints(MassInfo,4,i*4);
+            GridPane.setConstraints(SidesInfo,4,i*4+1);
+            GridPane.setConstraints(CMInfo,4,i*4+2);
+            GridPane.setConstraints(EditBtn,4,i*4+3);
+
+            objectPane.getChildren().addAll(temp,MassInfo,SidesInfo,CMInfo,EditBtn);
+
+
+
+
+        }
+
+
+
+
+
+
+
+        objectsUI.setContent(objectPane);
+
+        ObjectTab.setContent(objectsUI);
+
+
         SystemLayout.setLeft(leftPane);
 
-        //Buttons to change the selected varBGborderBGborder
-        systemB = new Button("System");
-        systemB.setOnAction(e -> { });
-        systemB.setPrefSize(150, 30);
-        systemB.setLayoutX(0);
-        systemB.setLayoutY(0);
 
-
-        objectB = new Button("Objects");
-        objectB.setPrefSize(150, 30);
-        objectB.setLayoutX(150);
-        objectB.setLayoutY(0);
 
 
 
