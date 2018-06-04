@@ -110,9 +110,11 @@ public class RigidBody{
 
 
 
-	public static void draw(RigidBody obj,Pane root)
+	public static void draw(RigidBody obj,Pane root, double newScale)
 	{
-		new RigidBody(obj.xPoints,obj.yPoints,obj.mass,obj.fixed,root);
+		RigidBody tmp = new RigidBody(obj.xPoints,obj.yPoints,obj.mass,obj.fixed,root);
+		tmp.setScale(newScale);
+		tmp.update(obj.xPoints, obj.yPoints, tmp.center);
 	}
 	//Allows the rigidbody to be printed
 	public String toString(){
@@ -199,7 +201,7 @@ public class RigidBody{
 	public static void penetrationFix(RigidBody a, RigidBody b, Point2D normal){
 		//How deep the collision point is in the object
 		double penetrationDepth = normal.magnitude();// - Math.abs(relVel)/100*simSpeed;
-        System.out.println(normal);
+        //System.out.println(normal);
 
 		//Pushes shapes out of each other if barely in
 		Point2D correction = normal.normalize().multiply(penetrationDepth);
@@ -227,12 +229,12 @@ public class RigidBody{
 
 
 		Point2D rv = b.velocity.subtract(a.velocity);	//Relative velocity between 2 bodies
-		double normalVel = rv.dotProduct(normalUnit) + Math.abs(((relA.normalize().dotProduct(relB.normalize())))*(relB.magnitude()*b.spin - relA.magnitude()*a.spin))/6.28;	//Find rv relative to normal vector
+		double normalVel = rv.dotProduct(normalUnit) + (relB.dotProduct(normalUnit)*b.spin - relA.dotProduct(normalUnit)*a.spin)/628;	//Find rv relative to normal vector
 
 
 
 		double e = Math.min(a.restitution, b.restitution);	//How sticky the shapes are
-		double rot =  0;//det(relA, normalUnit) * det(relA, normalUnit) / a.MOI + det(relB, normalUnit) * det(relB, normalUnit) / b.MOI;
+		double rot = 0;// det(relA, normalUnit) * det(relA, normalUnit) / a.MOI + det(relB, normalUnit) * det(relB, normalUnit) / b.MOI;
 		double numerator = -(1 + e) * normalVel;
 		double denom = (1/a.mass + 1/b.mass + rot);
 		double j = numerator/denom;
@@ -268,24 +270,24 @@ public class RigidBody{
 					info[0] = normalDirection; info[1] = contact;
 					for (int j = 0; j < b.sides*2; j += 2){ //Goes through all b polygon vertices
 
-						double x0 = aVertices.get(i) + a.velocity.getX()/2; double y0 = aVertices.get(i + 1) + a.velocity.getY()/2; //Vertex hitting polygon
+						double x0 = aVertices.get(i); double y0 = aVertices.get(i + 1); //Vertex hitting polygon
 						double x1 = bVertices.get(j); double y1 = bVertices.get(j + 1); //Side being hit
 						double x2 = bVertices.get((j+2) % (b.sides*2-1)); double y2 = bVertices.get((j+3) % (b.sides*2-1));
 						double sideLen = Math.sqrt((y2 - y1)*(y2 - y1) + (x2 - x1)*(x2 - x1));
-						double tmpDist = Math.abs((y2 - y1)*x0 - (x2 - x1)*y0 + x2*y1 - y2*x1)/sideLen;
-						double tmpDist2 = Math.abs((y2 - y1)*(x0 - a.velocity.getX()/2) - (x2 - x1)*(y0 - a.velocity.getY()/2) + x2*y1 - y2*x1)/sideLen;
+						double tmpDist2 = Math.abs((y2 - y1)*x0 - (x2 - x1)*y0 + x2*y1 - y2*x1)/sideLen;
 
-						if(tmpDist <= shortestDist){
-							shortestDist = tmpDist;
+						if(tmpDist2 <= shortestDist){
+							shortestDist = tmpDist2;
 							normalDirection = new Point2D(tmpDist2*(y2 - y1)/sideLen, tmpDist2*(x1 - x2)/sideLen);
 							contact = new Point2D(aVertices.get(i), aVertices.get(i+1));
 						}
 					}
 					info[0] = normalDirection; info[1] = contact;
 					if(contact != null) {
+						penetrationFix(a, b, info[0]);
 						resolveCollision(a, b, info, simSpeed);
-                        penetrationFix(a, b, info[0]);
-                        System.out.println(shortestDist);
+
+                        //System.out.println(shortestDist + " " + a.velocity + " " + b.velocity);
 					}
 				}
 			}
@@ -352,19 +354,29 @@ public class RigidBody{
 		return a.getX() * b.getY() - a.getY() * b.getX();
 	}
 	public Point2D getCenter(){
-		return this.center;
+		return center;
 	}
 
 
 	public RigidBody clone(Pane canvas)
 	{
 		RigidBody temp = new RigidBody(this.xPoints,this.yPoints,this.mass,this.fixed,canvas);
-		return temp;
+		temp.setScale(Math.max(polygon.getBoundsInLocal().getWidth()/100, polygon.getBoundsInLocal().getHeight()/100));
+		temp.translate(100000, 100000);
+		//temp.update(xPoints,yPoints, center);
+		//temp.translate(64 - temp.getCenter().getX(), 64 - temp.getCenter().getY());
+		//temp.update(xPoints,yPoints, center);
+		return new RigidBody(temp.xPoints, temp.yPoints, temp.mass, temp.fixed, canvas);
 	}
+
 	public double getMass()
     {
         return this.mass;
     }
+
+    public Polygon getPolygon(){
+		return this.polygon;
+	}
 
     public int getSides()
     {
@@ -372,4 +384,19 @@ public class RigidBody{
 
     }
 
+    public double getScale(){
+    	return this.scale;
+	}
+
+	public double[] getXPoints(){
+    	return xPoints;
+	}
+
+	public double[] getYPoints(){
+		return yPoints;
+	}
+
+	public boolean getFixed(){
+		return fixed;
+	}
 }

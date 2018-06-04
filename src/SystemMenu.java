@@ -336,24 +336,22 @@ public class SystemMenu {
             Pane temp = new Pane();
             temp.setStyle("-fx-border-color: black;-fx-border-insets: 10,10,10,10;");
 
-            // Garu is only a shallow copy. Chnages made to Garu will affect the original object.
+            // Garu is only a shallow copy. Changes made to Garu will affect the original object.
 
             RigidBody Garu = environment.getRigidBodies().get(i);
+            RigidBody DeepGaru = new RigidBody(Garu.getXPoints(), Garu.getYPoints(), Garu.getMass(), Garu.getFixed(), temp);
+            DeepGaru.setScale(Math.max(DeepGaru.getPolygon().getBoundsInLocal().getWidth()/100, DeepGaru.getPolygon().getBoundsInLocal().getHeight()/100));
+            DeepGaru.translate((-DeepGaru.getPolygon().getBoundsInLocal().getWidth()/2-DeepGaru.getPolygon().getBoundsInLocal().getMinX()), ((-DeepGaru.getPolygon().getBoundsInLocal().getHeight()/2-DeepGaru.getPolygon().getBoundsInLocal().getMinY())));
+            DeepGaru.translate(64*DeepGaru.getScale(), 64*DeepGaru.getScale());
+            System.out.println(DeepGaru.getPolygon().getBoundsInLocal().getWidth() + " " + DeepGaru.getScale());
+
             // DeepGaru is a deep copy. Changes made to DeepGaru will not affect the original object
-            RigidBody DeepGaru = Garu.clone(temp);
+
 
             temp.setPrefSize(128,128);
-            if (Garu.getMass()== Double.POSITIVE_INFINITY)
-            {
-                DeepGaru.setScale(0.00000000000000001);
-            }
-            else
-            {
-                DeepGaru.setScale(0.1);
-            }
 
-            DeepGaru.translate(64-Garu.getCenter().getX(),64-Garu.getCenter().getY());
-            RigidBody.draw(DeepGaru,temp);
+
+
 
             GridPane.setConstraints(temp,0,i*4,4,4);
             Label MassInfo = new Label(String.format("Mass: %f",Garu.getMass()));
