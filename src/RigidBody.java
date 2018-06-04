@@ -32,7 +32,7 @@ public class RigidBody{
 	private double MOI;							//Moment of Inertia
 	private double restitution;					//Coefficient of restitution
 	private double kineticFriction, staticFriction;
-	public double area; 						//Constant area of the polygon
+	private double area; 						//Constant area of the polygon
 	private double mass; 						//Mass and density is consistent throughout the body
 	private double density;
 	private boolean fixed; 						// Whether the rigid body can move
@@ -196,10 +196,10 @@ public class RigidBody{
 	}
 
 	//If two rigidbodies are intersecting, moves them apart
-	public static void penetrationFix(RigidBody a, RigidBody b, Point2D normal, double relVel, double simSpeed){
+	public static void penetrationFix(RigidBody a, RigidBody b, Point2D normal){
 		//How deep the collision point is in the object
-		double penetrationDepth = normal.magnitude() - Math.abs(relVel)/100*simSpeed;
-
+		double penetrationDepth = normal.magnitude();// - Math.abs(relVel)/100*simSpeed;
+        System.out.println(normal);
 
 		//Pushes shapes out of each other if barely in
 		Point2D correction = normal.normalize().multiply(penetrationDepth);
@@ -227,9 +227,9 @@ public class RigidBody{
 
 
 		Point2D rv = b.velocity.subtract(a.velocity);	//Relative velocity between 2 bodies
-		double normalVel = rv.dotProduct(normalUnit) + Math.abs(((relA.normalize().dotProduct(relB.normalize())))*(relB.magnitude()*b.spin - relA.magnitude()*a.spin))/6280;	//Find rv relative to normal vector
+		double normalVel = rv.dotProduct(normalUnit) + Math.abs(((relA.normalize().dotProduct(relB.normalize())))*(relB.magnitude()*b.spin - relA.magnitude()*a.spin))/6.28;	//Find rv relative to normal vector
 
-		penetrationFix(a, b, normal, normalVel, simSpeed);
+
 
 		double e = Math.min(a.restitution, b.restitution);	//How sticky the shapes are
 		double rot =  0;//det(relA, normalUnit) * det(relA, normalUnit) / a.MOI + det(relB, normalUnit) * det(relB, normalUnit) / b.MOI;
@@ -253,37 +253,42 @@ public class RigidBody{
 		if(a.polygon.getBoundsInLocal().intersects(b.polygon.getBoundsInLocal())){
 
 			ObservableList<Double> aVertices = a.polygon.getPoints();
+			ObservableList<Double> bVertices = b.polygon.getPoints();
 			double shortestDist = Double.POSITIVE_INFINITY;
 			Point2D contact = null;
 			Point2D normalDirection = new Point2D(0, 0);
-			ObservableList<Double> bVertices = b.polygon.getPoints();
 			Point2D[] info = {normalDirection, contact};
+
 
 			for(int i = 0; i < a.sides*2; i+=2){ //Goes through all a polygon vertices
 				if(b.polygon.contains(aVertices.get(i), aVertices.get(i+1))){ //Checks if vertex is in b.polygon
+					shortestDist = Double.POSITIVE_INFINITY;
+					contact = null;
+					normalDirection = new Point2D(0, 0);
+					info[0] = normalDirection; info[1] = contact;
 					for (int j = 0; j < b.sides*2; j += 2){ //Goes through all b polygon vertices
 
-						double x0 = aVertices.get(i); double y0 = aVertices.get(i + 1);
-						double x1 = bVertices.get(j); double y1 = bVertices.get(j + 1);
+						double x0 = aVertices.get(i) + a.velocity.getX()/2; double y0 = aVertices.get(i + 1) + a.velocity.getY()/2; //Vertex hitting polygon
+						double x1 = bVertices.get(j); double y1 = bVertices.get(j + 1); //Side being hit
 						double x2 = bVertices.get((j+2) % (b.sides*2-1)); double y2 = bVertices.get((j+3) % (b.sides*2-1));
 						double sideLen = Math.sqrt((y2 - y1)*(y2 - y1) + (x2 - x1)*(x2 - x1));
 						double tmpDist = Math.abs((y2 - y1)*x0 - (x2 - x1)*y0 + x2*y1 - y2*x1)/sideLen;
+						double tmpDist2 = Math.abs((y2 - y1)*(x0 - a.velocity.getX()/2) - (x2 - x1)*(y0 - a.velocity.getY()/2) + x2*y1 - y2*x1)/sideLen;
 
 						if(tmpDist <= shortestDist){
 							shortestDist = tmpDist;
-							normalDirection = new Point2D(tmpDist*(y2 - y1)/sideLen, tmpDist*(x1 - x2)/sideLen);
+							normalDirection = new Point2D(tmpDist2*(y2 - y1)/sideLen, tmpDist2*(x1 - x2)/sideLen);
 							contact = new Point2D(aVertices.get(i), aVertices.get(i+1));
 						}
 					}
 					info[0] = normalDirection; info[1] = contact;
 					if(contact != null) {
 						resolveCollision(a, b, info, simSpeed);
+                        penetrationFix(a, b, info[0]);
+                        System.out.println(shortestDist);
 					}
-
-
 				}
 			}
-
 		}
 	}
 
