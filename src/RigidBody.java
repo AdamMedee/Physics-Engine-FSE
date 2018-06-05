@@ -32,7 +32,7 @@ public class RigidBody{
 	private double MOI;							//Moment of Inertia
 	private double restitution;					//Coefficient of restitution
 	private double kineticFriction, staticFriction;
-	protected double area; 						//Constant area of the polygon
+	private double area; 						//Constant area of the polygon
 	private double mass; 						//Mass and density is consistent throughout the body
 	private double density;
 	private boolean fixed; 						// Whether the rigid body can move
@@ -45,13 +45,12 @@ public class RigidBody{
 
 	private Point2D tmpVel;
 	private double tmpSpin;
-	protected int SerialNumber;
+
+	private boolean hasCollided;
 	private Circle circle;
 
 
 	public RigidBody(double[] xPoints, double[] yPoints, double mass, boolean fixed, Pane root){
-		SerialNumber = Environment.nObjects;
-		Environment.nObjects++;
 		this.sides = xPoints.length;
 
 		this.area = 0;			//Init area, Moment of inertia and Center
@@ -93,6 +92,7 @@ public class RigidBody{
 		this.staticFriction = 0.2;
 		this.fixed = fixed;
 		this.scale = 1;
+		this.hasCollided = false;
 
 		//Creates polygon shape to add to group
 		this.polygon = new Polygon();
@@ -112,9 +112,11 @@ public class RigidBody{
 
 
 
-	public static void draw(RigidBody obj,Pane root)
+	public static void draw(RigidBody obj,Pane root, double newScale)
 	{
-		new RigidBody(obj.xPoints,obj.yPoints,obj.mass,obj.fixed,root);
+		RigidBody tmp = new RigidBody(obj.xPoints,obj.yPoints,obj.mass,obj.fixed,root);
+		tmp.setScale(newScale);
+		tmp.update(obj.xPoints, obj.yPoints, tmp.center);
 	}
 	//Allows the rigidbody to be printed
 	public String toString(){
@@ -198,17 +200,17 @@ public class RigidBody{
 	}
 
 	//If two rigidbodies are intersecting, moves them apart
-	public static void penetrationFix(RigidBody a, RigidBody b, Point2D normal, double relVel, double simSpeed){
+	public static void penetrationFix(RigidBody a, RigidBody b, Point2D normal){
 		//How deep the collision point is in the object
-		double penetrationDepth = normal.magnitude() - Math.abs(relVel)/100*simSpeed;
-
+		double penetrationDepth = normal.magnitude();// - Math.abs(relVel)/100*simSpeed;
+        //System.out.println(normal);
 
 		//Pushes shapes out of each other if barely in
 		Point2D correction = normal.normalize().multiply(penetrationDepth);
 		double aRatio = b.fixed ? 1 : (b.mass/(a.mass + b.mass));
 		double bRatio = a.fixed ? 1 : (a.mass/(a.mass + b.mass));
-		a.translate(-correction.getX() * aRatio, correction.getY() * aRatio);
-		b.translate(correction.getX() * bRatio, -correction.getY() * bRatio);
+		a.translate(correction.getX() * aRatio, correction.getY() * aRatio);
+		b.translate(-correction.getX() * bRatio, -correction.getY() * bRatio);
 	}
 
 
@@ -229,12 +231,12 @@ public class RigidBody{
 
 
 		Point2D rv = b.velocity.subtract(a.velocity);	//Relative velocity between 2 bodies
-		double normalVel = rv.dotProduct(normalUnit) + Math.abs(((relA.normalize().dotProduct(relB.normalize())))*(relB.magnitude()*b.spin - relA.magnitude()*a.spin))/6280;	//Find rv relative to normal vector
+		double normalVel = rv.dotProduct(normalUnit);// + (relB.dotProduct(normalUnit)*b.spin - relA.dotProduct(normalUnit)*a.spin);	//Find rv relative to normal vector
 
-		penetrationFix(a, b, normal, normalVel, simSpeed);
+
 
 		double e = Math.min(a.restitution, b.restitution);	//How sticky the shapes are
-		double rot =  0;//det(relA, normalUnit) * det(relA, normalUnit) / a.MOI + det(relB, normalUnit) * det(relB, normalUnit) / b.MOI;
+		double rot = 0;// det(relA, normalUnit) * det(relA, normalUnit) / a.MOI + det(relB, normalUnit) * det(relB, normalUnit) / b.MOI;
 		double numerator = -(1 + e) * normalVel;
 		double denom = (1/a.mass + 1/b.mass + rot);
 		double j = numerator/denom;
@@ -255,37 +257,43 @@ public class RigidBody{
 		if(a.polygon.getBoundsInLocal().intersects(b.polygon.getBoundsInLocal())){
 
 			ObservableList<Double> aVertices = a.polygon.getPoints();
+			ObservableList<Double> bVertices = b.polygon.getPoints();
 			double shortestDist = Double.POSITIVE_INFINITY;
 			Point2D contact = null;
 			Point2D normalDirection = new Point2D(0, 0);
-			ObservableList<Double> bVertices = b.polygon.getPoints();
 			Point2D[] info = {normalDirection, contact};
+
 
 			for(int i = 0; i < a.sides*2; i+=2){ //Goes through all a polygon vertices
 				if(b.polygon.contains(aVertices.get(i), aVertices.get(i+1))){ //Checks if vertex is in b.polygon
+					shortestDist = Double.POSITIVE_INFINITY;
+					contact = null;
+					normalDirection = new Point2D(0, 0);
+					info[0] = normalDirection; info[1] = contact;
 					for (int j = 0; j < b.sides*2; j += 2){ //Goes through all b polygon vertices
 
-						double x0 = aVertices.get(i); double y0 = aVertices.get(i + 1);
-						double x1 = bVertices.get(j); double y1 = bVertices.get(j + 1);
-						double x2 = bVertices.get((j+2) % (b.sides*2-1)); double y2 = bVertices.get((j+3) % (b.sides*2-1));
+						double x0 = aVertices.get(i); double y0 = aVertices.get(i + 1); //Vertex hitting polygon
+						double x1 = bVertices.get(j); double y1 = bVertices.get(j + 1); //Side being hit
+						double x2 = bVertices.get((j+2) % (b.sides*2)); double y2 = bVertices.get((j+3) % (b.sides*2));
 						double sideLen = Math.sqrt((y2 - y1)*(y2 - y1) + (x2 - x1)*(x2 - x1));
-						double tmpDist = Math.abs((y2 - y1)*x0 - (x2 - x1)*y0 + x2*y1 - y2*x1)/sideLen;
+						double tmpDist2 = Math.abs((y2 - y1)*(x0 - a.velocity.getX()) - (x2 - x1)*(y0 - a.velocity.getY()) + x2*y1 - y2*x1)/sideLen;
 
-						if(tmpDist <= shortestDist){
-							shortestDist = tmpDist;
-							normalDirection = new Point2D(tmpDist*(y2 - y1)/sideLen, tmpDist*(x1 - x2)/sideLen);
+						if(tmpDist2 <= shortestDist){
+							shortestDist = tmpDist2;
+							tmpDist2 = Math.abs((y2 - y1)*(x0) - (x2 - x1)*(y0) + x2*y1 - y2*x1)/sideLen;
+							normalDirection = new Point2D(tmpDist2*(y2 - y1)/sideLen, tmpDist2*(x1 - x2)/sideLen);
 							contact = new Point2D(aVertices.get(i), aVertices.get(i+1));
 						}
 					}
 					info[0] = normalDirection; info[1] = contact;
 					if(contact != null) {
+						penetrationFix(a, b, info[0]);
 						resolveCollision(a, b, info, simSpeed);
+						a.hasCollided = true;
+						b.hasCollided = true;
 					}
-
-
 				}
 			}
-
 		}
 	}
 
@@ -293,13 +301,14 @@ public class RigidBody{
 	public void run(double simSpeed, Point2D gravity, ArrayList<RigidBody> rigidBodies){
 		addForce(gravity.multiply(mass));
 		for(RigidBody body : rigidBodies) {
-			if(!body.equals(this)) {
+			if(!body.equals(this) && !this.hasCollided && !body.hasCollided) {
 				isColliding(this, body, simSpeed);
 			}
 		}
 		updateSpin(simSpeed);
 		updateVelocity(simSpeed);
 		clearForces();
+		clearCollide();
 	}
 
 
@@ -341,6 +350,10 @@ public class RigidBody{
 		forces.clear();
 	}
 
+	public void clearCollide(){
+		hasCollided = false;
+	}
+
 	public void setScale(double newScale) {
 		scale = newScale;
 	}
@@ -349,19 +362,27 @@ public class RigidBody{
 		return a.getX() * b.getY() - a.getY() * b.getX();
 	}
 	public Point2D getCenter(){
-		return this.center;
+		return center;
 	}
 
 
 	public RigidBody clone(Pane canvas)
 	{
 		RigidBody temp = new RigidBody(this.xPoints,this.yPoints,this.mass,this.fixed,canvas);
-		return temp;
+		temp.setScale(Math.max(polygon.getBoundsInLocal().getWidth()/100, polygon.getBoundsInLocal().getHeight()/100));
+		temp.translate(100000, 100000);
+		return new RigidBody(temp.xPoints, temp.yPoints, temp.mass, temp.fixed, canvas);
+
 	}
+
 	public double getMass()
     {
         return this.mass;
     }
+
+    public Polygon getPolygon(){
+		return this.polygon;
+	}
 
     public int getSides()
     {
@@ -369,4 +390,43 @@ public class RigidBody{
 
     }
 
+    public double getScale(){
+    	return this.scale;
+	}
+
+	public double[] getXPoints(){
+    	return xPoints;
+	}
+
+	public double[] getYPoints(){
+		return yPoints;
+	}
+
+	public boolean getFixed(){
+		return fixed;
+	}
+
+	public Point2D getMinCoords(){
+		double minX = Double.POSITIVE_INFINITY;
+		double minY = Double.POSITIVE_INFINITY;
+		ObservableList<Double> points = this.getPolygon().getPoints();
+		for(int i=0; i<points.size(); i+=2){
+			minX = minX > points.get(i) ? points.get(i) : minX;
+			minY = minY > points.get(i+1) ? points.get(i+1) : minY;
+		}
+		Point2D coords = new Point2D(minX, minY);
+		return coords;
+	}
+
+	public Point2D getMaxCoords(){
+		double maxX = -Double.POSITIVE_INFINITY;
+		double maxY = -Double.POSITIVE_INFINITY;
+		ObservableList<Double> points = this.getPolygon().getPoints();
+		for(int i=0; i<points.size(); i+=2){
+			maxX = maxX < points.get(i) ? points.get(i) : maxX;
+			maxY = maxY < points.get(i+1) ? points.get(i+1) : maxY;
+		}
+		Point2D coords = new Point2D(maxX, maxY);
+		return coords;
+	}
 }

@@ -338,8 +338,6 @@ public class SystemMenu {
             DeepGaru.setScale(Math.max(DeepGaru.getPolygon().getBoundsInLocal().getWidth()/100, DeepGaru.getPolygon().getBoundsInLocal().getHeight()/100));
             DeepGaru.translate((-DeepGaru.getPolygon().getBoundsInLocal().getWidth()/2-DeepGaru.getPolygon().getBoundsInLocal().getMinX()), ((-DeepGaru.getPolygon().getBoundsInLocal().getHeight()/2-DeepGaru.getPolygon().getBoundsInLocal().getMinY())));
             DeepGaru.translate(64*DeepGaru.getScale(), 64*DeepGaru.getScale());
-            System.out.println(DeepGaru.getPolygon().getBoundsInLocal().getWidth() + " " + DeepGaru.getScale());
-
             // DeepGaru is a deep copy. Changes made to DeepGaru will not affect the original object
 
 
