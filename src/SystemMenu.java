@@ -206,6 +206,17 @@ public class SystemMenu {
         SystemPane.getChildren().add(Disclaimer1);
         // ------------------------
 
+
+        // CheckBox for ratation
+
+        CheckBox rotateCB = new CheckBox();
+        rotateCB.setText("Rotation");
+        rotateCB.setSelected(false);
+
+        GridPane.setConstraints(rotateCB,0,5);
+
+        SystemPane.getChildren().add(rotateCB);
+
         //Three buttons at the bottom (run, reset, clear)
         HBox bottomrow = new HBox(30);
 
@@ -387,15 +398,15 @@ public class SystemMenu {
 
 
 
-                            int n = Garu.SerialNumber;
-                            Label MassInfo = new Label(String.format("Mass: %f",Garu.getMass()));
-                            Label SidesInfo = new Label(String.format("Number of sides: %d",Garu.getSides()));
-                            Label CMInfo = new Label(String.format("X: %.2f\nY: %.2f",Garu.getCenter().getX(),Garu.getCenter().getY()));
-
-                            GridPane.setConstraints(MassInfo,4,n*4);
-                            GridPane.setConstraints(SidesInfo,4,n*4+1);
-                            GridPane.setConstraints(CMInfo,4,n*4+2);
-                            GridPane.setConstraints(EditBtn,4,n*4+3);
+//                            int n = Garu.SerialNumber;
+//                            Label MassInfo = new Label(String.format("Mass: %f",Garu.getMass()));
+//                            Label SidesInfo = new Label(String.format("Number of sides: %d",Garu.getSides()));
+//                            Label CMInfo = new Label(String.format("X: %.2f\nY: %.2f",Garu.getCenter().getX(),Garu.getCenter().getY()));
+//
+//                            GridPane.setConstraints(MassInfo,4,n*4);
+//                            GridPane.setConstraints(SidesInfo,4,n*4+1);
+//                            GridPane.setConstraints(CMInfo,4,n*4+2);
+//                            GridPane.setConstraints(EditBtn,4,n*4+3);
 
                             newWindow.close();
                         }
