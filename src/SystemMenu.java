@@ -322,11 +322,11 @@ public class SystemMenu {
 
 
 
-        //for (int i = 0;i<1;i++)
+        for (int i = 0;i<1;i++)
         // Buttons will be affected by fixed object. Only the bottom few would right now.
         // Uncomment the for loop on top and the comment out the for loop at the bottom to test the object customization page
 
-        for (int i = 0;i<environment.rigidBodies.size();i++)
+//        for (int i = 0;i<environment.rigidBodies.size();i++)
         {
             Pane temp = new Pane();
             temp.setStyle("-fx-border-color: black;-fx-border-insets: 10,10,10,10;");
@@ -358,6 +358,7 @@ public class SystemMenu {
             EditBtn.setOnAction(new EventHandler<ActionEvent>() {
                 @Override
                 public void handle(ActionEvent actionEvent) {
+                    runBtn.fire();
                     Stage newWindow = new Stage();
                     newWindow.setTitle("Edit");
                     GridPane EditPane = new GridPane();
@@ -385,6 +386,18 @@ public class SystemMenu {
                             if (isDouble(massInput.getText())) Garu.setMass(Double.parseDouble(massInput.getText()));
                             if (isDouble(xInput.getText()))  Garu.translate(Double.parseDouble(xInput.getText())-Garu.getCenter().getX(),0);
                             if (isDouble(yInput.getText()))  Garu.translate(Double.parseDouble(yInput.getText())-Garu.getCenter().getY(),0);
+
+
+
+                            int n = Garu.SerialNumber;
+                            Label MassInfo = new Label(String.format("Mass: %f",Garu.getMass()));
+                            Label SidesInfo = new Label(String.format("Number of sides: %d",Garu.getSides()));
+                            Label CMInfo = new Label(String.format("X: %.2f\nY: %.2f",Garu.getCenter().getX(),Garu.getCenter().getY()));
+
+                            GridPane.setConstraints(MassInfo,4,n*4);
+                            GridPane.setConstraints(SidesInfo,4,n*4+1);
+                            GridPane.setConstraints(CMInfo,4,n*4+2);
+                            GridPane.setConstraints(EditBtn,4,n*4+3);
 
                             newWindow.close();
                         }
@@ -430,7 +443,6 @@ public class SystemMenu {
 
         ObjectTab.setContent(objectsUI);
 
-
         SystemLayout.setLeft(leftPane);
 
 
@@ -451,8 +463,7 @@ public class SystemMenu {
         });
 
         // Adds nodes to group
-//        SystemLayout.getChildren().add(systemB);
-//        SystemLayout.getChildren().add(objectB);
+
         leftPane.getChildren().add(back);
         //rightPane.getChildren().addAll(systemB,objectB);
 
