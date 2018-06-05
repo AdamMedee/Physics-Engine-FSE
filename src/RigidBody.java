@@ -209,8 +209,8 @@ public class RigidBody{
 		Point2D correction = normal.normalize().multiply(penetrationDepth);
 		double aRatio = b.fixed ? 1 : (b.mass/(a.mass + b.mass));
 		double bRatio = a.fixed ? 1 : (a.mass/(a.mass + b.mass));
-		a.translate(-correction.getX() * aRatio, correction.getY() * aRatio);
-		b.translate(correction.getX() * bRatio, -correction.getY() * bRatio);
+		a.translate(correction.getX() * aRatio, correction.getY() * aRatio);
+		b.translate(-correction.getX() * bRatio, -correction.getY() * bRatio);
 	}
 
 
@@ -231,7 +231,7 @@ public class RigidBody{
 
 
 		Point2D rv = b.velocity.subtract(a.velocity);	//Relative velocity between 2 bodies
-		double normalVel = rv.dotProduct(normalUnit) + (relB.dotProduct(normalUnit)*b.spin - relA.dotProduct(normalUnit)*a.spin)/628;	//Find rv relative to normal vector
+		double normalVel = rv.dotProduct(normalUnit);// + (relB.dotProduct(normalUnit)*b.spin - relA.dotProduct(normalUnit)*a.spin);	//Find rv relative to normal vector
 
 
 
@@ -274,12 +274,13 @@ public class RigidBody{
 
 						double x0 = aVertices.get(i); double y0 = aVertices.get(i + 1); //Vertex hitting polygon
 						double x1 = bVertices.get(j); double y1 = bVertices.get(j + 1); //Side being hit
-						double x2 = bVertices.get((j+2) % (b.sides*2-1)); double y2 = bVertices.get((j+3) % (b.sides*2-1));
+						double x2 = bVertices.get((j+2) % (b.sides*2)); double y2 = bVertices.get((j+3) % (b.sides*2));
 						double sideLen = Math.sqrt((y2 - y1)*(y2 - y1) + (x2 - x1)*(x2 - x1));
-						double tmpDist2 = Math.abs((y2 - y1)*x0 - (x2 - x1)*y0 + x2*y1 - y2*x1)/sideLen;
+						double tmpDist2 = Math.abs((y2 - y1)*(x0 - a.velocity.getX()) - (x2 - x1)*(y0 - a.velocity.getY()) + x2*y1 - y2*x1)/sideLen;
 
 						if(tmpDist2 <= shortestDist){
 							shortestDist = tmpDist2;
+							tmpDist2 = Math.abs((y2 - y1)*(x0) - (x2 - x1)*(y0) + x2*y1 - y2*x1)/sideLen;
 							normalDirection = new Point2D(tmpDist2*(y2 - y1)/sideLen, tmpDist2*(x1 - x2)/sideLen);
 							contact = new Point2D(aVertices.get(i), aVertices.get(i+1));
 						}
@@ -335,8 +336,17 @@ public class RigidBody{
 		this.forces.add(force);
 	}
 
+	//Removes force from body
+	public void delForce(Point2D force){
+		if(this.forces.contains(force)){
+			this.forces.remove(force);
+		}
+	}
+
 	//Clears all forces and vel from rigid body
 	public void clearForces(){
+		//tmpVel = new Point2D(0, 0);
+		//tmpSpin = 0;
 		forces.clear();
 	}
 
@@ -361,10 +371,8 @@ public class RigidBody{
 		RigidBody temp = new RigidBody(this.xPoints,this.yPoints,this.mass,this.fixed,canvas);
 		temp.setScale(Math.max(polygon.getBoundsInLocal().getWidth()/100, polygon.getBoundsInLocal().getHeight()/100));
 		temp.translate(100000, 100000);
-		//temp.update(xPoints,yPoints, center);
-		//temp.translate(64 - temp.getCenter().getX(), 64 - temp.getCenter().getY());
-		//temp.update(xPoints,yPoints, center);
 		return new RigidBody(temp.xPoints, temp.yPoints, temp.mass, temp.fixed, canvas);
+
 	}
 
 	public double getMass()
