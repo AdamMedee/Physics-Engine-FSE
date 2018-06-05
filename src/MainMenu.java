@@ -13,6 +13,7 @@
 import javafx.embed.swing.SwingFXUtils;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
+import javafx.geometry.Point2D;
 import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.SnapshotParameters;
@@ -21,6 +22,7 @@ import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.Button;
 import javafx.scene.image.Image;
 import javafx.scene.image.WritableImage;
+import javafx.scene.layout.StackPane;
 import javafx.scene.text.Font;
 
 import javax.imageio.ImageIO;
@@ -40,12 +42,21 @@ public class MainMenu {
     // Keeps track of switching between scenes
     public String newScene;
 
+    private Environment bg;
+    private StackPane boxSim;
+
     //Constructor for the menu
     public MainMenu(){
         newScene = "MainMenu";
         mainMenuLayout = new Group();
 
        //mainMenuScene.getStylesheets().add("resources/Garu.css");
+
+        bg = new Environment();
+        boxSim = new StackPane();
+        bg.setScale(0.5);
+        bg.setGroup(boxSim);
+        mainMenuLayout.getChildren().add(boxSim);
 
         //Making and placing buttons
         button1 = new Button("Demo");
@@ -110,14 +121,12 @@ public class MainMenu {
 
     //Goes through the actions inputted and acts accordingly
     public String run(){
+        bg.run();
         return newScene;
     }
 
 
     //Displayes menu to the screen
     public void update(){
-
     }
-
-
 }

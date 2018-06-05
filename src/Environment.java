@@ -41,11 +41,23 @@ public class Environment {
         for(RigidBody rigidBody : rigidBodies){
             rigidBody.run(simulationSpeed, gravity, rigidBodies);
         }
+        removeOffscreen(1080, 720);
+    }
+    public void removeOffscreen(int maxX, int maxY){
+        for(int i=rigidBodies.size(); i < 0; i--){
+            RigidBody r = rigidBodies.get(i);
+            Point2D min = r.getMinCoords();
+            Point2D max = r.getMaxCoords();
+            if((min.getX() > maxX && min.getY() > maxY) || (max.getX() < 0 && max.getY() < 0)){
+                rigidBodies.remove(r);
+            }
+        }
     }
 
     public void update(){
 
     }
+
 
     public Pane getGroup(){
         return environmentLayout;
@@ -87,6 +99,12 @@ public class Environment {
         rigidBodies.add(leooooo);
         rigidBodies.add(leoooooo);
         rigidBodies.add(leooooooooo);
+        /*
+        double[] x10 = {900, 1000, 1000, 900};
+        double[] y10 = {500, 500, 550,550};
+        RigidBody adamBogBoi = new RigidBody(x10, y10, 1.45, true, environmentLayout);
+        rigidBodies.add(adamBogBoi);
+        */
         /*
 
         RigidBody leooooooo = new RigidBody(x7, y7, 1, true, environmentLayout);

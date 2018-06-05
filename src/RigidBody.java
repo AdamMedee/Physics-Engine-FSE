@@ -46,6 +46,7 @@ public class RigidBody{
 	private Point2D tmpVel;
 	private double tmpSpin;
 
+	private boolean hasCollided;
 	private Circle circle;
 
 
@@ -91,6 +92,7 @@ public class RigidBody{
 		this.staticFriction = 0.2;
 		this.fixed = fixed;
 		this.scale = 1;
+		this.hasCollided = false;
 
 		//Creates polygon shape to add to group
 		this.polygon = new Polygon();
@@ -286,8 +288,8 @@ public class RigidBody{
 					if(contact != null) {
 						penetrationFix(a, b, info[0]);
 						resolveCollision(a, b, info, simSpeed);
-
-                        //System.out.println(shortestDist + " " + a.velocity + " " + b.velocity);
+						a.hasCollided = true;
+						b.hasCollided = true;
 					}
 				}
 			}
@@ -298,13 +300,14 @@ public class RigidBody{
 	public void run(double simSpeed, Point2D gravity, ArrayList<RigidBody> rigidBodies){
 		addForce(gravity.multiply(mass));
 		for(RigidBody body : rigidBodies) {
-			if(!body.equals(this)) {
+			if(!body.equals(this) && !this.hasCollided && !body.hasCollided) {
 				isColliding(this, body, simSpeed);
 			}
 		}
 		updateSpin(simSpeed);
 		updateVelocity(simSpeed);
 		clearForces();
+		clearCollide();
 	}
 
 
@@ -332,18 +335,13 @@ public class RigidBody{
 		this.forces.add(force);
 	}
 
-	//Removes force from body
-	public void delForce(Point2D force){
-		if(this.forces.contains(force)){
-			this.forces.remove(force);
-		}
-	}
-
 	//Clears all forces and vel from rigid body
 	public void clearForces(){
-		//tmpVel = new Point2D(0, 0);
-		//tmpSpin = 0;
 		forces.clear();
+	}
+
+	public void clearCollide(){
+		hasCollided = false;
 	}
 
 	public void setScale(double newScale) {
@@ -398,5 +396,29 @@ public class RigidBody{
 
 	public boolean getFixed(){
 		return fixed;
+	}
+
+	public Point2D getMinCoords(){
+		double minX = Double.POSITIVE_INFINITY;
+		double minY = Double.POSITIVE_INFINITY;
+		ObservableList<Double> points = this.getPolygon().getPoints();
+		for(int i=0; i<points.size(); i+=2){
+			minX = minX > points.get(i) ? points.get(i) : minX;
+			minY = minY > points.get(i+1) ? points.get(i+1) : minY;
+		}
+		Point2D coords = new Point2D(minX, minY);
+		return coords;
+	}
+
+	public Point2D getMaxCoords(){
+		double maxX = -Double.POSITIVE_INFINITY;
+		double maxY = -Double.POSITIVE_INFINITY;
+		ObservableList<Double> points = this.getPolygon().getPoints();
+		for(int i=0; i<points.size(); i+=2){
+			maxX = maxX < points.get(i) ? points.get(i) : maxX;
+			maxY = maxY < points.get(i+1) ? points.get(i+1) : maxY;
+		}
+		Point2D coords = new Point2D(maxX, maxY);
+		return coords;
 	}
 }

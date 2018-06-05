@@ -62,11 +62,6 @@ public class SystemMenu {
     //Scroll Pane----------
     ScrollPane objectsUI =  new ScrollPane();
 
-
-
-
-
-
     private String newScene;
 
 
@@ -76,7 +71,7 @@ public class SystemMenu {
         systemScene = new Scene(SystemLayout,1280,720);
         running = true;
 
-        gravityVal = 9.81;
+        gravityVal = 1;
         sideForceVal = 0;
         speedVal = 0.05;
 
@@ -261,9 +256,9 @@ public class SystemMenu {
                 xInput.setText("0");
                 yInput.setText("0");
                 scaleInput.setText("1");
-                gravityInput.setText("9.81");
+                gravityInput.setText("1");
                 sideForceInput.setText("0");
-                speedInput.setText("1");
+                speedInput.setText("0.05");
             }
         });
         bottomrow.getChildren().addAll(runBtn,resetBtn,clearBtn);
