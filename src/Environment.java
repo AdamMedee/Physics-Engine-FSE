@@ -20,6 +20,7 @@ public class Environment {
     double simulationSpeed; //How quickly the system passes through time
     double scale;
     ArrayList<RigidBody> rigidBodies = new ArrayList<RigidBody>(); //Contains physical rigid bodies
+    ArrayList<Circle> circles = new ArrayList<Circle>();
     public Pane environmentLayout;
     Point2D gravity;
 
@@ -40,6 +41,9 @@ public class Environment {
         //Applies all forces
         for(RigidBody rigidBody : rigidBodies){
             rigidBody.run(simulationSpeed, gravity, rigidBodies);
+        }
+        for(Circle c : circles){
+            c.run(simulationSpeed, gravity, circles);
         }
         removeOffscreen(1080, 720);
     }
@@ -99,6 +103,7 @@ public class Environment {
         rigidBodies.add(leooooo);
         rigidBodies.add(leoooooo);
         rigidBodies.add(leooooooooo);
+        circles.add(new Circle(400,500,30, 3, false, environmentLayout));
         /*
         double[] x10 = {900, 1000, 1000, 900};
         double[] y10 = {500, 500, 550,550};

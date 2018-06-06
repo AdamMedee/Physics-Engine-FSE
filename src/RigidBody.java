@@ -110,8 +110,6 @@ public class RigidBody{
 		root.getChildren().add(circle);
 	}
 
-
-
 	public static void draw(RigidBody obj,Pane root, double newScale)
 	{
 		RigidBody tmp = new RigidBody(obj.xPoints,obj.yPoints,obj.mass,obj.fixed,root);
@@ -336,17 +334,8 @@ public class RigidBody{
 		this.forces.add(force);
 	}
 
-	//Removes force from body
-	public void delForce(Point2D force){
-		if(this.forces.contains(force)){
-			this.forces.remove(force);
-		}
-	}
-
 	//Clears all forces and vel from rigid body
 	public void clearForces(){
-		//tmpVel = new Point2D(0, 0);
-		//tmpSpin = 0;
 		forces.clear();
 	}
 
