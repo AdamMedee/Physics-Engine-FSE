@@ -22,6 +22,7 @@ import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.Button;
 import javafx.scene.image.Image;
 import javafx.scene.image.WritableImage;
+import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.text.Font;
 
@@ -43,7 +44,7 @@ public class MainMenu {
     public String newScene;
 
     private Environment bg;
-    private StackPane boxSim;
+    private Pane boxSim;
 
     //Constructor for the menu
     public MainMenu(){
@@ -53,7 +54,7 @@ public class MainMenu {
        //mainMenuScene.getStylesheets().add("resources/Garu.css");
 
         bg = new Environment();
-        boxSim = new StackPane();
+        boxSim = new Pane();
         bg.setScale(0.5);
         bg.setGroup(boxSim);
         mainMenuLayout.getChildren().add(boxSim);
