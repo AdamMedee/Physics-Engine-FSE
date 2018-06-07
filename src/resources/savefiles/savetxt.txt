@@ -1,0 +1,14 @@
+#_of_environments   rigid_body_count_in_1   rigid_body_count_in_2   rigid_body_count_in_3 etc.
+environment_name   scale   hor_vel   ver_vel   sim_speed
+side_count x_points y_points mass fixed
+side_count x_points y_points mass fixed
+side_count x_points y_points mass fixed
+environment_name   scale   hor_vel   ver_vel   sim_speed
+side_count x_points y_points mass fixed
+side_count x_points y_points mass fixed
+side_count x_points y_points mass fixed
+side_count x_points y_points mass fixed
+side_count x_points y_points mass fixed
+environment_name   scale   hor_vel   ver_vel   sim_speed
+side_count x_points y_points mass fixed
+side_count x_points y_points mass fixed

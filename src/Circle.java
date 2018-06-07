@@ -16,7 +16,7 @@ import javafx.scene.paint.Color;
 
 import java.util.ArrayList;
 
-public class Circle{
+public class Circle extends RigidBody{
     private Point2D center;
     private double radius;
 
@@ -61,7 +61,7 @@ public class Circle{
         this.center = new Point2D(center.getX() + dx, center.getY() + dy);
     }
 
-    public static void isColliding(Circle a, Circle b){
+    public static void isColliding(Circle a, Circle b, double simSpeed){
         double dx = a.getCenter().getX() - b.getCenter().getY();
         double dy = a.getCenter().getY() - b.getCenter().getY();
         if(dx * dx + dy * dy <= (a.radius + b.radius) * (a.radius + b.radius)){
@@ -70,39 +70,28 @@ public class Circle{
             Point2D normalDirection = a.center.subtract(b.center).normalize();
             Point2D[] info = {normalDirection, contact};
             if(contact != null && normalDirection != null){
-                //PenetrationFix(a, b, normalDirection);
-                //resolveCollision(a, b, info);
+                penetrationFix(a, b, normalDirection);
+                resolveCollision(a, b, info, simSpeed);
             }
         }
     }
 
-    public static boolean isColliding(RigidBody r, Circle c){
+    public static Point2D isColliding(RigidBody r, Circle c){
         ObservableList<Double> verticies = r.getPolygon().getPoints();
         double shortestDist = Double.POSITIVE_INFINITY;
         Point2D contact = null;
         Point2D normalDirection = null;
-        for(int i=0; i < r.getSides(); i+=2){
-            if(distancePoL(verticies.get(i), verticies.get(i+1), verticies.get((i+2) % r.getSides()), verticies.get(i+3) % r.getSides(), c.center.getX(), c.center.getY()) <= c.radius){
-                //distance from point to line segment
-            }
-
-        }
-
+        return null;
     }
-    public static boolean isColliding(Circle c, RigidBody r){
+
+
+
+    public static Point2D isColliding(Circle c, RigidBody r){
         return isColliding(r, c);
     }
 
-    public static void draw(Circle obj,Pane root, double newScale)
-    {
-        Circle tmp = new Circle(obj.center.getX(),obj.center.getY(),obj.radius, obj.mass,obj.fixed,root);
-        tmp.setScale(newScale);
-        tmp.update(obj.center);
-    }
 
-    public void setScale(double newScale) {
-        scale = newScale;
-    }
+
 
     public void update(Point2D newCenter){
         center = newCenter;
@@ -110,28 +99,7 @@ public class Circle{
         instance.setCenterY(center.getY() / scale);
     }
 
-    public void updateVelocity(double timeStep){
-        if(!fixed) {
-            velocity = velocity.add(tmpVel);
-            double netX = 0;
-            double netY = 0;
-            Point2D prevAccel = acceleration;
-            //Update position based previous frame's forces
-            this.translate(velocity.getX() * timeStep + (0.5 * prevAccel.getX() * timeStep * timeStep), velocity.getY() * timeStep + (0.5 * prevAccel.getY() * timeStep * timeStep));
 
-            //Calculates net force of current frame
-            for (Point2D f : forces) {
-                netX += f.getX();
-                netY += f.getY();
-            }
-            netX /= mass;    //F = ma
-            netY /= mass;
-            acceleration = new Point2D(netX, netY);
-            Point2D avgAccel = prevAccel.add(acceleration);
-            avgAccel = new Point2D(avgAccel.getX() / 2, avgAccel.getY() / 2);
-            velocity = velocity.add(new Point2D(avgAccel.getX() * timeStep, avgAccel.getY() * timeStep));
-        }
-    }
 
     public void reset(double newScale){
         velocity = startVel;
@@ -141,29 +109,9 @@ public class Circle{
         this.update(startCenter);
     }
 
-    public void run(double simSpeed, Point2D gravity, ArrayList<Circle> circles){
-        addForce(gravity.multiply(mass));
-        for(Circle c : circles) {
-            if(!c.equals(this) && !this.hasCollided && !c.hasCollided) {
-                isColliding(this, c);
-            }
-        }
-        updateVelocity(simSpeed);
-        clearForces();
-        clearCollide();
-    }
 
-    public static double distancePoL(double x1, double y1, double x2, double y2, double x0, double y0){
-        return Math.abs((y2 - y1) * x0 - (x2 - x1) * y0 + x2 * y1 - y2 * x1) / Math.sqrt((y2 - y1) * (y2 - y1) + (x2 - x1) * (x2 - x1));
-    }
 
-    public void clearForces(){
-        this.forces.clear();
-    }
 
-    public void clearCollide(){
-        hasCollided = false;
-    }
 
     public Circle clone(Pane canvas)
     {
@@ -174,9 +122,7 @@ public class Circle{
         return new Circle(temp.center.getX(), temp.center.getY(), temp.radius, temp.mass, temp.fixed, canvas);
     }
 
-    public void addForce(Point2D force){
-        this.forces.add(force);
-    }
+
 
     public Point2D getCenter() {
         return center;
@@ -194,103 +140,5 @@ public class Circle{
         this.radius = radius;
     }
 
-    public ArrayList<Point2D> getForces() {
-        return forces;
-    }
 
-    public void setForces(ArrayList<Point2D> forces) {
-        this.forces = forces;
-    }
-
-    public Point2D getVelocity() {
-        return velocity;
-    }
-
-    public void setVelocity(Point2D velocity) {
-        this.velocity = velocity;
-    }
-
-    public Point2D getAcceleration() {
-        return acceleration;
-    }
-
-    public void setAcceleration(Point2D acceleration) {
-        this.acceleration = acceleration;
-    }
-
-    public double getRestitution() {
-        return restitution;
-    }
-
-    public void setRestitution(double restitution) {
-        this.restitution = restitution;
-    }
-
-    public double getMass() {
-        return mass;
-    }
-
-    public void setMass(double mass) {
-        this.mass = mass;
-    }
-
-    public double getDensity() {
-        return density;
-    }
-
-    public void setDensity(double density) {
-        this.density = density;
-    }
-
-    public boolean isFixed() {
-        return fixed;
-    }
-
-    public void setFixed(boolean fixed) {
-        this.fixed = fixed;
-    }
-
-    public double getScale() {
-        return scale;
-    }
-
-    public Point2D getStartCenter() {
-        return startCenter;
-    }
-
-    public void setStartCenter(Point2D startCenter) {
-        this.startCenter = startCenter;
-    }
-
-    public Point2D getStartVel() {
-        return startVel;
-    }
-
-    public void setStartVel(Point2D startVel) {
-        this.startVel = startVel;
-    }
-
-    public boolean isHasCollided() {
-        return hasCollided;
-    }
-
-    public void setHasCollided(boolean hasCollided) {
-        this.hasCollided = hasCollided;
-    }
-
-    public Point2D getTmpVel() {
-        return tmpVel;
-    }
-
-    public void setTmpVel(Point2D tmpVel) {
-        this.tmpVel = tmpVel;
-    }
-
-    public javafx.scene.shape.Circle getInstance() {
-        return instance;
-    }
-
-    public void setInstance(javafx.scene.shape.Circle instance) {
-        this.instance = instance;
-    }
 }

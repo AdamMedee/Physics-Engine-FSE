@@ -42,17 +42,14 @@ public class Environment {
         for(RigidBody rigidBody : rigidBodies){
             rigidBody.run(simulationSpeed, gravity, rigidBodies);
         }
-        for(Circle c : circles){
-            c.run(simulationSpeed, gravity, circles);
-        }
         removeOffscreen(1080, 720);
     }
     public void removeOffscreen(int maxX, int maxY){
         for(int i=rigidBodies.size(); i < 0; i--){
             RigidBody r = rigidBodies.get(i);
-            Point2D min = r.getMinCoords();
-            Point2D max = r.getMaxCoords();
-            if((min.getX() > maxX && min.getY() > maxY) || (max.getX() < 0 && max.getY() < 0)){
+            Point2D min = new Point2D(r.getPolygon().getBoundsInLocal().getMinX(), r.getPolygon().getBoundsInLocal().getMinY());
+            Point2D max = new Point2D(r.getPolygon().getBoundsInLocal().getMaxX(), r.getPolygon().getBoundsInLocal().getMaxY());
+            if(min.getX() > maxX + 200 || min.getY() > maxY + 200 || max.getX() < -200 || max.getY() < -200){
                 rigidBodies.remove(r);
             }
         }

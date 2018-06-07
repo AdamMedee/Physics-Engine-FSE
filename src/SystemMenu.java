@@ -54,8 +54,8 @@ public class SystemMenu {
 
     // Graphics Initialization
     public Scene systemScene;
-    public BorderPane SystemLayout = new BorderPane();
-    public Button systemB,objectB,back;
+    private BorderPane SystemLayout = new BorderPane();
+    private Button systemB,objectB,back;
 
 
     //------
@@ -78,7 +78,11 @@ public class SystemMenu {
         environment.setGravity(new Point2D(sideForceVal, gravityVal));
         environment.setSimulationSpeed(speedVal);
 
+
         Pane leftPane = new Pane();
+        //Environment being run
+        this.environment = environment;
+        this.environment.setGroup(leftPane);
 
         TabPane tabs = new TabPane();
         tabs.setTabClosingPolicy(TabPane.TabClosingPolicy.UNAVAILABLE);
@@ -103,8 +107,6 @@ public class SystemMenu {
         SystemPane.setPadding(new Insets(10, 10, 10, 10));
         SystemPane.setVgap(30);
         SystemPane.setHgap(10);
-
-
 
         // ----- First row
         HBox OriginBox = new HBox();
@@ -279,42 +281,9 @@ public class SystemMenu {
         SystemPane.getChildren().add(bottomrow);
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
         leftPane.setPrefSize(900,720);
         leftPane.setMaxWidth(980);
         tabs.setPrefSize(300,720);
-
-        //Environment being run
-        this.environment = environment;
-        this.environment.setGroup(leftPane);
-
-
 
 
         //ObjectUI Initialization
@@ -333,11 +302,10 @@ public class SystemMenu {
 
 
 
-        for (int i = 0;i<1;i++)
         // Buttons will be affected by fixed object. Only the bottom few would right now.
         // Uncomment the for loop on top and the comment out the for loop at the bottom to test the object customization page
 
-//        for (int i = 0;i<environment.rigidBodies.size();i++)
+        for (int i = 0;i<environment.rigidBodies.size();i++)
         {
             Pane temp = new Pane();
             temp.setStyle("-fx-border-color: black;-fx-border-insets: 10,10,10,10;");
@@ -353,8 +321,6 @@ public class SystemMenu {
 
 
             temp.setPrefSize(128,128);
-
-
 
 
             GridPane.setConstraints(temp,0,i*4,4,4);
@@ -396,18 +362,6 @@ public class SystemMenu {
                             if (isDouble(xInput.getText()))  Garu.translate(Double.parseDouble(xInput.getText())-Garu.getCenter().getX(),0);
                             if (isDouble(yInput.getText()))  Garu.translate(Double.parseDouble(yInput.getText())-Garu.getCenter().getY(),0);
 
-
-
-//                            int n = Garu.SerialNumber;
-//                            Label MassInfo = new Label(String.format("Mass: %f",Garu.getMass()));
-//                            Label SidesInfo = new Label(String.format("Number of sides: %d",Garu.getSides()));
-//                            Label CMInfo = new Label(String.format("X: %.2f\nY: %.2f",Garu.getCenter().getX(),Garu.getCenter().getY()));
-//
-//                            GridPane.setConstraints(MassInfo,4,n*4);
-//                            GridPane.setConstraints(SidesInfo,4,n*4+1);
-//                            GridPane.setConstraints(CMInfo,4,n*4+2);
-//                            GridPane.setConstraints(EditBtn,4,n*4+3);
-
                             newWindow.close();
                         }
                     });
@@ -436,14 +390,7 @@ public class SystemMenu {
             GridPane.setConstraints(EditBtn,4,i*4+3);
 
             objectPane.getChildren().addAll(temp,MassInfo,SidesInfo,CMInfo,EditBtn);
-
-
-
-
         }
-
-
-
 
 
 
@@ -456,13 +403,9 @@ public class SystemMenu {
 
 
 
-
-
-
         back = new Button("Back");
         back.setLayoutX(20);
         back.setLayoutY(20);
-
         back.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
