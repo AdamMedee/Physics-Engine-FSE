@@ -86,7 +86,7 @@ public class RigidBody{
 		this.tmpSpin = spin;
 		this.angAccel = 0;
 		this.density = mass/this.area;
-		this.restitution = 0.95;
+		this.restitution = 1;
 		this.xPoints = xPoints;
 		this.yPoints = yPoints;
 		this.startXPoints = xPoints;
@@ -197,7 +197,7 @@ public class RigidBody{
 	//If two rigidbodies are intersecting, moves them apart
 	public static void penetrationFix(RigidBody a, RigidBody b, Point2D normal){
 		//How deep the collision point is in the object
-		double penetrationDepth = normal.magnitude();// - Math.abs(relVel)/100*simSpeed;
+		double penetrationDepth = normal.magnitude()+1;// - Math.abs(relVel)/100*simSpeed;
         //System.out.println(normal);
 
 		//Pushes shapes out of each other if barely in
@@ -271,8 +271,7 @@ public class RigidBody{
 						double x1 = bVertices.get(j); double y1 = bVertices.get(j + 1); //Side being hit
 						double x2 = bVertices.get((j+2) % (b.sides*2)); double y2 = bVertices.get((j+3) % (b.sides*2));
 						double sideLen = Math.sqrt((y2 - y1)*(y2 - y1) + (x2 - x1)*(x2 - x1));
-						double tmpDist2 = Math.abs((y2 - y1)*(x0 - a.velocity.getX()) - (x2 - x1)*(y0 - a.velocity.getY()) + x2*y1 - y2*x1)/sideLen;
-
+						double tmpDist2 = Math.abs((y2 - y1)*(x0) - (x2 - x1)*(y0) + x2*y1 - y2*x1)/sideLen;
 						if(tmpDist2 <= shortestDist){
 							shortestDist = tmpDist2;
 							tmpDist2 = Math.abs((y2 - y1)*(x0) - (x2 - x1)*(y0) + x2*y1 - y2*x1)/sideLen;
@@ -286,6 +285,7 @@ public class RigidBody{
 						resolveCollision(a, b, info, simSpeed);
 					}
 				}
+
 			}
 		}
 	}

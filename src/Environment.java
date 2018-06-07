@@ -147,8 +147,8 @@ public class Environment {
             for(int y=0; y<301; y+=50){
                 if (Math.random()>0.8)
                 {
-                    double x1[] = {x,x+45,x+45,x};
-                    double y1[] = {y,y,y+35,y+45};
+                    double x1[] = {x,x+45,x+35,x+10};
+                    double y1[] = {y,y+10,y+35,y+45};
 
                     RigidBody rect = new RigidBody(x1,y1,1,false,environmentLayout);
                     rigidBodies.add(rect);
@@ -159,11 +159,19 @@ public class Environment {
         }
 
         double[] x2 = {0, 1280, 1280, 0};
-        double[] y2 = {580, 560, 720, 720};
+        double[] y2 = {560, 560, 720, 720};
+        double[] x3 = {0, 100, 100, 0};
+        double[] y3 = {0, 0, 559, 559};
+        double[] x4 = {1180, 1280, 1280, 1180};
+        double[] y4 = {0, 0, 559, 559};
 
         RigidBody bottomwall = new RigidBody(x2, y2, 1, true, environmentLayout);
+        RigidBody leftwall = new RigidBody(x3, y3, 1, true, environmentLayout);
+        RigidBody rightwall = new RigidBody(x4, y4, 1, true, environmentLayout);
 
         rigidBodies.add(bottomwall);
+        rigidBodies.add(leftwall);
+        rigidBodies.add(rightwall);
 
 
 
