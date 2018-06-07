@@ -9,6 +9,7 @@
    	everything
  */
 
+import javafx.collections.ObservableList;
 import javafx.geometry.Point2D;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
@@ -60,17 +61,33 @@ public class Circle{
         this.center = new Point2D(center.getX() + dx, center.getY() + dy);
     }
 
-    public static boolean isColliding(Circle a, Circle b){
+    public static void isColliding(Circle a, Circle b){
         double dx = a.getCenter().getX() - b.getCenter().getY();
         double dy = a.getCenter().getY() - b.getCenter().getY();
-        if(dx * dx + dy * dy > (a.radius + b.radius) * (a.radius + b.radius)){
-            return false;
+        if(dx * dx + dy * dy <= (a.radius + b.radius) * (a.radius + b.radius)){
+            double angle = Math.atan2(b.center.getY() - a.center.getY(), b.center.getX() - a.center.getX());
+            Point2D contact = new Point2D(a.center.getX() + a.radius * Math.cos(angle), a.center.getY() + a.radius * Math.sin(angle));
+            Point2D normalDirection = a.center.subtract(b.center).normalize();
+            Point2D[] info = {normalDirection, contact};
+            if(contact != null && normalDirection != null){
+                //PenetrationFix(a, b, normalDirection);
+                //resolveCollision(a, b, info);
+            }
         }
-        return true;
     }
 
     public static boolean isColliding(RigidBody r, Circle c){
-        return true;
+        ObservableList<Double> verticies = r.getPolygon().getPoints();
+        double shortestDist = Double.POSITIVE_INFINITY;
+        Point2D contact = null;
+        Point2D normalDirection = null;
+        for(int i=0; i < r.getSides(); i+=2){
+            if(distancePoL(verticies.get(i), verticies.get(i+1), verticies.get((i+2) % r.getSides()), verticies.get(i+3) % r.getSides(), c.center.getX(), c.center.getY()) <= c.radius){
+                //distance from point to line segment
+            }
+
+        }
+
     }
     public static boolean isColliding(Circle c, RigidBody r){
         return isColliding(r, c);
@@ -134,6 +151,10 @@ public class Circle{
         updateVelocity(simSpeed);
         clearForces();
         clearCollide();
+    }
+
+    public static double distancePoL(double x1, double y1, double x2, double y2, double x0, double y0){
+        return Math.abs((y2 - y1) * x0 - (x2 - x1) * y0 + x2 * y1 - y2 * x1) / Math.sqrt((y2 - y1) * (y2 - y1) + (x2 - x1) * (x2 - x1));
     }
 
     public void clearForces(){
