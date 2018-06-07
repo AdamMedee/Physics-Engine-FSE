@@ -45,7 +45,7 @@ public class Environment {
         removeOffscreen(1080, 720);
     }
     public void removeOffscreen(int maxX, int maxY){
-        for(int i=rigidBodies.size(); i < 0; i--){
+        for(int i=rigidBodies.size(); i < 0; i  --){
             RigidBody r = rigidBodies.get(i);
             Point2D min = new Point2D(r.getPolygon().getBoundsInLocal().getMinX(), r.getPolygon().getBoundsInLocal().getMinY());
             Point2D max = new Point2D(r.getPolygon().getBoundsInLocal().getMaxX(), r.getPolygon().getBoundsInLocal().getMaxY());
@@ -138,4 +138,37 @@ public class Environment {
     }
 
     public void setScale(double newScale) { scale = newScale; }
+
+    public void BackGroundMenu (Pane src)
+    {
+        environmentLayout = src;
+        int counter = 0;
+        for (int x=300; x<1001; x+=50){
+            for(int y=0; y<301; y+=50){
+                if (Math.random()>0.8)
+                {
+                    double x1[] = {x,x+45,x+45,x};
+                    double y1[] = {y,y,y+35,y+45};
+
+                    RigidBody rect = new RigidBody(x1,y1,1,false,environmentLayout);
+                    rigidBodies.add(rect);
+
+
+                }
+            }
+        }
+
+        double[] x2 = {0, 1280, 1280, 0};
+        double[] y2 = {580, 560, 720, 720};
+
+        RigidBody bottomwall = new RigidBody(x2, y2, 1, true, environmentLayout);
+
+        rigidBodies.add(bottomwall);
+
+
+
+
+
+
+    }
 }

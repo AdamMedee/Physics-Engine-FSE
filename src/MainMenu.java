@@ -55,8 +55,9 @@ public class MainMenu {
 
         bg = new Environment();
         boxSim = new Pane();
+        bg.setSimulationSpeed(0.05);
         bg.setScale(0.5);
-        bg.setGroup(boxSim);
+        bg.BackGroundMenu(boxSim);
         mainMenuLayout.getChildren().add(boxSim);
 
         //Making and placing buttons
