@@ -18,7 +18,7 @@ import javafx.scene.shape.Polygon;
 import java.util.ArrayList;
 import java.util.Arrays;
 import javafx.geometry.Point2D;
-
+//
 public class RigidBody{
 	private int sides;							//# of sides
 	private Point2D center;						//Coords of center (x,y)
@@ -52,7 +52,8 @@ public class RigidBody{
 	private Circle circle;
 
 	public RigidBody(){
-
+		double[] p = {0};
+		new RigidBody(p, p, 0, false, new Pane());
 	}
 
 
@@ -120,6 +121,10 @@ public class RigidBody{
 	//Allows the rigidbody to be printed
 	public String toString(){
 		return Arrays.toString(xPoints) + " " + Arrays.toString(yPoints) + " " + this.center;
+	}
+
+	public RigidBody copy(Pane src){
+		return new RigidBody(xPoints, yPoints, mass, fixed, src);
 	}
 
 
@@ -298,8 +303,12 @@ public class RigidBody{
 	public void run(double simSpeed, Point2D gravity, ArrayList<RigidBody> rigidBodies){
 		addForce(gravity.multiply(mass));
 		for(RigidBody body : rigidBodies) {
-			if(!body.equals(this)){
-				isColliding(this, body, simSpeed);
+			if(!body.equals(this) && (!this.fixed || !body.fixed)){
+				//CircleBody rigidbody collision checking and executing
+				if(this.polygon.getPoints() == null && body.polygon.getPoints() == null) { isColliding((CircleBody)body, (CircleBody)this, simSpeed); }
+				else if(this.polygon.getPoints() == null){ isColliding((CircleBody)this, body, simSpeed); }
+				else if(body.polygon.getPoints() == null){ isColliding(this, (CircleBody)body, simSpeed); }
+				else{ isColliding(this, body, simSpeed); }
 			}
 		}
 		updateSpin(simSpeed);
@@ -318,6 +327,14 @@ public class RigidBody{
 		angAccel = 0;
 		this.setScale(newScale);
 		this.update(startXPoints, startYPoints, startCenter);
+	}
+
+	public Point2D getSize(){
+		return new Point2D(polygon.getBoundsInLocal().getWidth(), polygon.getBoundsInLocal().getHeight());
+	}
+
+	public Point2D getMin(){
+		return new Point2D(polygon.getBoundsInLocal().getMinX(), polygon.getBoundsInLocal().getMinY());
 	}
 
 	//Setter methods
