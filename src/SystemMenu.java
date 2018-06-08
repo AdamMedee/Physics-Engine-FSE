@@ -26,6 +26,7 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
+import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.Scene;
 import javafx.scene.control.ScrollPane;
@@ -338,11 +339,11 @@ public class SystemMenu {
 
 
 
-        for (int i = 0;i<1;i++)
+//        for (int i = 0;i<1;i++)
         // Buttons will be affected by fixed object. Only the bottom few would right now.
         // Uncomment the for loop on top and the comment out the for loop at the bottom to test the object customization page
 
-//        for (int i = 0;i<environment.rigidBodies.size();i++)
+        for (int i = 0;i<environment.rigidBodies.size();i++)
         {
             Pane temp = new Pane();
             temp.setStyle("-fx-border-color: black;-fx-border-insets: 10,10,10,10;");
@@ -391,6 +392,15 @@ public class SystemMenu {
                     Label CMLabely = new Label("Y:");
                     TextField CMyInput = new TextField(String.format("%.2f",Garu.getCenter().getY()));
 
+                    ColorPicker colorPicker = new ColorPicker();
+                    colorPicker.setValue(Garu.colour);
+                    colorPicker.setOnAction(new EventHandler<ActionEvent>() {
+                        @Override
+                        public void handle(ActionEvent actionEvent) {
+                            Garu.colour = colorPicker.getValue();
+                        }
+                    });
+
                     Button ApplyBtn = new Button("Apply");
                     ApplyBtn.setOnAction(new EventHandler<ActionEvent>() {
                         @Override
@@ -423,10 +433,10 @@ public class SystemMenu {
                     GridPane.setConstraints(CMxInput,1,2);
                     GridPane.setConstraints(CMLabely,0,3);
                     GridPane.setConstraints(CMyInput,1,3);
-
+                    GridPane.setConstraints(colorPicker,0,4);
                     GridPane.setConstraints(ApplyBtn,0,5);
 
-                    EditPane.getChildren().addAll(massLabel,massInput,CMLabel,CMLabelx,CMxInput,CMLabely,CMyInput,ApplyBtn);
+                    EditPane.getChildren().addAll(massLabel,massInput,CMLabel,CMLabelx,CMxInput,CMLabely,CMyInput,colorPicker,ApplyBtn);
 
 
                     Scene editScene = new Scene(EditPane,400,720);

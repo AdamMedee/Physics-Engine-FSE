@@ -12,6 +12,7 @@
 
 import javafx.collections.ObservableList;
 import javafx.scene.layout.Pane;
+import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.Polygon;
 import java.util.ArrayList;
@@ -46,6 +47,7 @@ public class RigidBody{
 	private Point2D tmpVel;
 	private double tmpSpin;
 
+	protected  Color colour;
 	private Circle circle;
 
 	public RigidBody(){
@@ -55,7 +57,7 @@ public class RigidBody{
 
 	public RigidBody(double[] xPoints, double[] yPoints, double mass, boolean fixed, Pane root){
 		this.sides = xPoints.length;
-
+		this.colour = Color.BLACK;
 		this.area = 0;			//Init area, Moment of inertia and Center
 		this.MOI = 0;
 		double centerX = 0;
@@ -104,6 +106,7 @@ public class RigidBody{
 			tmpPoints[i*2+1] = yPoints[i];
 		}
 		this.polygon.getPoints().addAll(tmpPoints);
+		this.polygon.setFill(this.colour);
 		root.getChildren().add(polygon);
 
 		//Creates a center of mass as a circle for the polygon for testing purposes
