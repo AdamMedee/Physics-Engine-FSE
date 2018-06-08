@@ -43,13 +43,8 @@ public class CreditsMenu {
         creditsLayout = new Group();
         creditsScene = new Scene(creditsLayout, 1280, 720);
 
-        bg = new Environment();
         bgSim = new Pane();
-        bg.setSimulationSpeed(0.05);
-        bg.setScale(0.5);
-        bg.setGravity(new Point2D(-0.56, 1.27));
-        bg.creditsBG(bgSim);
-        creditsLayout.getChildren().add(bgSim);
+        this.startSim();
 
         Canvas canvas = new Canvas(1280, 720);
         GraphicsContext g = canvas.getGraphicsContext2D();
@@ -70,12 +65,25 @@ public class CreditsMenu {
             @Override
             public void handle(ActionEvent event) {
                 PhysicsEngine.window.setScene(PhysicsEngine.mainMenu.mainMenuScene);
+                PhysicsEngine.mainMenu.startSim();
                 newScene = "MainMenu";
             }
         });
 
         creditsLayout.getStylesheets().add("resources/Garu.css");
         creditsLayout.getChildren().add(back);
+    }
+
+    public void startSim(){
+        bg = new Environment();
+        creditsLayout.getChildren().remove(bgSim);
+        bgSim = new Pane();
+        bg.setSimulationSpeed(0.05);
+        bg.setScale(0.5);
+        bg.setGravity(new Point2D(-0.56, 1.27));
+        bg.creditsBG(bgSim);
+        creditsLayout.getChildren().add(bgSim);
+        bgSim.toBack();
     }
 
     public String run(){

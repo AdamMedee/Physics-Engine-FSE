@@ -503,6 +503,7 @@ public class SystemMenu {
             @Override
             public void handle(ActionEvent event) {
                 PhysicsEngine.window.setScene(PhysicsEngine.mainMenu.mainMenuScene);
+                PhysicsEngine.mainMenu.startSim();
                 newScene = "MainMenu";
             }
         });

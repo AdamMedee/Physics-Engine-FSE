@@ -62,8 +62,8 @@ public class PhysicsEngine extends Application {
 
         //Initializing the different menus
         mainMenu = new MainMenu();
-        selectMenu = new SelectMenu();
         creditsMenu = new CreditsMenu();
+        selectMenu = new SelectMenu();
         systemMenu = new SystemMenu(environmentList.get(0));
 
         //Sets default scene to main menu

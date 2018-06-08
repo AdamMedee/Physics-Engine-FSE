@@ -159,9 +159,9 @@ public class Environment {
 
     public void BackGroundMenu (Pane src) {
         environmentLayout = src;
-        int counter = 0;
-        for (int x = 200; x < 1000; x += 70) {
-            for (int y = 150; y < 500; y += 70) {
+        rigidBodies.clear();
+        for (int x = 200; x < 1000; x += 100) {
+            for (int y = 150; y < 500; y += 100) {
                 if (Math.random() > 0.6) {
                     double x1[] = {x + 20 * (0.5 - Math.random()), x + 45 + 20 * (0.5 - Math.random()), x + 45 + 20 * (0.5 - Math.random()), x + 20 * (0.5 - Math.random())};
                     double y1[] = {y + 20 * (0.5 - Math.random()), y + 20 * (0.5 - Math.random()), y + 45 + 20 * (0.5 - Math.random()), y + 45 + 20 * (0.5 - Math.random())};
@@ -196,6 +196,7 @@ public class Environment {
 
     public void creditsBG(Pane src){
         environmentLayout = src;
+        rigidBodies.clear();
         for (int x=10; x<1001; x+=50){
             for(int y=0; y<501; y+=50){
                 if (Math.random()>0.9)
@@ -205,8 +206,6 @@ public class Environment {
 
                     RigidBody rect = new RigidBody(x1,y1,1,false,environmentLayout,Color.BLACK);
                     rigidBodies.add(rect);
-
-
                 }
             }
         }

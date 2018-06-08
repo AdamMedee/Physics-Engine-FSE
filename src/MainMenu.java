@@ -52,13 +52,9 @@ public class MainMenu {
         mainMenuLayout = new Group();
 
        //mainMenuScene.getStylesheets().add("resources/Garu.css");
-
-        bg = new Environment();
         boxSim = new Pane();
-        bg.setSimulationSpeed(0.05);
-        bg.setScale(0.5);
-        bg.BackGroundMenu(boxSim);
-        mainMenuLayout.getChildren().add(boxSim);
+        this.startSim();
+
 
         //Making and placing buttons
         button1 = new Button("Demo");
@@ -84,6 +80,7 @@ public class MainMenu {
             @Override
             public void handle(ActionEvent actionEvent) {
                 PhysicsEngine.window.setScene(PhysicsEngine.creditsMenu.creditsScene);
+                PhysicsEngine.creditsMenu.startSim();
                 newScene = "CreditsMenu";
             }
         });
@@ -120,6 +117,16 @@ public class MainMenu {
         mainMenuScene = new Scene(mainMenuLayout,1280,720);
     }
 
+    public void startSim(){
+        bg = new Environment();
+        mainMenuLayout.getChildren().remove(boxSim);
+        boxSim = new Pane();
+        bg.setSimulationSpeed(0.05);
+        bg.setScale(0.5);
+        bg.BackGroundMenu(boxSim);
+        mainMenuLayout.getChildren().add(boxSim);
+        boxSim.toBack();
+    }
 
     //Goes through the actions inputted and acts accordingly
     public String run(){

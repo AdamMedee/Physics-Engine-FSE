@@ -206,7 +206,7 @@ public class RigidBody{
 	//If two rigidbodies are intersecting, moves them apart
 	public static void penetrationFix(RigidBody a, RigidBody b, Point2D normal){
 		//How deep the collision point is in the object
-		double penetrationDepth = normal.magnitude()+1;// - Math.abs(relVel)/100*simSpeed;
+		double penetrationDepth = normal.magnitude();// - Math.abs(relVel)/100*simSpeed;
         //System.out.println(normal);
 
 		//Pushes shapes out of each other if barely in
@@ -289,12 +289,11 @@ public class RigidBody{
 						}
 					}
 					info[0] = normalDirection; info[1] = contact;
-					if(contact != null) {
-						penetrationFix(a, b, info[0]);
+					if (contact != null) {
 						resolveCollision(a, b, info, simSpeed);
+						penetrationFix(a, b, info[0]);
 					}
 				}
-
 			}
 		}
 	}
