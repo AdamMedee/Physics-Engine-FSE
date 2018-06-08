@@ -53,7 +53,7 @@ public class RigidBody{
 
 	public RigidBody(){
 		double[] p = {0};
-		new RigidBody(p, p, 0, false, new Pane());
+		new RigidBody(p, p, 0, false, new Pane(),Color.BLACK);
 	}
 
 
@@ -124,7 +124,7 @@ public class RigidBody{
 	}
 
 	public RigidBody copy(Pane src){
-		return new RigidBody(xPoints, yPoints, mass, fixed, src);
+		return new RigidBody(xPoints, yPoints, mass, fixed, src,Color.BLACK);
 	}
 
 

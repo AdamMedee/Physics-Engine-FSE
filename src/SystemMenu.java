@@ -365,7 +365,7 @@ public class SystemMenu {
             RigidBody DeepGaru = new RigidBody(Garu.getXPoints(), Garu.getYPoints(), Garu.getMass(), Garu.getFixed(), temp,Garu.getColour());
             DeepGaru.setScale(Math.max(DeepGaru.getPolygon().getBoundsInLocal().getWidth()/100, DeepGaru.getPolygon().getBoundsInLocal().getHeight()/100));
             DeepGaru.translate((-DeepGaru.getPolygon().getBoundsInLocal().getWidth()/2-DeepGaru.getPolygon().getBoundsInLocal().getMinX()), ((-DeepGaru.getPolygon().getBoundsInLocal().getHeight()/2-DeepGaru.getPolygon().getBoundsInLocal().getMinY())));
-            RigidBody DeepGaru = Garu.copy(temp);
+            DeepGaru = Garu.copy(temp);
             Point2D size = DeepGaru.getSize();
             Point2D min = DeepGaru.getMin();
             DeepGaru.setScale(Math.max(size.getX()/100, size.getY()/100));

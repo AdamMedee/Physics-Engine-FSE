@@ -166,7 +166,7 @@ public class Environment {
                     double x1[] = {x + 20 * (0.5 - Math.random()), x + 45 + 20 * (0.5 - Math.random()), x + 45 + 20 * (0.5 - Math.random()), x + 20 * (0.5 - Math.random())};
                     double y1[] = {y + 20 * (0.5 - Math.random()), y + 20 * (0.5 - Math.random()), y + 45 + 20 * (0.5 - Math.random()), y + 45 + 20 * (0.5 - Math.random())};
 
-                    RigidBody rect = new RigidBody(x1, y1, 1, false, environmentLayout);
+                    RigidBody rect = new RigidBody(x1, y1, 1, false, environmentLayout,Color.BLACK);
                     rigidBodies.add(rect);
 
 
@@ -183,10 +183,10 @@ public class Environment {
         double[] x5 = {0, 1280, 1280, 0};
         double[] y5 = {0, 0, 50, 50};
 
-        RigidBody bottomwall = new RigidBody(x2, y2, 1, true, environmentLayout);
-        RigidBody leftwall = new RigidBody(x3, y3, 1, true, environmentLayout);
-        RigidBody rightwall = new RigidBody(x4, y4, 1, true, environmentLayout);
-        RigidBody topwall = new RigidBody(x5, y5, 1, true, environmentLayout);
+        RigidBody bottomwall = new RigidBody(x2, y2, 1, true, environmentLayout,Color.BLACK);
+        RigidBody leftwall = new RigidBody(x3, y3, 1, true, environmentLayout,Color.BLACK);
+        RigidBody rightwall = new RigidBody(x4, y4, 1, true, environmentLayout,Color.BLACK);
+        RigidBody topwall = new RigidBody(x5, y5, 1, true, environmentLayout,Color.BLACK);
 
         rigidBodies.add(bottomwall);
         rigidBodies.add(leftwall);
@@ -203,7 +203,7 @@ public class Environment {
                     double x1[] = {x-12,x+45,x+33,x+18, x+28};
                     double y1[] = {y-7,y+12,y+29,y+55, y+30};
 
-                    RigidBody rect = new RigidBody(x1,y1,1,false,environmentLayout);
+                    RigidBody rect = new RigidBody(x1,y1,1,false,environmentLayout,Color.BLACK);
                     rigidBodies.add(rect);
 
 
