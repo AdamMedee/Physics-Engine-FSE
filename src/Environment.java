@@ -20,9 +20,9 @@ public class Environment {
     double simulationSpeed; //How quickly the system passes through time
     double scale;
     ArrayList<RigidBody> rigidBodies = new ArrayList<RigidBody>(); //Contains physical rigid bodies
-    ArrayList<Circle> circles = new ArrayList<Circle>();
     public Pane environmentLayout;
     Point2D gravity;
+    boolean allowRotate;
 
     protected static int nObjects = 0;
 
@@ -34,6 +34,7 @@ public class Environment {
         simulationSpeed = 1;
         scale = 100;
         gravity = new Point2D(0, 0);
+        allowRotate = false;
     }
 
     //Goes through all rigid body interactions
@@ -100,7 +101,7 @@ public class Environment {
         rigidBodies.add(leooooo);
         rigidBodies.add(leoooooo);
         rigidBodies.add(leooooooooo);
-        circles.add(new Circle(400,500,30, 3, false, environmentLayout));
+        //rigidBodies.add(new Circle(400,500,30, 3, false, environmentLayout));
         /*
         double[] x10 = {900, 1000, 1000, 900};
         double[] y10 = {500, 500, 550,550};
@@ -139,6 +140,14 @@ public class Environment {
 
     public void setScale(double newScale) { scale = newScale; }
 
+    public boolean isRotate() {
+        return allowRotate;
+    }
+
+    public void setRotate(boolean allowRotate) {
+        this.allowRotate = allowRotate;
+    }
+
     public void BackGroundMenu (Pane src)
     {
         environmentLayout = src;
@@ -158,11 +167,11 @@ public class Environment {
             }
         }
 
-        double[] x2 = {0, 1280, 1280, 0};
-        double[] y2 = {560, 560, 720, 720};
+        double[] x2 = {0, 1350, 1350, 0};
+        double[] y2 = {560, 560, 750, 750};
         double[] x3 = {0, 100, 100, 0};
         double[] y3 = {0, 0, 559, 559};
-        double[] x4 = {1180, 1280, 1280, 1180};
+        double[] x4 = {1180, 1300, 1300, 1180};
         double[] y4 = {0, 0, 559, 559};
 
         RigidBody bottomwall = new RigidBody(x2, y2, 1, true, environmentLayout);
@@ -172,11 +181,38 @@ public class Environment {
         rigidBodies.add(bottomwall);
         rigidBodies.add(leftwall);
         rigidBodies.add(rightwall);
+    }
+
+    public void creditsBG(Pane src){
+        environmentLayout = src;
+        for (int x=10; x<1001; x+=50){
+            for(int y=0; y<501; y+=50){
+                if (Math.random()>0.9)
+                {
+                    double x1[] = {x-12,x+45,x+33,x+18, x+28};
+                    double y1[] = {y-7,y+12,y+29,y+55, y+30};
+
+                    RigidBody rect = new RigidBody(x1,y1,1,false,environmentLayout);
+                    rigidBodies.add(rect);
 
 
+                }
+            }
+        }
 
+        double[] x2 = {0, 1350, 1350, 0};
+        double[] y2 = {560, 560, 750, 750};
+        double[] x3 = {0, 100, 100, 0};
+        double[] y3 = {0, 0, 559, 559};
+        double[] x4 = {1180, 1300, 1300, 1180};
+        double[] y4 = {0, 0, 559, 559};
 
+        RigidBody bottomwall = new RigidBody(x2, y2, 1, true, environmentLayout);
+        RigidBody leftwall = new RigidBody(x3, y3, 1, true, environmentLayout);
+        RigidBody rightwall = new RigidBody(x4, y4, 1, true, environmentLayout);
 
-
+        rigidBodies.add(bottomwall);
+        rigidBodies.add(leftwall);
+        rigidBodies.add(rightwall);
     }
 }

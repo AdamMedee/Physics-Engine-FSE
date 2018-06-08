@@ -51,7 +51,8 @@ public class RigidBody{
 	private Circle circle;
 
 	public RigidBody(){
-
+		double[] p = {0};
+		new RigidBody(p, p, 0, false, new Pane());
 	}
 
 
@@ -119,6 +120,10 @@ public class RigidBody{
 	//Allows the rigidbody to be printed
 	public String toString(){
 		return Arrays.toString(xPoints) + " " + Arrays.toString(yPoints) + " " + this.center;
+	}
+
+	public RigidBody copy(Pane src){
+		return new RigidBody(xPoints, yPoints, mass, fixed, src);
 	}
 
 
@@ -298,7 +303,15 @@ public class RigidBody{
 		addForce(gravity.multiply(mass));
 		for(RigidBody body : rigidBodies) {
 			if(!body.equals(this)){
-				isColliding(this, body, simSpeed);
+				if(this.getClass() == new RigidBody().getClass() && body.getClass() == new RigidBody().getClass()){
+					isColliding(this, body, simSpeed);
+				}
+				/*
+				else{
+					Circle.isColliding(this, body);
+				}
+				*/
+
 			}
 		}
 		updateSpin(simSpeed);
@@ -317,6 +330,14 @@ public class RigidBody{
 		angAccel = 0;
 		this.setScale(newScale);
 		this.update(startXPoints, startYPoints, startCenter);
+	}
+
+	public Point2D getSize(){
+		return new Point2D(polygon.getBoundsInLocal().getWidth(), polygon.getBoundsInLocal().getHeight());
+	}
+
+	public Point2D getMin(){
+		return new Point2D(polygon.getBoundsInLocal().getMinX(), polygon.getBoundsInLocal().getMinY());
 	}
 
 	//Setter methods

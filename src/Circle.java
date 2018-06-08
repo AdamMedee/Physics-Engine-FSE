@@ -34,7 +34,11 @@ public class Circle extends RigidBody{
     private boolean hasCollided;
     private Point2D tmpVel;
 
-    private javafx.scene.shape.Circle instance;
+    private javafx.scene.shape.Circle polygon;
+
+    public Circle(){
+        new Circle(0,0,0,0,false, new Pane());
+    }
 
     public Circle(double x, double y, double radius, double mass, boolean fixed, Pane root){
         this.center = new Point2D(x, y);
@@ -52,9 +56,9 @@ public class Circle extends RigidBody{
         hasCollided = false;
         tmpVel = velocity;
 
-        instance = new javafx.scene.shape.Circle(x, y, radius);
-        instance.setFill(Color.BLACK);
-        root.getChildren().add(instance);
+        polygon = new javafx.scene.shape.Circle(x, y, radius);
+        polygon.setFill(Color.BLACK);
+        root.getChildren().add(polygon);
     }
 
     public void translate(double dx, double dy){
@@ -91,12 +95,14 @@ public class Circle extends RigidBody{
     }
 
 
-
+    public Circle copy(Pane src){
+        return new Circle(center.getX(), center.getY(), radius, mass, fixed, src);
+    }
 
     public void update(Point2D newCenter){
         center = newCenter;
-        instance.setCenterX(center.getX() / scale);
-        instance.setCenterY(center.getY() / scale);
+        polygon.setCenterX(center.getX() / scale);
+        polygon.setCenterY(center.getY() / scale);
     }
 
 
@@ -110,14 +116,11 @@ public class Circle extends RigidBody{
     }
 
 
-
-
-
     public Circle clone(Pane canvas)
     {
         Circle temp = new Circle(this.center.getX(),this.center.getY(), this.radius,this.mass,this.fixed,canvas);
-        instance = new javafx.scene.shape.Circle(this.center.getX(), this.center.getY(), this.radius);
-        temp.setScale(Math.max(instance.getBoundsInLocal().getWidth()/100, instance.getBoundsInLocal().getHeight()/100));
+        polygon = new javafx.scene.shape.Circle(this.center.getX(), this.center.getY(), this.radius);
+        temp.setScale(Math.max(polygon.getBoundsInLocal().getWidth()/100, polygon.getBoundsInLocal().getHeight()/100));
         temp.translate(100000, 100000);
         return new Circle(temp.center.getX(), temp.center.getY(), temp.radius, temp.mass, temp.fixed, canvas);
     }
@@ -128,16 +131,12 @@ public class Circle extends RigidBody{
         return center;
     }
 
-    public void setCenter(Point2D center) {
-        this.center = center;
+    public Point2D getSize(){
+        return new Point2D(polygon.getBoundsInLocal().getWidth(), polygon.getBoundsInLocal().getHeight());
     }
 
-    public double getRadius() {
-        return radius;
-    }
-
-    public void setRadius(double radius) {
-        this.radius = radius;
+    public Point2D getMin(){
+        return new Point2D(polygon.getBoundsInLocal().getMinX(), polygon.getBoundsInLocal().getMinY());
     }
 
 

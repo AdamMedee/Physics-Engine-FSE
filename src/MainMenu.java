@@ -93,9 +93,9 @@ public class MainMenu {
         GraphicsContext graphics = canvas.getGraphicsContext2D();
 
         //Title and background
-        Font ourFont = Font.loadFont(getClass().getResourceAsStream("resources/fonts/modern.ttf"),72);
+        Font ourFont = Font.loadFont(getClass().getResourceAsStream("resources/fonts/GiantRobotArmy-Medium.ttf"),72);
         graphics.setFont(ourFont);
-        graphics.strokeText("L.A.G Physics Engine",250,100);
+        graphics.strokeText("L.A.G Physics Engine",350,100);
         graphics.drawImage(background, 0, 0);
 
 

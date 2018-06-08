@@ -217,6 +217,17 @@ public class SystemMenu {
         CheckBox rotateCB = new CheckBox();
         rotateCB.setText("Rotation");
         rotateCB.setSelected(false);
+        rotateCB.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                if(rotateCB.selectedProperty().get()){
+                    environment.setRotate(true);
+                }
+                else{
+                    environment.setRotate(false);
+                }
+            }
+        });
 
         GridPane.setConstraints(rotateCB,0,5);
 
@@ -351,9 +362,11 @@ public class SystemMenu {
             // Garu is only a shallow copy. Changes made to Garu will affect the original object.
 
             RigidBody Garu = environment.getRigidBodies().get(i);
-            RigidBody DeepGaru = new RigidBody(Garu.getXPoints(), Garu.getYPoints(), Garu.getMass(), Garu.getFixed(), temp);
-            DeepGaru.setScale(Math.max(DeepGaru.getPolygon().getBoundsInLocal().getWidth()/100, DeepGaru.getPolygon().getBoundsInLocal().getHeight()/100));
-            DeepGaru.translate((-DeepGaru.getPolygon().getBoundsInLocal().getWidth()/2-DeepGaru.getPolygon().getBoundsInLocal().getMinX()), ((-DeepGaru.getPolygon().getBoundsInLocal().getHeight()/2-DeepGaru.getPolygon().getBoundsInLocal().getMinY())));
+            RigidBody DeepGaru = Garu.copy(temp);
+            Point2D size = DeepGaru.getSize();
+            Point2D min = DeepGaru.getMin();
+            DeepGaru.setScale(Math.max(size.getX()/100, size.getY()/100));
+            DeepGaru.translate((-size.getX()/2-min.getX()), ((-size.getY()/2-min.getY())));
             DeepGaru.translate(64*DeepGaru.getScale(), 64*DeepGaru.getScale());
             // DeepGaru is a deep copy. Changes made to DeepGaru will not affect the original object
 
