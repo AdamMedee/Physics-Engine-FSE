@@ -351,7 +351,7 @@ public class SystemMenu {
             // Garu is only a shallow copy. Changes made to Garu will affect the original object.
 
             RigidBody Garu = environment.getRigidBodies().get(i);
-            RigidBody DeepGaru = new RigidBody(Garu.getXPoints(), Garu.getYPoints(), Garu.getMass(), Garu.getFixed(), temp);
+            RigidBody DeepGaru = new RigidBody(Garu.getXPoints(), Garu.getYPoints(), Garu.getMass(), Garu.getFixed(), temp,Garu.getColour());
             DeepGaru.setScale(Math.max(DeepGaru.getPolygon().getBoundsInLocal().getWidth()/100, DeepGaru.getPolygon().getBoundsInLocal().getHeight()/100));
             DeepGaru.translate((-DeepGaru.getPolygon().getBoundsInLocal().getWidth()/2-DeepGaru.getPolygon().getBoundsInLocal().getMinX()), ((-DeepGaru.getPolygon().getBoundsInLocal().getHeight()/2-DeepGaru.getPolygon().getBoundsInLocal().getMinY())));
             DeepGaru.translate(64*DeepGaru.getScale(), 64*DeepGaru.getScale());
@@ -397,7 +397,14 @@ public class SystemMenu {
                     colorPicker.setOnAction(new EventHandler<ActionEvent>() {
                         @Override
                         public void handle(ActionEvent actionEvent) {
+
                             Garu.colour = colorPicker.getValue();
+                            RigidBody tmp = new RigidBody(Garu.getXPoints(), Garu.getYPoints(), Garu.getMass(), Garu.getFixed(),leftPane, Garu.getColour());
+
+
+
+                            environment.rigidBodies.set(Garu.getSerialNum(),tmp);
+
                         }
                     });
 
@@ -406,10 +413,10 @@ public class SystemMenu {
                         @Override
                         public void handle(ActionEvent actionEvent) {
                             // Only half done here
-
-                            if (isDouble(massInput.getText())) Garu.setMass(Double.parseDouble(massInput.getText()));
-                            if (isDouble(xInput.getText()))  Garu.translate(Double.parseDouble(xInput.getText())-Garu.getCenter().getX(),0);
-                            if (isDouble(yInput.getText()))  Garu.translate(Double.parseDouble(yInput.getText())-Garu.getCenter().getY(),0);
+                            runBtn.fire();
+//                            if (isDouble(massInput.getText())) Garu.setMass(Double.parseDouble(massInput.getText()));
+//                            if (isDouble(xInput.getText()))  Garu.translate(Double.parseDouble(xInput.getText())-Garu.getCenter().getX(),0);
+//                            if (isDouble(yInput.getText()))  Garu.translate(Double.parseDouble(yInput.getText())-Garu.getCenter().getY(),0);
 
 
 

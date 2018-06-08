@@ -10,7 +10,9 @@
  */
 
 import javafx.geometry.Point2D;
+import javafx.scene.control.ColorPicker;
 import javafx.scene.layout.Pane;
+import javafx.scene.paint.Color;
 
 
 import java.util.ArrayList;
@@ -86,19 +88,26 @@ public class Environment {
         double[] x9 = {520, 500, 480, 490, 500};
         double[] y9 = {400, 460, 450, 440, 420};
 
-        RigidBody leo = new RigidBody(x, y, 1, false, environmentLayout);
-        RigidBody leoo = new RigidBody(x2, y2, 1, true, environmentLayout);
-        RigidBody leoooooo = new RigidBody(x3, y3, 4, false, environmentLayout);
-        RigidBody leooo = new RigidBody(x4, y4, 1, true, environmentLayout);
-        RigidBody leoooo = new RigidBody(x5, y5, 1, true, environmentLayout);
-        RigidBody leooooo = new RigidBody(x6, y6, 1, true, environmentLayout);
-        RigidBody leooooooooo = new RigidBody(x9, y9, 2, false, environmentLayout);
+        RigidBody leo = new RigidBody(x, y, 1, false, environmentLayout, Color.BLACK);
+        RigidBody leoo = new RigidBody(x2, y2, 1, true, environmentLayout,Color.BLACK);
+        RigidBody leoooooo = new RigidBody(x3, y3, 4, false, environmentLayout,Color.BLACK);
+        RigidBody leooo = new RigidBody(x4, y4, 1, true, environmentLayout,Color.BLACK);
+        RigidBody leoooo = new RigidBody(x5, y5, 1, true, environmentLayout,Color.BLACK);
+        RigidBody leooooo = new RigidBody(x6, y6, 1, true, environmentLayout,Color.BLACK);
+        RigidBody leooooooooo = new RigidBody(x9, y9, 2, false, environmentLayout,Color.BLACK);
+        leo.setSerialNum(rigidBodies.size());
         rigidBodies.add(leo);
+        leoo.setSerialNum(rigidBodies.size());
         rigidBodies.add(leoo);
+        leooo.setSerialNum(rigidBodies.size());
         rigidBodies.add(leooo);
+        leoooo.setSerialNum(rigidBodies.size());
         rigidBodies.add(leoooo);
+        leooooo.setSerialNum(rigidBodies.size());
         rigidBodies.add(leooooo);
+        leoooooo.setSerialNum(rigidBodies.size());
         rigidBodies.add(leoooooo);
+        leooooooooo.setSerialNum(rigidBodies.size());
         rigidBodies.add(leooooooooo);
         circles.add(new Circle(400,500,30, 3, false, environmentLayout));
         /*
@@ -150,7 +159,7 @@ public class Environment {
                     double x1[] = {x,x+45,x+35,x+10};
                     double y1[] = {y,y+10,y+35,y+45};
 
-                    RigidBody rect = new RigidBody(x1,y1,1,false,environmentLayout);
+                    RigidBody rect = new RigidBody(x1,y1,1,false,environmentLayout,Color.BLACK);
                     rigidBodies.add(rect);
 
 
@@ -165,9 +174,9 @@ public class Environment {
         double[] x4 = {1180, 1280, 1280, 1180};
         double[] y4 = {0, 0, 559, 559};
 
-        RigidBody bottomwall = new RigidBody(x2, y2, 1, true, environmentLayout);
-        RigidBody leftwall = new RigidBody(x3, y3, 1, true, environmentLayout);
-        RigidBody rightwall = new RigidBody(x4, y4, 1, true, environmentLayout);
+        RigidBody bottomwall = new RigidBody(x2, y2, 1, true, environmentLayout,Color.BLACK);
+        RigidBody leftwall = new RigidBody(x3, y3, 1, true, environmentLayout,Color.BLACK);
+        RigidBody rightwall = new RigidBody(x4, y4, 1, true, environmentLayout,Color.BLACK);
 
         rigidBodies.add(bottomwall);
         rigidBodies.add(leftwall);

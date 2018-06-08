@@ -46,6 +46,7 @@ public class RigidBody{
 
 	private Point2D tmpVel;
 	private double tmpSpin;
+	private int serialNum;
 
 	protected  Color colour;
 	private Circle circle;
@@ -55,9 +56,9 @@ public class RigidBody{
 	}
 
 
-	public RigidBody(double[] xPoints, double[] yPoints, double mass, boolean fixed, Pane root){
+	public RigidBody(double[] xPoints, double[] yPoints, double mass, boolean fixed, Pane root,Color Colour){
 		this.sides = xPoints.length;
-		this.colour = Color.BLACK;
+		this.colour = Colour;
 		this.area = 0;			//Init area, Moment of inertia and Center
 		this.MOI = 0;
 		double centerX = 0;
@@ -353,10 +354,10 @@ public class RigidBody{
 
 	public RigidBody clone(Pane canvas)
 	{
-		RigidBody temp = new RigidBody(this.xPoints,this.yPoints,this.mass,this.fixed,canvas);
+		RigidBody temp = new RigidBody(this.xPoints,this.yPoints,this.mass,this.fixed,canvas,this.colour);
 		temp.setScale(Math.max(polygon.getBoundsInLocal().getWidth()/100, polygon.getBoundsInLocal().getHeight()/100));
 		temp.translate(100000, 100000);
-		return new RigidBody(temp.xPoints, temp.yPoints, temp.mass, temp.fixed, canvas);
+		return new RigidBody(temp.xPoints, temp.yPoints, temp.mass, temp.fixed, canvas,this.colour);
 
 	}
 
@@ -390,5 +391,20 @@ public class RigidBody{
 	public boolean getFixed(){
 		return fixed;
 	}
+
+	public Color getColour()
+	{
+		return this.colour;
+	}
+
+	public int getSerialNum()
+	{
+		return  this.serialNum;
+	}
+	public void setSerialNum(int n)
+	{
+		this.serialNum = n;
+	}
+
 
 }
