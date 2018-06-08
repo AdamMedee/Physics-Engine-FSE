@@ -302,16 +302,12 @@ public class RigidBody{
 	public void run(double simSpeed, Point2D gravity, ArrayList<RigidBody> rigidBodies){
 		addForce(gravity.multiply(mass));
 		for(RigidBody body : rigidBodies) {
-			if(!body.equals(this)){
-				if(this.getClass() == new RigidBody().getClass() && body.getClass() == new RigidBody().getClass()){
-					isColliding(this, body, simSpeed);
-				}
-				/*
-				else{
-					Circle.isColliding(this, body);
-				}
-				*/
-
+			if(!body.equals(this) && (!this.fixed || !body.fixed)){
+				//CircleBody rigidbody collision checking and executing
+				if(this.polygon.getPoints() == null && body.polygon.getPoints() == null) { isColliding((CircleBody)body, (CircleBody)this, simSpeed); }
+				else if(this.polygon.getPoints() == null){ isColliding((CircleBody)this, body, simSpeed); }
+				else if(body.polygon.getPoints() == null){ isColliding(this, (CircleBody)body, simSpeed); }
+				else{ isColliding(this, body, simSpeed); }
 			}
 		}
 		updateSpin(simSpeed);

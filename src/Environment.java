@@ -101,7 +101,7 @@ public class Environment {
         rigidBodies.add(leooooo);
         rigidBodies.add(leoooooo);
         rigidBodies.add(leooooooooo);
-        //rigidBodies.add(new Circle(400,500,30, 3, false, environmentLayout));
+        //rigidBodies.add(new CircleBody(400,500,30, 3, false, environmentLayout));
         /*
         double[] x10 = {900, 1000, 1000, 900};
         double[] y10 = {500, 500, 550,550};
@@ -148,18 +148,16 @@ public class Environment {
         this.allowRotate = allowRotate;
     }
 
-    public void BackGroundMenu (Pane src)
-    {
+    public void BackGroundMenu (Pane src) {
         environmentLayout = src;
         int counter = 0;
-        for (int x=300; x<1001; x+=50){
-            for(int y=0; y<301; y+=50){
-                if (Math.random()>0.8)
-                {
-                    double x1[] = {x,x+45,x+35,x+10};
-                    double y1[] = {y,y+10,y+35,y+45};
+        for (int x = 200; x < 1000; x += 70) {
+            for (int y = 150; y < 500; y += 70) {
+                if (Math.random() > 0.6) {
+                    double x1[] = {x + 20 * (0.5 - Math.random()), x + 45 + 20 * (0.5 - Math.random()), x + 45 + 20 * (0.5 - Math.random()), x + 20 * (0.5 - Math.random())};
+                    double y1[] = {y + 20 * (0.5 - Math.random()), y + 20 * (0.5 - Math.random()), y + 45 + 20 * (0.5 - Math.random()), y + 45 + 20 * (0.5 - Math.random())};
 
-                    RigidBody rect = new RigidBody(x1,y1,1,false,environmentLayout);
+                    RigidBody rect = new RigidBody(x1, y1, 1, false, environmentLayout);
                     rigidBodies.add(rect);
 
 
@@ -167,20 +165,24 @@ public class Environment {
             }
         }
 
-        double[] x2 = {0, 1350, 1350, 0};
-        double[] y2 = {560, 560, 750, 750};
-        double[] x3 = {0, 100, 100, 0};
-        double[] y3 = {0, 0, 559, 559};
-        double[] x4 = {1180, 1300, 1300, 1180};
-        double[] y4 = {0, 0, 559, 559};
+        double[] x2 = {0, 1280, 1280, 0};
+        double[] y2 = {670, 670, 720, 720};
+        double[] x3 = {0, 50, 50, 0};
+        double[] y3 = {0, 0, 720, 720};
+        double[] x4 = {1230, 1280, 1280, 1230};
+        double[] y4 = {0, 0, 720, 720};
+        double[] x5 = {0, 1280, 1280, 0};
+        double[] y5 = {0, 0, 50, 50};
 
         RigidBody bottomwall = new RigidBody(x2, y2, 1, true, environmentLayout);
         RigidBody leftwall = new RigidBody(x3, y3, 1, true, environmentLayout);
         RigidBody rightwall = new RigidBody(x4, y4, 1, true, environmentLayout);
+        RigidBody topwall = new RigidBody(x5, y5, 1, true, environmentLayout);
 
         rigidBodies.add(bottomwall);
         rigidBodies.add(leftwall);
         rigidBodies.add(rightwall);
+        rigidBodies.add(topwall);
     }
 
     public void creditsBG(Pane src){
