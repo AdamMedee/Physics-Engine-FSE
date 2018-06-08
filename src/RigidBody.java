@@ -18,7 +18,7 @@ import javafx.scene.shape.Polygon;
 import java.util.ArrayList;
 import java.util.Arrays;
 import javafx.geometry.Point2D;
-
+//
 public class RigidBody{
 	private int sides;							//# of sides
 	private Point2D center;						//Coords of center (x,y)
