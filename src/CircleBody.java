@@ -65,33 +65,71 @@ public class CircleBody extends RigidBody{
         this.center = new Point2D(center.getX() + dx, center.getY() + dy);
     }
 
-    public static void isColliding(CircleBody a, CircleBody b, double simSpeed, boolean allowRotate){
-        double dx = a.getCenter().getX() - b.getCenter().getY();
-        double dy = a.getCenter().getY() - b.getCenter().getY();
-        if(dx * dx + dy * dy <= (a.radius + b.radius) * (a.radius + b.radius)){
-            double angle = Math.atan2(b.center.getY() - a.center.getY(), b.center.getX() - a.center.getX());
-            Point2D contact = new Point2D(a.center.getX() + a.radius * Math.cos(angle), a.center.getY() + a.radius * Math.sin(angle));
-            Point2D normalDirection = a.center.subtract(b.center).normalize();
+    public static void isCollidingCC(CircleBody a, CircleBody b, double simSpeed, boolean allowRotate){
+        if(a.polygon.getBoundsInLocal().intersects(b.polygon.getBoundsInLocal())){
+            Point2D contact = null;
+            Point2D normalDirection = new Point2D(0, 0);
             Point2D[] info = {normalDirection, contact};
-            if(contact != null && normalDirection != null){
-                penetrationFix(a, b, normalDirection);
-                resolveCollision(a, b, info, simSpeed, allowRotate);
+            Point2D distance = new Point2D(b.center.getX() - a.center.getX(), b.center.getY() - a.center.getY());
+            if(a.radius + b.radius >= distance.magnitude()){
+                normalDirection = a.center.subtract(b.center).normalize().multiply(distance.magnitude()-b.radius);
+                contact = normalDirection.add(a.center);
+                info[0] = normalDirection; info[1] = contact;
+                if (contact != null) {
+                    resolveCollision(a, b, info, simSpeed, allowRotate);
+                    penetrationFix(a, b, info[0]);
+                }
             }
         }
     }
 
-    public static Point2D isColliding(RigidBody r, CircleBody c){
-        ObservableList<Double> verticies = r.getPolygon().getPoints();
-        double shortestDist = Double.POSITIVE_INFINITY;
-        Point2D contact = null;
-        Point2D normalDirection = null;
-        return null;
+
+    public static void isCollidingRC(RigidBody a, CircleBody b, double simSpeed, boolean allowRotate) {
+        if (a.getPolygon().getBoundsInLocal().intersects(b.polygon.getBoundsInLocal())) {
+
+
+            Point2D[] info = new Point2D[2];
+            double shortestDist = Double.POSITIVE_INFINITY;
+            Point2D contact = null;
+            Point2D contactTmp = null;
+            Point2D sideTmp = null;
+            Point2D perpLine;
+            Point2D normalDirection = new Point2D(0, 0);
+            info[0] = normalDirection;
+            info[1] = contact;
+            for (int j = 0; j < a.getSides() * 2; j += 2) { //Goes through all b polygon vertices
+                ObservableList<Double> aVertices = a.getPolygon().getPoints();
+
+                double x1 = aVertices.get(j);
+                double y1 = aVertices.get(j + 1); //Side being hit
+                double x2 = aVertices.get((j + 2) % (a.getSides() * 2));
+                double y2 = aVertices.get((j + 3) % (a.getSides() * 2));
+                double sideLen = Math.sqrt((y2 - y1) * (y2 - y1) + (x2 - x1) * (x2 - x1));
+                perpLine = new Point2D(b.radius * (y2 - y1) / sideLen, b.radius * (x1 - x2) / sideLen);
+                contactTmp = new Point2D(b.center.getX(), b.center.getY());
+                double x0 = b.center.getX();
+                double y0 = b.center.getY(); //Vertex hitting polygon
+                double tmpDist2 = Math.abs((y2 - y1) * (x0) - (x2 - x1) * (y0) + x2 * y1 - y2 * x1) / sideLen;
+
+
+                if (tmpDist2 <= b.radius) {
+                    normalDirection = new Point2D(tmpDist2 * (y2 - y1) / sideLen, tmpDist2 * (x1 - x2) / sideLen);
+                    contact = contactTmp;
+                }
+            }
+            info[0] = normalDirection;
+            info[1] = contact;
+            if (contact != null) {
+                resolveCollision(a, b, info, simSpeed, allowRotate);
+                penetrationFix(a, b, info[0]);
+            }
+        }
     }
 
 
 
-    public static Point2D isColliding(CircleBody c, RigidBody r){
-        return isColliding(r, c);
+    public static void isCollidingCR(CircleBody a, RigidBody b, double simSpeed, boolean allowRotate){
+        isCollidingRC(b, a, simSpeed, allowRotate);
     }
 
 
@@ -99,7 +137,8 @@ public class CircleBody extends RigidBody{
         return new CircleBody(center.getX(), center.getY(), radius, mass, fixed, src);
     }
 
-    public void update(Point2D newCenter){
+    public void update(double[] XP, double[] YP, Point2D newCenter){
+
         center = newCenter;
         polygon.setCenterX(center.getX() / scale);
         polygon.setCenterY(center.getY() / scale);
@@ -112,7 +151,7 @@ public class CircleBody extends RigidBody{
         tmpVel = new Point2D(0, 0);
         acceleration = new Point2D(0, 0);
         this.setScale(newScale);
-        this.update(startCenter);
+        this.update(null, null, startCenter);
     }
 
 

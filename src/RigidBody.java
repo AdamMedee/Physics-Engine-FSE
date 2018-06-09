@@ -323,9 +323,9 @@ public class RigidBody{
 		for(RigidBody body : rigidBodies) {
 			if(!body.equals(this) && (!this.fixed || !body.fixed)){
 				//CircleBody rigidbody collision checking and executing
-				if(this.polygon.getPoints() == null && body.polygon.getPoints() == null) { isColliding((CircleBody)body, (CircleBody)this, simSpeed, allowRotate); }
-				else if(this.polygon.getPoints() == null){ isColliding((CircleBody)this, body, simSpeed, allowRotate); }
-				else if(body.polygon.getPoints() == null){ isColliding(this, (CircleBody)body, simSpeed, allowRotate); }
+				if(this instanceof CircleBody && body instanceof CircleBody) { CircleBody.isCollidingCC((CircleBody)body, (CircleBody)this, simSpeed, allowRotate); }
+				else if(this instanceof CircleBody){ CircleBody.isCollidingCR((CircleBody)this, body, simSpeed, allowRotate); }
+				else if(body instanceof CircleBody){ CircleBody.isCollidingRC(this, (CircleBody)body, simSpeed,allowRotate); }
 				else{ isColliding(this, body, simSpeed, allowRotate); }
 			}
 		}

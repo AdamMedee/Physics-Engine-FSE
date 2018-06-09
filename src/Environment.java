@@ -96,6 +96,7 @@ public class Environment {
         RigidBody leoooo = new RigidBody(x5, y5, 1, true, environmentLayout,Color.BLACK);
         RigidBody leooooo = new RigidBody(x6, y6, 1, true, environmentLayout,Color.BLACK);
         RigidBody leooooooooo = new RigidBody(x9, y9, 2, false, environmentLayout,Color.BLACK);
+        CircleBody garuu = new CircleBody(50, 250, 20, 1, false, environmentLayout);
         leo.setSerialNum(rigidBodies.size());
         rigidBodies.add(leo);
         leoo.setSerialNum(rigidBodies.size());
@@ -110,6 +111,7 @@ public class Environment {
         rigidBodies.add(leoooooo);
         leooooooooo.setSerialNum(rigidBodies.size());
         rigidBodies.add(leooooooooo);
+        rigidBodies.add(garuu);
         //rigidBodies.add(new CircleBody(400,500,30, 3, false, environmentLayout));
         /*
         double[] x10 = {900, 1000, 1000, 900};

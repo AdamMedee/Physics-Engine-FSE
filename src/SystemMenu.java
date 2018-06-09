@@ -336,6 +336,9 @@ public class SystemMenu {
 
         for (int i = 0;i<environment.rigidBodies.size();i++)
         {
+            if(environment.rigidBodies.get(i) instanceof CircleBody){
+                continue;
+            }
             Pane temp = new Pane();
             temp.setStyle("-fx-border-color: black;-fx-border-insets: 10,10,10,10;");
 
