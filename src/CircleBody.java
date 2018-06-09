@@ -13,6 +13,8 @@ import javafx.collections.ObservableList;
 import javafx.geometry.Point2D;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
+import javafx.scene.shape.Circle;
+
 import java.util.ArrayList;
 
 public class CircleBody extends RigidBody{
@@ -30,7 +32,6 @@ public class CircleBody extends RigidBody{
     private boolean fixed; //True represents infinite mass
 
     private double scale; //Size of shape relative to screen (larger value = smaller shape)
-    private Pane root;
     private boolean hasCollided;
     private Point2D tmpVel;
 
@@ -39,7 +40,9 @@ public class CircleBody extends RigidBody{
     private Point2D startVel;
 
     //The actual circle shape added to layout
+    private Pane root;
     private javafx.scene.shape.Circle polygon;
+    private Circle circle;
 
     public CircleBody(){
         new CircleBody(0,0,0,0,false, new Pane());
@@ -51,27 +54,35 @@ public class CircleBody extends RigidBody{
         this.radius = radius;
         this.mass = mass;
         this.fixed = fixed;
-        density = mass / (Math.PI * radius * radius);
-        forces = new ArrayList<Point2D>();
-        velocity = new Point2D(0,0);
-        acceleration = new Point2D(0,0);
-        restitution = 0.95;
-        scale = 1;
-        startCenter = center;
-        startVel = velocity;
-        hasCollided = false;
-        tmpVel = velocity;
+        this.density = mass / (Math.PI * radius * radius);
+        this.forces = new ArrayList<Point2D>();
+        this.velocity = new Point2D(0,0);
+        this.acceleration = new Point2D(0,0);
+        this.restitution = 0.95;
+        this.scale = 1;
+        this.startCenter = center;
+        this.startVel = velocity;
+        this.hasCollided = false;
+        this.tmpVel = velocity;
         this.root = root;
 
-        polygon = new javafx.scene.shape.Circle(x, y, radius);
-        polygon.setFill(Color.BLACK);
-        root.getChildren().add(polygon);
+        //Adds shape of circle to pane
+        this.polygon = new javafx.scene.shape.Circle(x, y, radius);
+        this.polygon.setFill(Color.BLACK);
+        this.circle = new Circle(x, y, 2);
+        this.circle.setFill(Color.RED);
+        root.getChildren().addAll(polygon, circle);
+
+
     }
 
+    //Moves circle over to new location
     public void translate(double dx, double dy){
         this.center = new Point2D(center.getX() + dx, center.getY() + dy);
+        this.update(null, null, this.center);
     }
 
+    //Checks and computes collision normal between two circlebodies
     public static void isCollidingCC(CircleBody a, CircleBody b, double simSpeed, boolean allowRotate){
         if(a.polygon.getBoundsInLocal().intersects(b.polygon.getBoundsInLocal())){
             Point2D contact = null;
@@ -90,7 +101,7 @@ public class CircleBody extends RigidBody{
         }
     }
 
-
+    //Checks and computes collision normal between a rigidbody and circlebody
     public static void isCollidingRC(RigidBody a, CircleBody b, double simSpeed, boolean allowRotate) {
         if (a.getPolygon().getBoundsInLocal().intersects(b.polygon.getBoundsInLocal())) {
 
@@ -133,26 +144,26 @@ public class CircleBody extends RigidBody{
         }
     }
 
-
-
+    //Checks and computes collision normal between a circlebody and rigidbody
     public static void isCollidingCR(CircleBody a, RigidBody b, double simSpeed, boolean allowRotate){
         isCollidingRC(b, a, simSpeed, allowRotate);
     }
 
-
+    //Makes a deepcopy duplicate of the shape
     public CircleBody copy(Pane src){
         return new CircleBody(center.getX(), center.getY(), radius, mass, fixed, src);
     }
 
+    //Updates where shape is located
     public void update(double[] XP, double[] YP, Point2D newCenter){
-
         center = newCenter;
         polygon.setCenterX(center.getX() / scale);
         polygon.setCenterY(center.getY() / scale);
+        circle.setCenterX(center.getX() / scale);
+        circle.setCenterY(center.getY() / scale);
     }
 
-
-
+    //Puts circle back to starting state at beginning of simulation
     public void reset(double newScale){
         velocity = startVel;
         tmpVel = new Point2D(0, 0);
@@ -172,7 +183,7 @@ public class CircleBody extends RigidBody{
     }
 
 
-
+    //Getters for circlebody
     public Point2D getCenter() {
         return center;
     }
@@ -185,8 +196,9 @@ public class CircleBody extends RigidBody{
         return new Point2D(polygon.getBoundsInLocal().getMinX(), polygon.getBoundsInLocal().getMinY());
     }
 
+    //Removes the shapes of the body from the pane
     public void removeShape(){
-        root.getChildren().remove(polygon);
+        root.getChildren().removeAll(polygon, circle);
     }
 
 

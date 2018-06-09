@@ -343,18 +343,15 @@ public class SystemMenu {
             temp.setStyle("-fx-border-color: black;-fx-border-insets: 10,10,10,10;");
 
             // Garu is only a shallow copy. Changes made to Garu will affect the original object.
-
+            // DeepGaru is a deep copy. Changes made to DeepGaru will not affect the original object
             RigidBody Garu = environment.getRigidBodies().get(i);
-            //RigidBody DeepGaru = new RigidBody(Garu.getXPoints(), Garu.getYPoints(), Garu.getMass(), Garu.getFixed(), temp,Garu.getColour());
-            //DeepGaru.setScale(Math.max(DeepGaru.getPolygon().getBoundsInLocal().getWidth()/100, DeepGaru.getPolygon().getBoundsInLocal().getHeight()/100));
-            //DeepGaru.translate((-DeepGaru.getPolygon().getBoundsInLocal().getWidth()/2-DeepGaru.getPolygon().getBoundsInLocal().getMinX()), ((-DeepGaru.getPolygon().getBoundsInLocal().getHeight()/2-DeepGaru.getPolygon().getBoundsInLocal().getMinY())));
             RigidBody DeepGaru = Garu.copy(temp);
             Point2D size = DeepGaru.getSize();
             Point2D min = DeepGaru.getMin();
             DeepGaru.setScale(Math.max(size.getX()/100, size.getY()/100));
             DeepGaru.translate((-size.getX()/2-min.getX()), ((-size.getY()/2-min.getY())));
             DeepGaru.translate(64*DeepGaru.getScale(), 64*DeepGaru.getScale());
-            // DeepGaru is a deep copy. Changes made to DeepGaru will not affect the original object
+
 
 
             temp.setPrefSize(128,128);
@@ -372,7 +369,7 @@ public class SystemMenu {
             EditBtn.setOnAction(new EventHandler<ActionEvent>() {
                 @Override
                 public void handle(ActionEvent actionEvent) {
-                    runBtn.fire();
+                    if(running) runBtn.fire();
                     Stage newWindow = new Stage();
                     newWindow.setTitle("Edit");
                     GridPane EditPane = new GridPane();
@@ -383,7 +380,8 @@ public class SystemMenu {
                     Label massLabel = new Label("Mass");
                     TextField massInput = new TextField(String.format("%.2f",Garu.getMass()));
 
-                    Label CMLabel = new Label("Center of Mass:");
+                    //Where the shape currently is
+                    Label CMLabel = new Label("Current Center of Mass:");
 
                     Label CMLabelx = new Label("X:");
                     TextField CMxInput = new TextField(String.format("%.2f",Garu.getCenter().getX()));
@@ -391,20 +389,29 @@ public class SystemMenu {
                     Label CMLabely = new Label("Y:");
                     TextField CMyInput = new TextField(String.format("%.2f",Garu.getCenter().getY()));
 
+                    //Where the shape starts
+                    Label SCMLabel = new Label("Starting Center of Mass:");
+
+                    Label SCMLabelx = new Label("X:");
+                    TextField SCMxInput = new TextField(String.format("%.2f",Garu.getStartCenter().getX()));
+
+                    Label SCMLabely = new Label("Y:");
+                    TextField SCMyInput = new TextField(String.format("%.2f",Garu.getStartCenter().getY()));
+
+                    //How bouncy the shape is
+                    Label RestLabel = new Label("Restitution:");
+                    TextField RestInput = new TextField(String.format("%.3f",Garu.getRestitution()));
+
+                    //For editing shape colour
                     ColorPicker colorPicker = new ColorPicker();
                     colorPicker.setValue(Garu.colour);
                     colorPicker.setOnAction(new EventHandler<ActionEvent>() {
                         @Override
                         public void handle(ActionEvent actionEvent) {
-
                             Garu.colour = colorPicker.getValue();
                             Garu.removeShape();
                             RigidBody tmp = new RigidBody(Garu.getXPoints(), Garu.getYPoints(), Garu.getMass(), Garu.getFixed(),leftPane, Garu.getColour());
-
-
-
                             environment.rigidBodies.set(Garu.getSerialNum(),tmp);
-
                         }
                     });
 
@@ -412,12 +419,14 @@ public class SystemMenu {
                     ApplyBtn.setOnAction(new EventHandler<ActionEvent>() {
                         @Override
                         public void handle(ActionEvent actionEvent) {
-                            // Only half done here
-                            runBtn.fire();
-//                            if (isDouble(massInput.getText())) Garu.setMass(Double.parseDouble(massInput.getText()));
-//                            if (isDouble(xInput.getText()))  Garu.translate(Double.parseDouble(xInput.getText())-Garu.getCenter().getX(),0);
-//                            if (isDouble(yInput.getText()))  Garu.translate(Double.parseDouble(yInput.getText())-Garu.getCenter().getY(),0);
-
+                            //Edits mass, current and start position, colour, and restitution
+                            if (isDouble(massInput.getText())) Garu.setMass(Double.parseDouble(massInput.getText()));
+                            if (isDouble(CMxInput.getText()))  Garu.translate(Double.parseDouble(CMxInput.getText())-Garu.getCenter().getX(),0);
+                            if (isDouble(CMyInput.getText()))  Garu.translate(0,Double.parseDouble(CMyInput.getText())-Garu.getCenter().getY());
+                            if (isDouble(SCMxInput.getText())) Garu.setStartCenter(Double.parseDouble(SCMxInput.getText()), Garu.getStartCenter().getY());
+                            if (isDouble(SCMyInput.getText())) Garu.setStartCenter(Garu.getStartCenter().getX(), Double.parseDouble(SCMyInput.getText()));
+                            if (isDouble(RestInput.getText())) Garu.setRestitution(Double.parseDouble(RestInput.getText()));
+                            MassInfo.setText(String.format("Mass: %f",Garu.getMass()));
 
 
 //                            int n = Garu.SerialNumber;
@@ -433,17 +442,28 @@ public class SystemMenu {
                             newWindow.close();
                         }
                     });
+
                     GridPane.setConstraints(massLabel,0,0);
                     GridPane.setConstraints(massInput,1,0);
-                    GridPane.setConstraints(CMLabel,0,1);
-                    GridPane.setConstraints(CMLabelx,0,2);
-                    GridPane.setConstraints(CMxInput,1,2);
-                    GridPane.setConstraints(CMLabely,0,3);
-                    GridPane.setConstraints(CMyInput,1,3);
-                    GridPane.setConstraints(colorPicker,0,4);
-                    GridPane.setConstraints(ApplyBtn,0,5);
+                    GridPane.setConstraints(CMLabel,0,3);
+                    GridPane.setConstraints(CMLabelx,0,4);
+                    GridPane.setConstraints(CMxInput,1,4);
+                    GridPane.setConstraints(CMLabely,0,5);
+                    GridPane.setConstraints(CMyInput,1,5);
 
-                    EditPane.getChildren().addAll(massLabel,massInput,CMLabel,CMLabelx,CMxInput,CMLabely,CMyInput,colorPicker,ApplyBtn);
+                    GridPane.setConstraints(SCMLabel,0,8);
+                    GridPane.setConstraints(SCMLabelx,0,9);
+                    GridPane.setConstraints(SCMxInput,1,9);
+                    GridPane.setConstraints(SCMLabely,0,10);
+                    GridPane.setConstraints(SCMyInput,1,10);
+
+                    GridPane.setConstraints(RestLabel,0,13);
+                    GridPane.setConstraints(RestInput,1,13);
+
+                    GridPane.setConstraints(colorPicker,0,15);
+                    GridPane.setConstraints(ApplyBtn,0,17);
+
+                    EditPane.getChildren().addAll(massLabel,massInput,CMLabel,CMLabelx,CMxInput,CMLabely,CMyInput,colorPicker,ApplyBtn, SCMLabel, SCMLabelx, SCMLabely, SCMxInput, SCMyInput, RestLabel, RestInput);
 
 
                     Scene editScene = new Scene(EditPane,400,720);

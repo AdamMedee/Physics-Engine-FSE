@@ -114,7 +114,7 @@ public class RigidBody{
 		root.getChildren().add(polygon);
 
 		//Creates a center of mass as a circle for the polygon for testing purposes
-		this.circle = new Circle(centerX, centerY, 3);
+		this.circle = new Circle(centerX, centerY, 2);
 		circle.setFill(javafx.scene.paint.Color.RED);
 		root.getChildren().add(circle);
 	}
@@ -373,6 +373,23 @@ public class RigidBody{
 	}
 	public void setMass(double mass){
 		this.mass = mass;
+		setFixed(mass == Double.POSITIVE_INFINITY);
+	}
+
+	public void setFixed(boolean fixed) {
+		this.fixed = fixed;
+		if(fixed) {
+			this.velocity = new Point2D(0, 0);
+			clearForces();
+		}
+	}
+
+	public void setStartCenter(double x, double y) {
+		for(int i = 0; i < sides; i++){
+			startXPoints[i] += x - startCenter.getX();
+			startYPoints[i] += y - startCenter.getY();
+		}
+		startCenter = new Point2D(x, y);
 	}
 
 	public void addForce(Point2D force){
@@ -398,6 +415,10 @@ public class RigidBody{
 		return center;
 	}
 
+	public Point2D getStartCenter(){
+		return startCenter;
+	}
+
 
 	public RigidBody clone(Pane canvas)
 	{
@@ -405,7 +426,10 @@ public class RigidBody{
 		temp.setScale(Math.max(polygon.getBoundsInLocal().getWidth()/100, polygon.getBoundsInLocal().getHeight()/100));
 		temp.translate(100000, 100000);
 		return new RigidBody(temp.xPoints, temp.yPoints, temp.mass, temp.fixed, canvas,this.colour);
+	}
 
+	public double getRestitution(){
+		return restitution;
 	}
 
 	public double getMass()
@@ -455,8 +479,7 @@ public class RigidBody{
 	}
 
 	public void removeShape(){
-		root.getChildren().remove(polygon);
-		root.getChildren().remove(circle);
+		root.getChildren().removeAll(polygon, circle);
 	}
 
 

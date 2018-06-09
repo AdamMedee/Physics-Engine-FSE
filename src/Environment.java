@@ -161,6 +161,7 @@ public class Environment {
 
     public void BackGroundMenu (Pane src) {
         environmentLayout = src;
+        gravity = new Point2D(0, 9.81);
         rigidBodies.clear();
         for (int x = 200; x < 1000; x += 100) {
             for (int y = 150; y < 500; y += 100) {
