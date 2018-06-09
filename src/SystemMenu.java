@@ -345,10 +345,10 @@ public class SystemMenu {
             // Garu is only a shallow copy. Changes made to Garu will affect the original object.
 
             RigidBody Garu = environment.getRigidBodies().get(i);
-            RigidBody DeepGaru = new RigidBody(Garu.getXPoints(), Garu.getYPoints(), Garu.getMass(), Garu.getFixed(), temp,Garu.getColour());
-            DeepGaru.setScale(Math.max(DeepGaru.getPolygon().getBoundsInLocal().getWidth()/100, DeepGaru.getPolygon().getBoundsInLocal().getHeight()/100));
-            DeepGaru.translate((-DeepGaru.getPolygon().getBoundsInLocal().getWidth()/2-DeepGaru.getPolygon().getBoundsInLocal().getMinX()), ((-DeepGaru.getPolygon().getBoundsInLocal().getHeight()/2-DeepGaru.getPolygon().getBoundsInLocal().getMinY())));
-            DeepGaru = Garu.copy(temp);
+            //RigidBody DeepGaru = new RigidBody(Garu.getXPoints(), Garu.getYPoints(), Garu.getMass(), Garu.getFixed(), temp,Garu.getColour());
+            //DeepGaru.setScale(Math.max(DeepGaru.getPolygon().getBoundsInLocal().getWidth()/100, DeepGaru.getPolygon().getBoundsInLocal().getHeight()/100));
+            //DeepGaru.translate((-DeepGaru.getPolygon().getBoundsInLocal().getWidth()/2-DeepGaru.getPolygon().getBoundsInLocal().getMinX()), ((-DeepGaru.getPolygon().getBoundsInLocal().getHeight()/2-DeepGaru.getPolygon().getBoundsInLocal().getMinY())));
+            RigidBody DeepGaru = Garu.copy(temp);
             Point2D size = DeepGaru.getSize();
             Point2D min = DeepGaru.getMin();
             DeepGaru.setScale(Math.max(size.getX()/100, size.getY()/100));
@@ -398,6 +398,7 @@ public class SystemMenu {
                         public void handle(ActionEvent actionEvent) {
 
                             Garu.colour = colorPicker.getValue();
+                            Garu.removeShape();
                             RigidBody tmp = new RigidBody(Garu.getXPoints(), Garu.getYPoints(), Garu.getMass(), Garu.getFixed(),leftPane, Garu.getColour());
 
 

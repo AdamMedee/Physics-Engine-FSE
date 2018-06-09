@@ -50,6 +50,7 @@ public class RigidBody{
 
 	protected  Color colour;
 	private Circle circle;
+	private Pane root;
 
 	public RigidBody(){
 		double[] p = {0};
@@ -99,6 +100,7 @@ public class RigidBody{
 		this.staticFriction = 0.2;
 		this.fixed = fixed;
 		this.scale = 1;
+		this.root = root;
 
 		//Creates polygon shape to add to group
 		this.polygon = new Polygon();
@@ -309,10 +311,12 @@ public class RigidBody{
 					}
 					info[0] = normalDirection; info[1] = contact;
 					if (contact != null) {
-						resolveCollision(a, b, info, simSpeed, allowRotate);
 						penetrationFix(a, b, info[0]);
 					}
 				}
+			}
+			if (contact != null) {
+				resolveCollision(a, b, info, simSpeed, allowRotate);
 			}
 		}
 	}
@@ -444,9 +448,15 @@ public class RigidBody{
 	{
 		return  this.serialNum;
 	}
+
 	public void setSerialNum(int n)
 	{
 		this.serialNum = n;
+	}
+
+	public void removeShape(){
+		root.getChildren().remove(polygon);
+		root.getChildren().remove(circle);
 	}
 
 

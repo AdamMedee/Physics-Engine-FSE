@@ -13,33 +13,39 @@ import javafx.collections.ObservableList;
 import javafx.geometry.Point2D;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
-
 import java.util.ArrayList;
 
 public class CircleBody extends RigidBody{
+    //Describes the shape
     private Point2D center;
     private double radius;
 
-    private ArrayList<Point2D> forces;
+    //Describes the shapes properties
+    private ArrayList<Point2D> forces; //All forces being applied in a certain frame
     private Point2D velocity;
     private Point2D acceleration;
-    private double restitution;
-    private double mass;
+    private double restitution; //Bounciness of object
     private double density;
+    private double mass;
+    private boolean fixed; //True represents infinite mass
 
-    private boolean fixed;
-    private double scale;
-    private Point2D startCenter;
-    private Point2D startVel;
+    private double scale; //Size of shape relative to screen (larger value = smaller shape)
+    private Pane root;
     private boolean hasCollided;
     private Point2D tmpVel;
 
+    //Stats at start of each sim
+    private Point2D startCenter;
+    private Point2D startVel;
+
+    //The actual circle shape added to layout
     private javafx.scene.shape.Circle polygon;
 
     public CircleBody(){
         new CircleBody(0,0,0,0,false, new Pane());
     }
 
+    //Constructor for circlebody
     public CircleBody(double x, double y, double radius, double mass, boolean fixed, Pane root){
         this.center = new Point2D(x, y);
         this.radius = radius;
@@ -55,6 +61,7 @@ public class CircleBody extends RigidBody{
         startVel = velocity;
         hasCollided = false;
         tmpVel = velocity;
+        this.root = root;
 
         polygon = new javafx.scene.shape.Circle(x, y, radius);
         polygon.setFill(Color.BLACK);
@@ -176,6 +183,10 @@ public class CircleBody extends RigidBody{
 
     public Point2D getMin(){
         return new Point2D(polygon.getBoundsInLocal().getMinX(), polygon.getBoundsInLocal().getMinY());
+    }
+
+    public void removeShape(){
+        root.getChildren().remove(polygon);
     }
 
 

@@ -111,7 +111,7 @@ public class Environment {
         rigidBodies.add(leoooooo);
         leooooooooo.setSerialNum(rigidBodies.size());
         rigidBodies.add(leooooooooo);
-        rigidBodies.add(garuu);
+        //rigidBodies.add(garuu);
         //rigidBodies.add(new CircleBody(400,500,30, 3, false, environmentLayout));
         /*
         double[] x10 = {900, 1000, 1000, 900};
