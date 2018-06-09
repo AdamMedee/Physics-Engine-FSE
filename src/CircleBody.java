@@ -65,7 +65,7 @@ public class CircleBody extends RigidBody{
         this.center = new Point2D(center.getX() + dx, center.getY() + dy);
     }
 
-    public static void isColliding(CircleBody a, CircleBody b, double simSpeed){
+    public static void isColliding(CircleBody a, CircleBody b, double simSpeed, boolean allowRotate){
         double dx = a.getCenter().getX() - b.getCenter().getY();
         double dy = a.getCenter().getY() - b.getCenter().getY();
         if(dx * dx + dy * dy <= (a.radius + b.radius) * (a.radius + b.radius)){
@@ -75,7 +75,7 @@ public class CircleBody extends RigidBody{
             Point2D[] info = {normalDirection, contact};
             if(contact != null && normalDirection != null){
                 penetrationFix(a, b, normalDirection);
-                resolveCollision(a, b, info, simSpeed);
+                resolveCollision(a, b, info, simSpeed, allowRotate);
             }
         }
     }

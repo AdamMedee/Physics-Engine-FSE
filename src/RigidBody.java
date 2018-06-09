@@ -180,7 +180,7 @@ public class RigidBody{
 	}
 
 	//Moves the rigid body based on the forces acting on it
-	public void updateVelocity(double timeStep){
+	public void updateVelocity(double timeStep, boolean allowRotate){
 		if(!fixed) {
 			velocity = velocity.add(tmpVel);
 			double netX = 0;
@@ -200,6 +200,24 @@ public class RigidBody{
 			Point2D avgAccel = prevAccel.add(acceleration);
 			avgAccel = new Point2D(avgAccel.getX() / 2, avgAccel.getY() / 2);
 			velocity = velocity.add(new Point2D(avgAccel.getX() * timeStep, avgAccel.getY() * timeStep));
+
+			if(allowRotate){
+				if(spin > 0.0001){
+					spin -= mass*timeStep/1000.0;
+				}
+				else if(spin < -0.0001){
+					spin += mass*timeStep/1000.0;
+				}
+				else{
+					spin = 0;
+				}
+			}
+			else{
+				spin = 0;
+			}
+
+
+
 		}
 	}
 
@@ -220,7 +238,7 @@ public class RigidBody{
 
 	//Updates the states of two rigid bodies colliding at a given point
 	//Will change normal and rotational velocity
-	public static void resolveCollision(RigidBody a, RigidBody b, Point2D[] info, double simSpeed){
+	public static void resolveCollision(RigidBody a, RigidBody b, Point2D[] info, double simSpeed, boolean allowRotate){
 		//Updates velocities of 2 bodies that have collided
 		Point2D normal = info[0];	//Vector of dist from point to side
 		Point2D vertex = info[1];	//Point of collison
@@ -240,7 +258,7 @@ public class RigidBody{
 
 
 		double e = Math.min(a.restitution, b.restitution);	//How sticky the shapes are
-		double rot = 0;// det(relA, normalUnit) * det(relA, normalUnit) / a.MOI + det(relB, normalUnit) * det(relB, normalUnit) / b.MOI;
+		double rot = allowRotate ?  det(relA, normalUnit) * det(relA, normalUnit) / a.MOI + det(relB, normalUnit) * det(relB, normalUnit) / b.MOI : 0;
 		double numerator = -(1 + e) * normalVel;
 		double denom = (1/a.mass + 1/b.mass + rot);
 		double j = numerator/denom;
@@ -251,13 +269,14 @@ public class RigidBody{
 		a.velocity = a.velocity.subtract(impulse.multiply(1 / a.mass));	//The object doing the collision is slowed
 		b.velocity = b.velocity.add(impulse.multiply(1 / b.mass));	    //The object being hit is sped up
 
-		//Causes objects to spin based on their MOI
-		//a.spin += (1/a.MOI) * det(relA, normalUnit) * j;
-		//b.spin -= (1/b.MOI) * det(relB, normalUnit) * j;
+		if(allowRotate) {
+			a.spin += (1 / a.MOI) * det(relA, normalUnit) * j;
+			b.spin -= (1 / b.MOI) * det(relB, normalUnit) * j;
+		}
 	}
 
 	//Gets the normal if two rigidbodies are colliding else null
-	public static void isColliding(RigidBody a, RigidBody b, double simSpeed){
+	public static void isColliding(RigidBody a, RigidBody b, double simSpeed, boolean allowRotate){
 		if(a.polygon.getBoundsInLocal().intersects(b.polygon.getBoundsInLocal())){
 
 			ObservableList<Double> aVertices = a.polygon.getPoints();
@@ -290,7 +309,7 @@ public class RigidBody{
 					}
 					info[0] = normalDirection; info[1] = contact;
 					if (contact != null) {
-						resolveCollision(a, b, info, simSpeed);
+						resolveCollision(a, b, info, simSpeed, allowRotate);
 						penetrationFix(a, b, info[0]);
 					}
 				}
@@ -299,33 +318,41 @@ public class RigidBody{
 	}
 
 	//Runs all the methods on the rigidbody
-	public void run(double simSpeed, Point2D gravity, ArrayList<RigidBody> rigidBodies){
+	public void run(double simSpeed, Point2D gravity, ArrayList<RigidBody> rigidBodies, boolean allowRotate){
 		addForce(gravity.multiply(mass));
 		for(RigidBody body : rigidBodies) {
 			if(!body.equals(this) && (!this.fixed || !body.fixed)){
 				//CircleBody rigidbody collision checking and executing
-				if(this.polygon.getPoints() == null && body.polygon.getPoints() == null) { isColliding((CircleBody)body, (CircleBody)this, simSpeed); }
-				else if(this.polygon.getPoints() == null){ isColliding((CircleBody)this, body, simSpeed); }
-				else if(body.polygon.getPoints() == null){ isColliding(this, (CircleBody)body, simSpeed); }
-				else{ isColliding(this, body, simSpeed); }
+				if(this.polygon.getPoints() == null && body.polygon.getPoints() == null) { isColliding((CircleBody)body, (CircleBody)this, simSpeed, allowRotate); }
+				else if(this.polygon.getPoints() == null){ isColliding((CircleBody)this, body, simSpeed, allowRotate); }
+				else if(body.polygon.getPoints() == null){ isColliding(this, (CircleBody)body, simSpeed, allowRotate); }
+				else{ isColliding(this, body, simSpeed, allowRotate); }
 			}
 		}
 		updateSpin(simSpeed);
-		updateVelocity(simSpeed);
+		updateVelocity(simSpeed, allowRotate);
 		clearForces();
 	}
 
 
 	//Puts rigid body back to starting state
-	public void reset(double newScale){
-		spin = startSpin;
-		velocity = startVel;
-		tmpSpin = 0;
-		tmpVel = new Point2D(0, 0);
-		acceleration = new Point2D(0, 0);
-		angAccel = 0;
-		this.setScale(newScale);
-		this.update(startXPoints, startYPoints, startCenter);
+	public void reset(double newScale, boolean resetPos){
+        this.setScale(newScale);
+	    if(resetPos){
+            spin = startSpin;
+            velocity = startVel;
+            tmpSpin = 0;
+            tmpVel = new Point2D(0, 0);
+            acceleration = new Point2D(0, 0);
+            angAccel = 0;
+            this.update(startXPoints, startYPoints, startCenter);
+        }
+        else{
+            this.update(xPoints, yPoints, center);
+        }
+
+
+
 	}
 
 	public Point2D getSize(){

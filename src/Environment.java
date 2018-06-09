@@ -43,7 +43,7 @@ public class Environment {
     public void run(){
         //Applies all forces
         for(RigidBody rigidBody : rigidBodies){
-            rigidBody.run(simulationSpeed, gravity, rigidBodies);
+            rigidBody.run(simulationSpeed, gravity, rigidBodies, allowRotate);
         }
         removeOffscreen(1080, 720);
     }
@@ -137,7 +137,7 @@ public class Environment {
     }
 
     //Resets all rigid bodies
-    public void reset(){ for(RigidBody body : rigidBodies) body.reset(scale);}
+    public void reset(boolean resetPos){ for(RigidBody body : rigidBodies) body.reset(scale, resetPos);}
 
     public void setGravity(Point2D grav){
         gravity = grav;

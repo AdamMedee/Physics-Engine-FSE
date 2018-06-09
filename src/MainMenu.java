@@ -20,11 +20,14 @@ import javafx.scene.SnapshotParameters;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.Button;
+import javafx.scene.effect.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.WritableImage;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
+import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
+import javafx.scene.text.Text;
 
 import javax.imageio.ImageIO;
 import java.io.File;
@@ -86,30 +89,47 @@ public class MainMenu {
         });
 
         //Canvas and graphics context
+
         Canvas canvas = new Canvas(1280,720);
         GraphicsContext graphics = canvas.getGraphicsContext2D();
+        graphics.drawImage(background, 640 - background.getWidth()/2, 360 - background.getHeight()/2);
 
-        //Title and background
-        Font ourFont = Font.loadFont(getClass().getResourceAsStream("resources/fonts/GiantRobotArmy-Medium.ttf"),72);
-        graphics.setFont(ourFont);
-        graphics.strokeText("L.A.G Physics Engine",350,100);
-        graphics.drawImage(background, 0, 0);
+        Text t = new Text();
 
+        //Create a light source
+        Light.Distant light = new Light.Distant();
+        light.setAzimuth(-135.0);
+        Lighting lighting = new Lighting();
+        lighting.setLight(light);
+        lighting.setSurfaceScale(10.0);
+        lighting.setDiffuseConstant(0.67);
+        lighting.setSpecularConstant(10);
+        lighting.setSpecularExponent(40);
 
-        final WritableImage writableImage = new WritableImage((int) canvas.getWidth(), (int) canvas.getHeight());
-        final WritableImage snapshot = canvas.snapshot(new SnapshotParameters(), writableImage);
-        File file = new File ("Ex1.png");
-        try {
-            ImageIO.write(SwingFXUtils.fromFXImage(snapshot, null), "png", file);
-        }
-        catch (Exception ex)
-        {
+        //Shadow
+        DropShadow dropShadow = new DropShadow();
+        dropShadow.setRadius(5.0);
+        dropShadow.setOffsetX(3.0);
+        dropShadow.setOffsetY(3.0);
+        dropShadow.setColor(Color.color(0.3, 0.3, 0.3));
+        dropShadow.setInput(lighting);
 
-        }
+        Bloom bloom = new Bloom();
+        bloom.setThreshold(0.02);
+        bloom.setInput(dropShadow);
+
+        t.setX(70);
+        t.setY(200);
+        t.setText("L.A.G.'s Physics Engine");
+        t.setFont(Font.loadFont(getClass().getResourceAsStream("resources/fonts/GiantRobotArmy-Medium.ttf"),110));
+        t.setFill(Color.GHOSTWHITE);
+        t.setEffect(dropShadow);
+
 
 
         //Adds all the nodes to the layout
         mainMenuLayout.getChildren().add(canvas);
+        mainMenuLayout.getChildren().add(t);
         mainMenuLayout.getChildren().add(button1);
         mainMenuLayout.getChildren().add(button2);
 

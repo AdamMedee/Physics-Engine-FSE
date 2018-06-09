@@ -153,7 +153,7 @@ public class SystemMenu {
         Label scaleLabel = new Label("Scale:");
         scaleLabel.setPrefWidth(80);
 
-        TextField scaleInput = new TextField();
+        TextField scaleInput = new TextField("1");
         scaleInput.setPrefWidth(100);
 
         GridPane.setConstraints(scaleLabel,0,1);
@@ -167,7 +167,7 @@ public class SystemMenu {
         Label gravityLabel = new Label("Ver. Gravity:");
         gravityLabel.setPrefWidth(80);
 
-        TextField gravityInput = new TextField();
+        TextField gravityInput = new TextField("1");
         gravityInput.setPrefWidth(100);
 
         GridPane.setConstraints(gravityLabel,0,2);
@@ -182,7 +182,7 @@ public class SystemMenu {
         Label sideForceLabel = new Label("Hor. Gravity:");
         sideForceLabel.setPrefWidth(80);
 
-        TextField sideForceInput = new TextField();
+        TextField sideForceInput = new TextField("0");
         sideForceInput.setPrefWidth(100);
 
         GridPane.setConstraints(sideForceLabel,0,3);
@@ -194,7 +194,7 @@ public class SystemMenu {
 
         Label speedLabel = new Label("Simulation Speed:");
 
-        TextField speedInput = new TextField();
+        TextField speedInput = new TextField("0.05");
         speedInput.setPrefWidth(100);
 
         GridPane.setConstraints(speedLabel,0,4);
@@ -259,6 +259,7 @@ public class SystemMenu {
             @Override
             public void handle(ActionEvent actionEvent) {
                 //Takes all the text box input for environment settings and applies them
+
                 if (isDouble(xInput.getText())) OriginX = Double.parseDouble(xInput.getText());
                 if (isDouble(yInput.getText())) OriginY = Double.parseDouble(yInput.getText());
                 if (isDouble(scaleInput.getText())) ScaleVal = Double.parseDouble(scaleInput.getText());
@@ -271,21 +272,28 @@ public class SystemMenu {
                 environment.setSimulationSpeed(speedVal);
                 environment.setScale(ScaleVal);
 
-                environment.reset();
+                environment.reset(true);
             }
         });
 
         //Resets environment to default settings
-        Button clearBtn = new Button("Clear");
+        Button clearBtn = new Button("Apply");
         clearBtn.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent actionEvent) {
-                xInput.setText("0");
-                yInput.setText("0");
-                scaleInput.setText("1");
-                gravityInput.setText("1");
-                sideForceInput.setText("0");
-                speedInput.setText("0.05");
+                if (isDouble(xInput.getText())) OriginX = Double.parseDouble(xInput.getText());
+                if (isDouble(yInput.getText())) OriginY = Double.parseDouble(yInput.getText());
+                if (isDouble(scaleInput.getText())) ScaleVal = Double.parseDouble(scaleInput.getText());
+                if (isDouble(sideForceInput.getText())) sideForceVal = Double.parseDouble(sideForceInput.getText());
+                if (isDouble(gravityInput.getText())) gravityVal = Double.parseDouble(gravityInput.getText());
+                if (isDouble(speedInput.getText())) speedVal = Double.parseDouble(speedInput.getText());
+
+                //Updates environment
+                environment.setGravity(new Point2D(sideForceVal, gravityVal));
+                environment.setSimulationSpeed(speedVal);
+                environment.setScale(ScaleVal == 0 ? Integer.MAX_VALUE : 1/ScaleVal);
+
+                environment.reset(false);
             }
         });
         bottomrow.getChildren().addAll(runBtn,resetBtn,clearBtn);
@@ -293,34 +301,6 @@ public class SystemMenu {
         GridPane.setConstraints(bottomrow,0,6,2,4);
 
         SystemPane.getChildren().add(bottomrow);
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
         leftPane.setPrefSize(900,720);
         leftPane.setMaxWidth(980);
