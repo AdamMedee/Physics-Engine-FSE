@@ -125,8 +125,8 @@ public class RigidBody{
 		return Arrays.toString(xPoints) + " " + Arrays.toString(yPoints) + " " + this.center;
 	}
 
-	public RigidBody copy(Pane src){
-		return new RigidBody(xPoints, yPoints, mass, fixed, src,Color.BLACK);
+	public RigidBody copy(Pane src,Color colour){
+		return new RigidBody(xPoints, yPoints, mass, fixed, src,colour);
 	}
 
 

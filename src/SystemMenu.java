@@ -11,11 +11,13 @@
    	everything
  */
 
+import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.geometry.Point2D;
 import javafx.scene.Group;
+import javafx.scene.Node;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.control.*;
 import javafx.scene.control.Button;
@@ -326,7 +328,7 @@ public class SystemMenu {
 
 
 
-         //--- Iterating through every rigid body
+        //--- Iterating through every rigid body
 
 
 
@@ -408,10 +410,15 @@ public class SystemMenu {
                     colorPicker.setOnAction(new EventHandler<ActionEvent>() {
                         @Override
                         public void handle(ActionEvent actionEvent) {
-                            Garu.colour = colorPicker.getValue();
-                            Garu.removeShape();
-                            RigidBody tmp = new RigidBody(Garu.getXPoints(), Garu.getYPoints(), Garu.getMass(), Garu.getFixed(),leftPane, Garu.getColour());
-                            environment.rigidBodies.set(Garu.getSerialNum(),tmp);
+
+
+
+
+
+
+
+
+
                         }
                     });
 
@@ -419,6 +426,45 @@ public class SystemMenu {
                     ApplyBtn.setOnAction(new EventHandler<ActionEvent>() {
                         @Override
                         public void handle(ActionEvent actionEvent) {
+                            // Only half done here
+                            Garu.colour = colorPicker.getValue();
+                            Garu.removeShape();
+                            RigidBody tmp = new RigidBody(Garu.getXPoints(), Garu.getYPoints(), Garu.getMass(), Garu.getFixed(),leftPane, Garu.getColour());
+
+                            tmp.setSerialNum(Garu.getSerialNum());
+
+                            environment.rigidBodies.set(Garu.getSerialNum(),tmp);
+
+                            //---- Updating colour in the selection menu for objects
+                            Pane newPane = new Pane();
+                            newPane.setStyle("-fx-border-color: black;-fx-border-insets: 10,10,10,10;");
+                            newPane.setPrefSize(128,128);
+
+
+                            RigidBody Deeptmp = tmp.copy(newPane,tmp.colour);
+                            Point2D size0 = Deeptmp.getSize();
+                            Point2D min0 = Deeptmp.getMin();
+                            Deeptmp.setScale(Math.max(size0.getX()/100, size0.getY()/100));
+                            Deeptmp.translate((-size0.getX()/2-min0.getX()), ((-size0.getY()/2-min0.getY())));
+                            Deeptmp.translate(64*Deeptmp.getScale(), 64*Deeptmp.getScale());
+
+
+                            GridPane.setConstraints(newPane,0,tmp.getSerialNum()*4,4,4);
+
+
+
+                            objectPane.getChildren().remove(getNodeByRowColumnIndex(tmp.getSerialNum()*4,0,objectPane));
+
+                            objectPane.getChildren().add(newPane);
+
+                            System.out.println(tmp.getSerialNum());
+                            System.out.println(tmp.getColour());
+                            runBtn.fire();
+
+//                            if (isDouble(massInput.getText())) Garu.setMass(Double.parseDouble(massInput.getText()));
+//                            if (isDouble(xInput.getText()))  Garu.translate(Double.parseDouble(xInput.getText())-Garu.getCenter().getX(),0);
+//                            if (isDouble(yInput.getText()))  Garu.translate(Double.parseDouble(yInput.getText())-Garu.getCenter().getY(),0);
+
                             //Edits mass, current and start position, colour, and restitution
                             if (isDouble(massInput.getText())) Garu.setMass(Double.parseDouble(massInput.getText()));
                             if (isDouble(CMxInput.getText()))  Garu.translate(Double.parseDouble(CMxInput.getText())-Garu.getCenter().getX(),0);
@@ -540,6 +586,20 @@ public class SystemMenu {
         return newScene;
     }
 
+
+    public static Node getNodeByRowColumnIndex (final int row, final int column, GridPane gridPane) {
+        Node result = null;
+        ObservableList<Node> childrens = gridPane.getChildren();
+
+        for (Node node : childrens) {
+            if(gridPane.getRowIndex(node) == row && gridPane.getColumnIndex(node) == column) {
+                result = node;
+                break;
+            }
+        }
+
+        return result;
+    }
 
     //Displayes menu to the screen
     public void update(){
