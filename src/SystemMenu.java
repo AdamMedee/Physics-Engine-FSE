@@ -427,17 +427,23 @@ public class SystemMenu {
                                         selectionPane.getChildren().remove(lines.get(lines.size()-1));
                                         lines.remove(lines.size()-1);
 
-                                        Line tmpline = new Line(prevX.get(n-1),prevY.get(n-1),prevX.get(0),prevY.get(0));
-                                        lines.add(tmpline);
-                                        selectionPane.getChildren().add(tmpline);
+
                                     }
 
                                     Line line = new Line(prevX.get(n-2),prevY.get(n-2),prevX.get(n-1),prevY.get(n-1));
                                     lines.add(line);
                                     selectionPane.getChildren().add(line);
+                                    // ---- Order matters if you're wondering why I split the two if statements apart
+                                    if (n>3)
+                                    {
+                                        Line tmpline = new Line(prevX.get(n-1),prevY.get(n-1),prevX.get(0),prevY.get(0));
+                                        lines.add(tmpline);
+                                        selectionPane.getChildren().add(tmpline);
+                                    }
+
                                     if (n==3)
                                     {
-                                        Line tmpline = new Line(prevX.get(0),prevY.get(0),prevX.get(n-1),prevY.get(n-1));
+                                        Line tmpline = new Line(prevX.get(n-1),prevY.get(n-1),prevX.get(0),prevY.get(0));
                                         lines.add(tmpline);
                                         selectionPane.getChildren().add(tmpline);
 
