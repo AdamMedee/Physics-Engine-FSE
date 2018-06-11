@@ -16,6 +16,7 @@ import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.geometry.Point2D;
+import javafx.scene.Cursor;
 import javafx.scene.Group;
 import javafx.scene.Node;
 import javafx.scene.canvas.Canvas;
@@ -24,16 +25,22 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.image.WritableImage;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
+import javafx.scene.shape.Circle;
+import javafx.scene.shape.Line;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.Scene;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.ScrollPane.ScrollBarPolicy;
 import javafx.stage.Stage;
+
+import javax.xml.soap.Text;
+import java.util.ArrayList;
 
 
 public class SystemMenu {
@@ -336,6 +343,124 @@ public class SystemMenu {
         // Buttons will be affected by fixed object. Only the bottom few would right now.
         // Uncomment the for loop on top and the comment out the for loop at the bottom to test the object customization page
 
+        // --- Create new object
+        Menu createObject = new Menu("New");
+        MenuItem newRigidBody = new MenuItem("Rigid Body");
+        newRigidBody.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent actionEvent) {
+                Stage newObjectWindow = new Stage();
+                newObjectWindow.setTitle("Create a New Object");
+
+                GridPane createPane = new GridPane();
+                createPane.setPadding(new Insets(10,10,10,10));
+
+                Pane selectionPane = new Pane();
+                selectionPane.setStyle("-fx-border-color: black;-fx-border-insets: 10,10,10,10;");
+                selectionPane.setPrefSize(400,400);
+
+
+                ArrayList<Double> x = new ArrayList<Double>();
+                ArrayList<Double> y = new ArrayList<Double>();
+
+                ArrayList<Double> prevX = new ArrayList<Double>();
+                ArrayList<Double> prevY = new ArrayList<Double>();
+                //---------------Information-------------
+                Label currentPoint = new Label("Current Point");
+                Label xLabel = new Label("X:");
+
+                TextField xInput = new TextField();
+                Label yLabel = new Label("Y:");
+                TextField yInput = new TextField();
+
+
+                //---------------------------------
+
+                Scene createScene = new Scene(createPane,400,720);
+
+                selectionPane.setOnMouseEntered(new EventHandler<MouseEvent>() {
+                    @Override
+                    public void handle(MouseEvent mouseEvent) {
+                        createScene.setCursor(Cursor.CROSSHAIR);
+
+                        selectionPane.setOnMouseClicked(new EventHandler<MouseEvent>() {
+                            @Override
+                            public void handle(MouseEvent mouseEvent) {
+                                Double oldX = mouseEvent.getX();
+                                Double oldY = mouseEvent.getY();
+
+                                prevX.add(oldX);
+                                prevY.add(oldY);
+
+                                Double newX = oldX*2.45;
+                                Double newY = oldY*1.8;
+
+                                x.add(newX);
+                                y.add(newY);
+
+
+                                xInput.setText(String.format("%.2f",newX));
+                                yInput.setText(String.format("%.2f",newY));
+
+                                Circle tmpPoint = new Circle(1,Color.BLACK);
+                                tmpPoint.setLayoutX(oldX);
+                                tmpPoint.setLayoutY(oldY);
+
+                                int n = x.size();
+                                if (n>=2)
+                                {
+                                    Line line = new Line(prevX.get(n-2),prevY.get(n-2),prevX.get(n-1),prevY.get(n-1));
+                                    selectionPane.getChildren().add(line);
+                                }
+
+                                selectionPane.getChildren().add(tmpPoint);
+
+
+
+                            }
+                        });
+                    }
+                });
+
+                selectionPane.setOnMouseExited(new EventHandler<MouseEvent>() {
+                    @Override
+                    public void handle(MouseEvent mouseEvent) {
+                        createScene.setCursor(Cursor.DEFAULT);
+                    }
+                });
+
+                GridPane.setConstraints(selectionPane,0,0,10,10);
+                GridPane.setConstraints(currentPoint,0,10);
+                GridPane.setConstraints(xLabel,0,12);
+                GridPane.setConstraints(xInput,2,12);
+                GridPane.setConstraints(yLabel,0,14);
+                GridPane.setConstraints(yInput,2,14);
+
+
+                createPane.getChildren().addAll(selectionPane,currentPoint,xLabel,xInput,yLabel,yInput);
+
+                newObjectWindow.setScene(createScene);
+
+                newObjectWindow.show();
+
+            }
+        });
+        MenuItem newCircle = new MenuItem("Circle");
+        newCircle.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent actionEvent) {
+
+            }
+        });
+        createObject.getItems().addAll(newRigidBody,newCircle);
+
+        MenuBar menubar = new MenuBar();
+        menubar.getMenus().add(createObject);
+
+        GridPane.setConstraints(menubar,0,0);
+
+        objectPane.getChildren().add(menubar);
+
         for (int i = 0;i<environment.rigidBodies.size();i++)
         {
             if(environment.rigidBodies.get(i) instanceof CircleBody){
@@ -347,7 +472,7 @@ public class SystemMenu {
             // Garu is only a shallow copy. Changes made to Garu will affect the original object.
             // DeepGaru is a deep copy. Changes made to DeepGaru will not affect the original object
             RigidBody Garu = environment.getRigidBodies().get(i);
-            RigidBody DeepGaru = Garu.copy(temp);
+            RigidBody DeepGaru = Garu.copy(temp,Garu.getColour());
             Point2D size = DeepGaru.getSize();
             Point2D min = DeepGaru.getMin();
             DeepGaru.setScale(Math.max(size.getX()/100, size.getY()/100));
@@ -361,7 +486,7 @@ public class SystemMenu {
 
 
 
-            GridPane.setConstraints(temp,0,i*4,4,4);
+            GridPane.setConstraints(temp,0,i*4+1,4,4);
             Label MassInfo = new Label(String.format("Mass: %f",Garu.getMass()));
             Label SidesInfo = new Label(String.format("Number of sides: %d",Garu.getSides()));
             Label CMInfo = new Label(String.format("X: %.2f\nY: %.2f",Garu.getCenter().getX(),Garu.getCenter().getY()));
@@ -410,15 +535,6 @@ public class SystemMenu {
                     colorPicker.setOnAction(new EventHandler<ActionEvent>() {
                         @Override
                         public void handle(ActionEvent actionEvent) {
-
-
-
-
-
-
-
-
-
                         }
                     });
 
@@ -518,16 +634,12 @@ public class SystemMenu {
                     newWindow.show();
                 }
             });
-            GridPane.setConstraints(MassInfo,4,i*4);
-            GridPane.setConstraints(SidesInfo,4,i*4+1);
-            GridPane.setConstraints(CMInfo,4,i*4+2);
-            GridPane.setConstraints(EditBtn,4,i*4+3);
+            GridPane.setConstraints(MassInfo,4,i*4+1);
+            GridPane.setConstraints(SidesInfo,4,i*4+2);
+            GridPane.setConstraints(CMInfo,4,i*4+3);
+            GridPane.setConstraints(EditBtn,4,i*4+4);
 
             objectPane.getChildren().addAll(temp,MassInfo,SidesInfo,CMInfo,EditBtn);
-
-
-
-
         }
 
 
@@ -540,8 +652,6 @@ public class SystemMenu {
         SystemLayout.setLeft(leftPane);
 
 
-
-        System.out.println(SystemLayout.leftProperty());
 
 
 
