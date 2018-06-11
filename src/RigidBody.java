@@ -188,8 +188,8 @@ public class RigidBody{
 			double netY = 0;
 			Point2D prevAccel = acceleration;
 			//Update position based previous frame's forces
-			this.translate(velocity.getX() * timeStep + (0.5 * prevAccel.getX() * timeStep * timeStep), velocity.getY() * timeStep + (0.5 * prevAccel.getY() * timeStep * timeStep));
-
+			//this.translate(velocity.getX() * timeStep + (0.5 * prevAccel.getX() * timeStep * timeStep), velocity.getY() * timeStep + (0.5 * prevAccel.getY() * timeStep * timeStep));
+			this.translate(velocity.getX() * timeStep, velocity.getY() * timeStep);
 			//Calculates net force of current frame
 			for (Point2D f : forces) {
 				netX += f.getX();
@@ -199,9 +199,12 @@ public class RigidBody{
 			netY /= mass;
 			acceleration = new Point2D(netX, netY);
 			Point2D avgAccel = prevAccel.add(acceleration);
-			avgAccel = new Point2D(avgAccel.getX() / 2, avgAccel.getY() / 2);
-			velocity = velocity.add(new Point2D(avgAccel.getX() * timeStep, avgAccel.getY() * timeStep));
 
+			avgAccel = new Point2D(avgAccel.getX() / 2, avgAccel.getY() / 2);
+
+			//System.out.println(avgAccel.multiply(timeStep));
+			velocity = velocity.add(avgAccel);
+			//System.out.println(avgAccel);
 			if(allowRotate){
 				if(spin > 0.00001){
 					spin -= mass*timeStep/1000.0;
@@ -322,7 +325,7 @@ public class RigidBody{
 
 	//Runs all the methods on the rigidbody
 	public void run(double simSpeed, Point2D gravity, ArrayList<RigidBody> rigidBodies, boolean allowRotate){
-		addForce(gravity.multiply(mass));
+		addForce(gravity.multiply(mass).multiply(simSpeed));
 		for(RigidBody body : rigidBodies) {
 			if(!body.equals(this) && (!this.fixed || !body.fixed)){
 				//CircleBody rigidbody collision checking and executing

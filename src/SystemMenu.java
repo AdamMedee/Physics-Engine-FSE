@@ -26,10 +26,7 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.image.WritableImage;
 import javafx.scene.input.MouseEvent;
-import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.GridPane;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.Pane;
+import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.Line;
@@ -71,6 +68,7 @@ public class SystemMenu {
     //------
     //Scroll Pane----------
     ScrollPane objectsUI =  new ScrollPane();
+    ScrollPane systemUI = new ScrollPane();
 
     private String newScene;
 
@@ -99,7 +97,6 @@ public class SystemMenu {
         //SystemPane.setPrefSize();
 
         Tab SystemTab = new Tab();
-
         SystemTab.setText("System");
         SystemTab.setStyle("-fx-pref-width: 125");
 
@@ -108,7 +105,8 @@ public class SystemMenu {
         ObjectTab.setText("Objects");
         ObjectTab.setStyle("-fx-pref-width: 125");
 
-        tabs.getTabs().addAll(SystemTab,ObjectTab);
+        tabs.getTabs().addAll(SystemTab, ObjectTab);
+
 
         // ---------SystemPane Initialization
         SystemPane.setPadding(new Insets(10, 10, 10, 10));
@@ -121,7 +119,6 @@ public class SystemMenu {
         HBox OriginBox = new HBox();
 
         Label orgLabel = new Label("Origin");
-
         orgLabel.setPrefWidth(100);
         //orgLabel.setMaxWidth(60);
 
@@ -153,6 +150,7 @@ public class SystemMenu {
         SystemPane.getChildren().add(OriginBox);
 
         SystemTab.setContent(SystemPane);
+
 
 
 
@@ -213,7 +211,7 @@ public class SystemMenu {
 
         // -------------------------------
         Label Disclaimer1 = new Label("                               *Lower = More Accurate");
-        Disclaimer1.setPrefWidth(300);
+        Disclaimer1.setPrefWidth(160);
         Disclaimer1.setStyle("-fx-font-size: 10;");
 
         GridPane.setConstraints(Disclaimer1,0,5,2,1);
@@ -311,6 +309,7 @@ public class SystemMenu {
 
         SystemPane.getChildren().add(bottomrow);
 
+
         leftPane.setPrefSize(900,720);
         leftPane.setMaxWidth(980);
 
@@ -326,6 +325,8 @@ public class SystemMenu {
         //ObjectUI Initialization
         objectsUI.setVbarPolicy(ScrollBarPolicy.ALWAYS);
         objectsUI.setHbarPolicy(ScrollBarPolicy.AS_NEEDED);
+        systemUI.setVbarPolicy(ScrollBarPolicy.AS_NEEDED);
+        systemUI.setHbarPolicy(ScrollBarPolicy.AS_NEEDED);
 
         GridPane objectPane = new GridPane();
         objectPane.setPadding(new Insets(10,10,10,10));
@@ -518,6 +519,7 @@ public class SystemMenu {
 
         objectPane.getChildren().add(menubar);
 
+
         for (int i = 0;i<environment.rigidBodies.size();i++)
         {
             if(environment.rigidBodies.get(i) instanceof CircleBody){
@@ -602,7 +604,6 @@ public class SystemMenu {
                         @Override
                         public void handle(ActionEvent actionEvent) {
                             //Edits mass, current and start position, colour, and restitution
-                            Garu.removeShape();
                             RigidBody tmp = new RigidBody(Garu.getXPoints(), Garu.getYPoints(), Garu.getMass(), Garu.getFixed(),leftPane, Garu.getColour());
 
                             if (isDouble(massInput.getText())) tmp.setMass(Double.parseDouble(massInput.getText()));
@@ -611,7 +612,8 @@ public class SystemMenu {
                             if (isDouble(SCMxInput.getText())) tmp.setStartCenter(Double.parseDouble(SCMxInput.getText()), tmp.getStartCenter().getY());
                             if (isDouble(SCMyInput.getText())) tmp.setStartCenter(tmp.getStartCenter().getX(), Double.parseDouble(SCMyInput.getText()));
                             if (isDouble(RestInput.getText())) tmp.setRestitution(Double.parseDouble(RestInput.getText()));
-                            tmp.setScale(environment.scale);
+                            //tmp.setScale(environment.scale);
+                            Garu.removeShape();
                             environment.rigidBodies.set(Garu.getSerialNum(),tmp);
 
                             MassInfo.setText(String.format("Mass: %f",tmp.getMass()));
@@ -661,8 +663,10 @@ public class SystemMenu {
 
 
         objectsUI.setContent(objectPane);
+        systemUI.setContent(SystemPane);
 
         ObjectTab.setContent(objectsUI);
+        SystemTab.setContent(systemUI);
 
         SystemLayout.setLeft(leftPane);
 
