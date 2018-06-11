@@ -22,7 +22,9 @@ import javafx.scene.control.Button;
 import javafx.scene.image.Image;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.Pane;
+import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
+import javafx.scene.text.Text;
 import javafx.stage.Stage;
 import java.util.ArrayList;
 
@@ -46,21 +48,39 @@ public class CreditsMenu {
         bgSim = new Pane();
         this.startSim();
 
-        Canvas canvas = new Canvas(1280, 720);
-        GraphicsContext g = canvas.getGraphicsContext2D();
-        Font txtFont = Font.loadFont(getClass().getResourceAsStream("resources/fonts/modern.ttf"),20);
-        g.setFont(txtFont);
 
-        g.strokeText("Thanks to ma boi Green for the math", 600, 40);
-        g.strokeText("Adam, Gary, Leo ", 620, 100);
-        //g.drawImage(background, 150, 50);
-        canvas.toBack();
-        creditsLayout.getChildren().add(canvas);
+        Text creditsTitle = new Text("Thank you for using this semi-functional Physics Engine!");
+        creditsTitle.setX(350); creditsTitle.setY(300);
+        creditsTitle.setFont(Font.loadFont(getClass().getResourceAsStream("resources/fonts/GiantRobotArmy-Medium.ttf"),15));
+        creditsTitle.setFill(Color.RED);
+        Text contributors = new Text("Created by: Leo Chen, Adam Mehdi, and Gary Sun");
+        contributors.setX(350);  contributors.setY(340);
+        contributors.setFont(Font.loadFont(getClass().getResourceAsStream("resources/fonts/GiantRobotArmy-Medium.ttf"),15));
+        contributors.setFill(Color.RED);
+        Text description1 = new Text("This is an attempt to simulate the laws that govern the universe.");
+        description1.setX(350); description1.setY(380);
+        description1.setFont(Font.loadFont(getClass().getResourceAsStream("resources/fonts/GiantRobotArmy-Medium.ttf"),15));
+        description1.setFill(Color.RED);
+
+        int a = 0;
+        int b = 0;
+
+        Text description2 = new Text("It's so accurate that we even incorporated quantum tunneling :D");
+        description2.setX(350); description2.setY(420);
+        description2.setFont(Font.loadFont(getClass().getResourceAsStream("resources/fonts/GiantRobotArmy-Medium.ttf"),15));
+        description2.setFill(Color.RED);
+        Text description3 = new Text("Also a thanks to dead mathmetician George Green for supplying us");
+        description3.setX(350); description3.setY(460);
+        description3.setFont(Font.loadFont(getClass().getResourceAsStream("resources/fonts/GiantRobotArmy-Medium.ttf"),15));
+        description3.setFill(Color.RED);
+        Text description4 = new Text("with more than half of the math we used <3");
+        description4.setX(350); description4.setY(500);
+        description4.setFont(Font.loadFont(getClass().getResourceAsStream("resources/fonts/GiantRobotArmy-Medium.ttf"),15));
+        description4.setFill(Color.RED);
+
 
         back = new Button("Back");
-        back.setLayoutX(20);
-        back.setLayoutY(20);
-
+        back.setLayoutX(20); back.setLayoutY(20);
         back.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
@@ -71,7 +91,7 @@ public class CreditsMenu {
         });
 
         creditsLayout.getStylesheets().add("resources/Garu.css");
-        creditsLayout.getChildren().add(back);
+        creditsLayout.getChildren().addAll(back, creditsTitle, description1, description2, description3, description4, contributors);
     }
 
     public void startSim(){

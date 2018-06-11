@@ -52,9 +52,8 @@ public class RigidBody{
 	private Circle circle;
 	private Pane root;
 
-	public RigidBody(){
-		double[] p = {0};
-		new RigidBody(p, p, 0, false, new Pane(),Color.BLACK);
+	public RigidBody(double mass, boolean fixed, Pane root, Color Colour){
+		this.mass = mass;
 	}
 
 
@@ -204,10 +203,10 @@ public class RigidBody{
 			velocity = velocity.add(new Point2D(avgAccel.getX() * timeStep, avgAccel.getY() * timeStep));
 
 			if(allowRotate){
-				if(spin > 0.0001){
+				if(spin > 0.00001){
 					spin -= mass*timeStep/1000.0;
 				}
-				else if(spin < -0.0001){
+				else if(spin < -0.00001){
 					spin += mass*timeStep/1000.0;
 				}
 				else{
@@ -354,9 +353,6 @@ public class RigidBody{
         else{
             this.update(xPoints, yPoints, center);
         }
-
-
-
 	}
 
 	public Point2D getSize(){
@@ -405,6 +401,7 @@ public class RigidBody{
 
 	public void setScale(double newScale) {
 		scale = newScale;
+		update(xPoints, yPoints, center);
 	}
 
 	public static double det(Point2D a, Point2D b){
@@ -441,11 +438,7 @@ public class RigidBody{
 		return this.polygon;
 	}
 
-    public int getSides()
-    {
-        return this.sides;
-
-    }
+    public int getSides() { return this.sides; }
 
     public double getScale(){
     	return this.scale;

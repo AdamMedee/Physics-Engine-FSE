@@ -96,7 +96,7 @@ public class Environment {
         RigidBody leoooo = new RigidBody(x5, y5, 1, true, environmentLayout,Color.BLACK);
         RigidBody leooooo = new RigidBody(x6, y6, 1, true, environmentLayout,Color.BLACK);
         RigidBody leooooooooo = new RigidBody(x9, y9, 2, false, environmentLayout,Color.BLACK);
-        CircleBody garuu = new CircleBody(50, 250, 20, 1, false, environmentLayout);
+        //CircleBody garuu = new CircleBody(50, 250, 20, 1, false, environmentLayout, Color.BLACK);
         leo.setSerialNum(rigidBodies.size());
         rigidBodies.add(leo);
         leoo.setSerialNum(rigidBodies.size());
@@ -171,8 +171,45 @@ public class Environment {
 
                     RigidBody rect = new RigidBody(x1, y1, 1, false, environmentLayout,Color.BLACK);
                     rigidBodies.add(rect);
+                }
+            }
+        }
 
+        double[] x2 = {0, 1280, 1280, 0};       double[] y2 = {670, 670, 720, 720};
+        double[] x3 = {0, 50, 50, 0};           double[] y3 = {0, 0, 720, 720};
+        double[] x4 = {1230, 1280, 1280, 1230}; double[] y4 = {0, 0, 720, 720};
+        double[] x5 = {0, 1280, 1280, 0};       double[] y5 = {0, 0, 50, 50};
+        double[] x6 = {541, 739, 739, 541};     double[] y6 = {301, 301, 399, 399};
+        double[] x7 = {561, 719, 719, 561};     double[] y7 = {441, 441, 519, 519};
 
+        RigidBody bottomwall = new RigidBody(x2, y2, 1, true, environmentLayout,Color.BLACK);
+        RigidBody leftwall = new RigidBody(x3, y3, 1, true, environmentLayout,Color.BLACK);
+        RigidBody rightwall = new RigidBody(x4, y4, 1, true, environmentLayout,Color.BLACK);
+        RigidBody topwall = new RigidBody(x5, y5, 1, true, environmentLayout,Color.BLACK);
+        RigidBody buttonStart = new RigidBody(x6, y6, 1, true, environmentLayout, Color.BLACK);
+        RigidBody buttonCredits = new RigidBody(x7, y7, 1, true, environmentLayout, Color.BLACK);
+
+        rigidBodies.add(bottomwall);
+        rigidBodies.add(leftwall);
+        rigidBodies.add(rightwall);
+        rigidBodies.add(topwall);
+        rigidBodies.add(buttonStart);
+        rigidBodies.add(buttonCredits);
+    }
+
+    //Creates the environment background for the credits
+    public void creditsBG(Pane src){
+        environmentLayout = src;
+        gravity = new Point2D(0, 9.81);
+        rigidBodies.clear();
+        for (int x = 200; x < 1000; x += 100) {
+            for (int y = 150; y < 500; y += 100) {
+                if (Math.random() > 0.6) {
+                    double x1[] = {x + 20 * (0.5 - Math.random()), x + 45 + 20 * (0.5 - Math.random()), x + 45 + 20 * (0.5 - Math.random()), x + 20 * (0.5 - Math.random())};
+                    double y1[] = {y + 20 * (0.5 - Math.random()), y + 20 * (0.5 - Math.random()), y + 45 + 20 * (0.5 - Math.random()), y + 45 + 20 * (0.5 - Math.random())};
+
+                    RigidBody rect = new RigidBody(x1, y1, 1, false, environmentLayout,Color.BLACK);
+                    rigidBodies.add(rect);
                 }
             }
         }
@@ -185,47 +222,19 @@ public class Environment {
         double[] y4 = {0, 0, 720, 720};
         double[] x5 = {0, 1280, 1280, 0};
         double[] y5 = {0, 0, 50, 50};
+        double[] x6 = {340, 940, 940, 340};
+        double[] y6 = {210, 210, 510, 510};
 
         RigidBody bottomwall = new RigidBody(x2, y2, 1, true, environmentLayout,Color.BLACK);
         RigidBody leftwall = new RigidBody(x3, y3, 1, true, environmentLayout,Color.BLACK);
         RigidBody rightwall = new RigidBody(x4, y4, 1, true, environmentLayout,Color.BLACK);
         RigidBody topwall = new RigidBody(x5, y5, 1, true, environmentLayout,Color.BLACK);
+        RigidBody middle = new RigidBody(x6, y6, 1, true, environmentLayout, Color.BLACK);
 
         rigidBodies.add(bottomwall);
         rigidBodies.add(leftwall);
         rigidBodies.add(rightwall);
         rigidBodies.add(topwall);
-    }
-
-    public void creditsBG(Pane src){
-        environmentLayout = src;
-        rigidBodies.clear();
-        for (int x=10; x<1001; x+=50){
-            for(int y=0; y<501; y+=50){
-                if (Math.random()>0.9)
-                {
-                    double x1[] = {x-12,x+45,x+33,x+18, x+28};
-                    double y1[] = {y-7,y+12,y+29,y+55, y+30};
-
-                    RigidBody rect = new RigidBody(x1,y1,1,false,environmentLayout,Color.BLACK);
-                    rigidBodies.add(rect);
-                }
-            }
-        }
-
-        double[] x2 = {0, 1350, 1350, 0};
-        double[] y2 = {560, 560, 750, 750};
-        double[] x3 = {0, 100, 100, 0};
-        double[] y3 = {0, 0, 559, 559};
-        double[] x4 = {1180, 1300, 1300, 1180};
-        double[] y4 = {0, 0, 559, 559};
-
-        RigidBody bottomwall = new RigidBody(x2, y2, 1, true, environmentLayout,Color.BLACK);
-        RigidBody leftwall = new RigidBody(x3, y3, 1, true, environmentLayout,Color.BLACK);
-        RigidBody rightwall = new RigidBody(x4, y4, 1, true, environmentLayout,Color.BLACK);
-
-        rigidBodies.add(bottomwall);
-        rigidBodies.add(leftwall);
-        rigidBodies.add(rightwall);
+        rigidBodies.add(middle);
     }
 }

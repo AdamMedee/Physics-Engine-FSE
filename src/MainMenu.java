@@ -23,6 +23,8 @@ import javafx.scene.control.Button;
 import javafx.scene.effect.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.WritableImage;
+import javafx.scene.layout.Background;
+import javafx.scene.layout.BackgroundFill;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
@@ -60,14 +62,17 @@ public class MainMenu {
 
 
         //Making and placing buttons
-        button1 = new Button("Demo");
-        button1.setLayoutX(640);
-        button1.setLayoutY(360);
+        button1 = new Button("START");
+        button1.setFont(Font.loadFont(getClass().getResourceAsStream("resources/fonts/GiantRobotArmy-Medium.ttf"),40));
+        button1.setMinSize(200, 100);  button1.setLayoutX(540); button1.setLayoutY(300);
+
+        //Making and placing buttons
+        button2 = new Button("CREDITS");
+        button2.setFont(Font.loadFont(getClass().getResourceAsStream("resources/fonts/GiantRobotArmy-Medium.ttf"),30));
+        button2.setMinSize(160, 80);  button2.setLayoutX(560); button2.setLayoutY(440);
 
 
-        button2 = new Button("Credits");
-        button2.setLayoutX(640);
-        button2.setLayoutY(540);
+
 
 
         //Setting button actions
@@ -92,7 +97,7 @@ public class MainMenu {
 
         Canvas canvas = new Canvas(1280,720);
         GraphicsContext graphics = canvas.getGraphicsContext2D();
-        graphics.drawImage(background, 640 - background.getWidth()/2, 360 - background.getHeight()/2);
+        //graphics.drawImage(background, 640 - background.getWidth()/2, 360 - background.getHeight()/2);
 
         Text t = new Text();
 

@@ -44,12 +44,9 @@ public class CircleBody extends RigidBody{
     private javafx.scene.shape.Circle polygon;
     private Circle circle;
 
-    public CircleBody(){
-        new CircleBody(0,0,0,0,false, new Pane());
-    }
-
     //Constructor for circlebody
-    public CircleBody(double x, double y, double radius, double mass, boolean fixed, Pane root){
+    public CircleBody(double x, double y, double radius, double mass, boolean fixed, Pane root, Color colour){
+        super(mass, fixed, root, colour);
         this.center = new Point2D(x, y);
         this.radius = radius;
         this.mass = mass;
@@ -72,6 +69,7 @@ public class CircleBody extends RigidBody{
         this.circle = new Circle(x, y, 2);
         this.circle.setFill(Color.RED);
         root.getChildren().addAll(polygon, circle);
+
 
 
     }
@@ -151,7 +149,7 @@ public class CircleBody extends RigidBody{
 
     //Makes a deepcopy duplicate of the shape
     public CircleBody copy(Pane src){
-        return new CircleBody(center.getX(), center.getY(), radius, mass, fixed, src);
+        return new CircleBody(center.getX(), center.getY(), radius, mass, fixed, src, colour);
     }
 
     //Updates where shape is located
@@ -175,11 +173,11 @@ public class CircleBody extends RigidBody{
 
     public CircleBody clone(Pane canvas)
     {
-        CircleBody temp = new CircleBody(this.center.getX(),this.center.getY(), this.radius,this.mass,this.fixed,canvas);
+        CircleBody temp = new CircleBody(this.center.getX(),this.center.getY(), this.radius,this.mass,this.fixed,canvas, colour);
         polygon = new javafx.scene.shape.Circle(this.center.getX(), this.center.getY(), this.radius);
         temp.setScale(Math.max(polygon.getBoundsInLocal().getWidth()/100, polygon.getBoundsInLocal().getHeight()/100));
         temp.translate(100000, 100000);
-        return new CircleBody(temp.center.getX(), temp.center.getY(), temp.radius, temp.mass, temp.fixed, canvas);
+        return new CircleBody(temp.center.getX(), temp.center.getY(), temp.radius, temp.mass, temp.fixed, canvas, colour);
     }
 
 
