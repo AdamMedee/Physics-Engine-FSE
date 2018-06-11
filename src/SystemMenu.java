@@ -375,16 +375,33 @@ public class SystemMenu {
                 Label yLabel = new Label("Y:");
                 TextField yInput = new TextField();
 
+                CheckBox fixed = new CheckBox("Fixed");
+                fixed.setSelected(false);
 
-                Button clickMe = new Button("Print Lines(BUG TESTING)");
+
+                Button clickMe = new Button("Add");
                 clickMe.setOnAction(new EventHandler<ActionEvent>() {
                     @Override
                     public void handle(ActionEvent actionEvent) {
+//                        ArrayList<String> list = new ArrayList<String>();
+//
+//                        list.add("India");
+//                        list.add("Switzerland");
+//                        list.add("Italy");
+//                        list.add("France");
+//
+//                        String [] countries = list.toArray(new String[list.size()]);d
+                        double [] tempX =  new double[x.size()];
+                        double [] tempY =  new double[x.size()];
 
-                        for (Line tmp : lines)
+                        for (int i=0;i<x.size();i++)
                         {
-                            System.out.println(tmp);
+                            tempX[i] = x.get(i);
+                            tempY[i] = y.get(i);
                         }
+
+                       environment.rigidBodies.add(new RigidBody(tempX,tempY,1,fixed.isSelected(),leftPane,Color.BLACK));
+
                     }
                 });
                 //---------------------------------
