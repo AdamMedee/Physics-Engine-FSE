@@ -365,6 +365,8 @@ public class SystemMenu {
 
                 ArrayList<Double> prevX = new ArrayList<Double>();
                 ArrayList<Double> prevY = new ArrayList<Double>();
+
+                ArrayList<Line> lines = new ArrayList<Line>();
                 //---------------Information-------------
                 Label currentPoint = new Label("Current Point");
                 Label xLabel = new Label("X:");
@@ -374,6 +376,17 @@ public class SystemMenu {
                 TextField yInput = new TextField();
 
 
+                Button clickMe = new Button("Print Lines(BUG TESTING)");
+                clickMe.setOnAction(new EventHandler<ActionEvent>() {
+                    @Override
+                    public void handle(ActionEvent actionEvent) {
+
+                        for (Line tmp : lines)
+                        {
+                            System.out.println(tmp);
+                        }
+                    }
+                });
                 //---------------------------------
 
                 Scene createScene = new Scene(createPane,400,720);
@@ -409,8 +422,28 @@ public class SystemMenu {
                                 int n = x.size();
                                 if (n>=2)
                                 {
+                                    if (n>3)
+                                    {
+                                        selectionPane.getChildren().remove(lines.get(lines.size()-1));
+                                        lines.remove(lines.size()-1);
+
+                                        Line tmpline = new Line(prevX.get(n-1),prevY.get(n-1),prevX.get(0),prevY.get(0));
+                                        lines.add(tmpline);
+                                        selectionPane.getChildren().add(tmpline);
+                                    }
+
                                     Line line = new Line(prevX.get(n-2),prevY.get(n-2),prevX.get(n-1),prevY.get(n-1));
+                                    lines.add(line);
                                     selectionPane.getChildren().add(line);
+                                    if (n==3)
+                                    {
+                                        Line tmpline = new Line(prevX.get(0),prevY.get(0),prevX.get(n-1),prevY.get(n-1));
+                                        lines.add(tmpline);
+                                        selectionPane.getChildren().add(tmpline);
+
+                                    }
+
+
                                 }
 
                                 selectionPane.getChildren().add(tmpPoint);
@@ -435,9 +468,10 @@ public class SystemMenu {
                 GridPane.setConstraints(xInput,2,12);
                 GridPane.setConstraints(yLabel,0,14);
                 GridPane.setConstraints(yInput,2,14);
+                GridPane.setConstraints(clickMe,0,16);
 
 
-                createPane.getChildren().addAll(selectionPane,currentPoint,xLabel,xInput,yLabel,yInput);
+                createPane.getChildren().addAll(selectionPane,currentPoint,xLabel,xInput,yLabel,yInput,clickMe);
 
                 newObjectWindow.setScene(createScene);
 
