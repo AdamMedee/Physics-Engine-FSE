@@ -74,6 +74,7 @@ public class SystemMenu {
     ScrollPane objectsUI =  new ScrollPane();
     ScrollPane systemUI = new ScrollPane();
 
+
     private String newScene;
 
 
@@ -82,7 +83,6 @@ public class SystemMenu {
         newScene = "SystemMenu";
         systemScene = new Scene(SystemLayout,1280,720);
         running = true;
-
         gravityVal = 1;
         sideForceVal = 0;
         speedVal = 0.05;
