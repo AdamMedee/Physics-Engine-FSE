@@ -50,13 +50,12 @@ public class SystemMenu {
     Rectangle BGborder;
 
     // Inputs we're keeping track of
-
-    double OriginX,OriginY;
-    double ScaleVal;
-    double gravityVal;
-    double sideForceVal;
-    double speedVal;
-    boolean running; //Whether the environment's been paused
+    double OriginX,OriginY;    //Origin (x,y) of simulation
+    double ScaleVal;               //Scale of simulation
+    double gravityVal;            //Verical gravity
+    double sideForceVal;        //Horizontal gravity
+    double speedVal;              //Simulation speed
+    boolean running;               //Whether the environment's been paused
 
 
     // Graphics Initialization
@@ -466,13 +465,8 @@ public class SystemMenu {
                                         selectionPane.getChildren().add(tmpline);
 
                                     }
-
-
                                 }
-
                                 selectionPane.getChildren().add(tmpPoint);
-
-
 
                             }
                         });
@@ -507,7 +501,51 @@ public class SystemMenu {
         newCircle.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent actionEvent) {
+                Stage newObjectWindow = new Stage();
+                newObjectWindow.setTitle("Create a New Object");
 
+                GridPane createPane = new GridPane();
+                createPane.setPadding(new Insets(10,10,10,10));
+
+                Pane selectionPane = new Pane();
+                selectionPane.setStyle("-fx-border-color: black;-fx-border-insets: 10,10,10,10;");
+                selectionPane.setPrefSize(400,400);
+
+                Label xLabel = new Label("X:");
+                TextField xInput = new TextField();
+
+                Label yLabel = new Label("Y:");
+                TextField yInput = new TextField();
+
+                Label radLabel = new Label("Radius:");
+                TextField radInput = new TextField();
+
+                CheckBox fixed = new CheckBox("Fixed");
+                fixed.setSelected(false);
+
+                Button clickMe = new Button("Add");
+                clickMe.setOnAction(new EventHandler<ActionEvent>() {
+                    @Override
+                    public void handle(ActionEvent actionEvent) {
+                        double x = 0;
+                        double y = 0;
+                        double radius = 0;
+                        if (isDouble(xInput.getText())) x = Double.parseDouble(xInput.getText());
+                        if (isDouble(yInput.getText())) y = Double.parseDouble(yInput.getText());
+                        if (isDouble(radInput.getText())) radius = Double.parseDouble(radInput.getText());
+
+                        double[] xTmp = new double[10];
+                        double[] yTmp = new double[10];
+
+                        for(int i=0; i<20; i++){
+                            xTmp[i] = radius * Math.cos(i * Math.PI / 20);
+                            yTmp[i] = radius * Math.sin(i * Math.PI / 20);
+                        }
+
+                        environment.rigidBodies.add(new RigidBody(xTmp, yTmp,1,fixed.isSelected(),leftPane,Color.BLACK));
+
+                    }
+                });
             }
         });
         createObject.getItems().addAll(newRigidBody,newCircle);

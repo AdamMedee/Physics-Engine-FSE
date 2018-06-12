@@ -29,26 +29,25 @@ import javafx.stage.Stage;
 import java.util.ArrayList;
 
 public class CreditsMenu {
-
-    public Image background = new Image("resources/images/GREEN.png");
-
-    public Button back;
-    public String newScene;
-    public Scene creditsScene;
+    public Button back;                 //Button to return to main menu
+    public String newScene;          //Screen that will be displayed next frame
+    public Scene creditsScene;      //Stores and displays all objects
     public Group creditsLayout;
 
-    private Environment bg;
+    private Environment bg;           //The background of the screen
     private Pane bgSim;
 
     public CreditsMenu(){
+        //Init scene and group
         newScene = "CreditsMenu";
         creditsLayout = new Group();
         creditsScene = new Scene(creditsLayout, 1280, 720);
 
+        //Init background
         bgSim = new Pane();
         this.startSim();
 
-
+        //Text for credits
         Text creditsTitle = new Text("Thank you for using this semi-functional Physics Engine!");
         creditsTitle.setX(350); creditsTitle.setY(300);
         creditsTitle.setFont(Font.loadFont(getClass().getResourceAsStream("resources/fonts/GiantRobotArmy-Medium.ttf"),15));
@@ -61,10 +60,6 @@ public class CreditsMenu {
         description1.setX(350); description1.setY(380);
         description1.setFont(Font.loadFont(getClass().getResourceAsStream("resources/fonts/GiantRobotArmy-Medium.ttf"),15));
         description1.setFill(Color.RED);
-
-        int a = 0;
-        int b = 0;
-
         Text description2 = new Text("It's so accurate that we even incorporated quantum tunneling :D");
         description2.setX(350); description2.setY(420);
         description2.setFont(Font.loadFont(getClass().getResourceAsStream("resources/fonts/GiantRobotArmy-Medium.ttf"),15));
@@ -78,9 +73,11 @@ public class CreditsMenu {
         description4.setFont(Font.loadFont(getClass().getResourceAsStream("resources/fonts/GiantRobotArmy-Medium.ttf"),15));
         description4.setFill(Color.RED);
 
-
+        //Init back button
         back = new Button("Back");
         back.setLayoutX(20); back.setLayoutY(20);
+        back.setFont(Font.loadFont(getClass().getResourceAsStream("resources/fonts/GiantRobotArmy-Medium.ttf"),40));
+        back.setMinSize(100, 50);
         back.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
@@ -90,10 +87,11 @@ public class CreditsMenu {
             }
         });
 
-        creditsLayout.getStylesheets().add("resources/Garu.css");
+        //Add everything to the layout so it is displayed to the screen
         creditsLayout.getChildren().addAll(back, creditsTitle, description1, description2, description3, description4, contributors);
     }
 
+    //Init environment variables
     public void startSim(){
         bg = new Environment();
         creditsLayout.getChildren().remove(bgSim);
@@ -105,7 +103,7 @@ public class CreditsMenu {
         creditsLayout.getChildren().add(bgSim);
         bgSim.toBack();
     }
-
+    //Run the screen
     public String run(){
         bg.run();
         return newScene;

@@ -19,12 +19,12 @@ import java.util.ArrayList;
 
 public class Environment {
 
-    double simulationSpeed; //How quickly the system passes through time
-    double scale;
-    ArrayList<RigidBody> rigidBodies = new ArrayList<RigidBody>(); //Contains physical rigid bodies
+    double simulationSpeed;                                                     //How quickly the system passes through time
+    double scale;                                                                    //How big the simulation appears
+    ArrayList<RigidBody> rigidBodies = new ArrayList<RigidBody>();    //Contains physical rigid bodies
     public Pane environmentLayout;
     Point2D gravity;
-    boolean allowRotate;
+    boolean allowRotate;                                                        //Keeps track if rotation is on or off
 
     protected static int nObjects = 0;
 
@@ -33,6 +33,7 @@ public class Environment {
     }
 
     public Environment(){
+        //Default values
         simulationSpeed = 1;
         scale = 100;
         gravity = new Point2D(0, 0);
@@ -43,9 +44,9 @@ public class Environment {
     public void run(){
         //Applies all forces
         for(RigidBody rigidBody : rigidBodies){
-            rigidBody.run(simulationSpeed, gravity, rigidBodies, allowRotate);
+            rigidBody.run(simulationSpeed, gravity, rigidBodies, allowRotate);  //Run each rigidbody every frame
         }
-        removeOffscreen(1080, 720);
+        removeOffscreen(1080, 720);                                     //Get rid of rigidbodies off screen
     }
     public void removeOffscreen(int maxX, int maxY){
         for(int i=rigidBodies.size(); i < 0; i  --){
@@ -53,6 +54,7 @@ public class Environment {
             Point2D min = new Point2D(r.getPolygon().getBoundsInLocal().getMinX(), r.getPolygon().getBoundsInLocal().getMinY());
             Point2D max = new Point2D(r.getPolygon().getBoundsInLocal().getMaxX(), r.getPolygon().getBoundsInLocal().getMaxY());
             if(min.getX() > maxX + 200 || min.getY() > maxY + 200 || max.getX() < -200 || max.getY() < -200){
+                //Remove object if completely offscreen
                 rigidBodies.remove(r);
             }
         }
@@ -160,6 +162,7 @@ public class Environment {
     }
 
     public void BackGroundMenu (Pane src) {
+        //Generate environment for the main menu background
         environmentLayout = src;
         gravity = new Point2D(0, 9.81);
         rigidBodies.clear();
@@ -199,6 +202,7 @@ public class Environment {
 
     //Creates the environment background for the credits
     public void creditsBG(Pane src){
+        //Generate background environment for credits menu
         environmentLayout = src;
         gravity = new Point2D(0, 9.81);
         rigidBodies.clear();

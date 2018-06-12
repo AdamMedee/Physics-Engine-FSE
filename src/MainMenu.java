@@ -41,42 +41,35 @@ public class MainMenu {
 
 
     // Graphics
-    public Scene mainMenuScene;
-    public Group mainMenuLayout;
-    public Button button1,button2;
+    public Scene mainMenuScene;      //Shows all the objects on screen
+    public Group mainMenuLayout;    //Group of all objects in the main menu
+    public Button startBtn,creditsBtn;
 
     // Keeps track of switching between scenes
-    public String newScene;
+    public String newScene;             //Represents the screen to be shown next frame
 
-    private Environment bg;
+    private Environment bg;             //The background simulation
     private Pane boxSim;
 
     //Constructor for the menu
     public MainMenu(){
         newScene = "MainMenu";
         mainMenuLayout = new Group();
-
-       //mainMenuScene.getStylesheets().add("resources/Garu.css");
         boxSim = new Pane();
         this.startSim();
 
+        //Making and placing buttons
+        startBtn = new Button("START");
+        startBtn.setFont(Font.loadFont(getClass().getResourceAsStream("resources/fonts/GiantRobotArmy-Medium.ttf"),40));
+        startBtn.setMinSize(200, 100);  startBtn.setLayoutX(540); startBtn.setLayoutY(300);
 
         //Making and placing buttons
-        button1 = new Button("START");
-        button1.setFont(Font.loadFont(getClass().getResourceAsStream("resources/fonts/GiantRobotArmy-Medium.ttf"),40));
-        button1.setMinSize(200, 100);  button1.setLayoutX(540); button1.setLayoutY(300);
-
-        //Making and placing buttons
-        button2 = new Button("CREDITS");
-        button2.setFont(Font.loadFont(getClass().getResourceAsStream("resources/fonts/GiantRobotArmy-Medium.ttf"),30));
-        button2.setMinSize(160, 80);  button2.setLayoutX(560); button2.setLayoutY(440);
-
-
-
-
+        creditsBtn = new Button("CREDITS");
+        creditsBtn.setFont(Font.loadFont(getClass().getResourceAsStream("resources/fonts/GiantRobotArmy-Medium.ttf"),30));
+        creditsBtn.setMinSize(160, 80);  creditsBtn.setLayoutX(560); creditsBtn.setLayoutY(440);
 
         //Setting button actions
-        button1.setOnAction(new EventHandler<ActionEvent>() {
+        startBtn.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent actionEvent) {
                 PhysicsEngine.window.setScene(PhysicsEngine.systemMenu.systemScene);
@@ -84,7 +77,7 @@ public class MainMenu {
             }
         });
 
-        button2.setOnAction(new EventHandler<ActionEvent>() {
+        creditsBtn.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent actionEvent) {
                 PhysicsEngine.window.setScene(PhysicsEngine.creditsMenu.creditsScene);
@@ -93,15 +86,10 @@ public class MainMenu {
             }
         });
 
-        //Canvas and graphics context
-
-        Canvas canvas = new Canvas(1280,720);
-        GraphicsContext graphics = canvas.getGraphicsContext2D();
-        //graphics.drawImage(background, 640 - background.getWidth()/2, 360 - background.getHeight()/2);
-
+        //Create the text for the title
         Text t = new Text();
 
-        //Create a light source
+        //Create a light source for shadow effect
         Light.Distant light = new Light.Distant();
         light.setAzimuth(-135.0);
         Lighting lighting = new Lighting();
@@ -111,7 +99,7 @@ public class MainMenu {
         lighting.setSpecularConstant(10);
         lighting.setSpecularExponent(40);
 
-        //Shadow
+        //Back Shadow
         DropShadow dropShadow = new DropShadow();
         dropShadow.setRadius(5.0);
         dropShadow.setOffsetX(3.0);
@@ -119,6 +107,7 @@ public class MainMenu {
         dropShadow.setColor(Color.color(0.3, 0.3, 0.3));
         dropShadow.setInput(lighting);
 
+        //Small bloom effect
         Bloom bloom = new Bloom();
         bloom.setThreshold(0.02);
         bloom.setInput(dropShadow);
@@ -133,15 +122,15 @@ public class MainMenu {
 
 
         //Adds all the nodes to the layout
-        mainMenuLayout.getChildren().add(canvas);
         mainMenuLayout.getChildren().add(t);
-        mainMenuLayout.getChildren().add(button1);
-        mainMenuLayout.getChildren().add(button2);
+        mainMenuLayout.getChildren().add(startBtn);
+        mainMenuLayout.getChildren().add(creditsBtn);
 
         //Makes a new scene with the constructed group
         mainMenuScene = new Scene(mainMenuLayout,1280,720);
     }
 
+    //Initialize the background environment variables
     public void startSim(){
         bg = new Environment();
         mainMenuLayout.getChildren().remove(boxSim);
@@ -159,8 +148,7 @@ public class MainMenu {
         return newScene;
     }
 
-
-    //Displayes menu to the screen
+    //Displays menu to the screen
     public void update(){
     }
 }

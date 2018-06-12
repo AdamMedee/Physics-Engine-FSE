@@ -20,37 +20,35 @@ import java.util.Arrays;
 import javafx.geometry.Point2D;
 //
 public class RigidBody{
-	private int sides;							//# of sides
-	private Point2D center;						//Coords of center (x,y)
-	private Polygon polygon;					//Polygon defining the shape
-	private double[] xPoints, yPoints;			//Set of x coords and y coords
-	private ArrayList<Point2D> forces;			//The forces acting on the body
+	private int sides;							            //# of sides
+	private Point2D center;						        //Coords of center (x,y)
+	private Polygon polygon;					            //Polygon defining the shape
+	private double[] xPoints, yPoints;		        //Set of x coords and y coords
+	private ArrayList<Point2D> forces;		        //The forces acting on the body
 
 	private Point2D velocity;
 	private Point2D acceleration;
-	private double spin;						//Angular velocity
-	private double angAccel;					//Angular acceleration
-	private double MOI;							//Moment of Inertia
-	private double restitution;					//Coefficient of restitution
-	private double kineticFriction, staticFriction;
-	private double area; 						//Constant area of the polygon
-	private double mass; 						//Mass and density is consistent throughout the body
-	private double density;
-	private boolean fixed; 						// Whether the rigid body can move
+	private double spin;						            //Angular velocity
+	private double angAccel;					        //Angular acceleration
+	private double MOI;							        //Moment of Inertia
+	private double restitution;					        //Coefficient of restitution
+	private double area; 						            //Constant area of the polygon
+	private double mass; 						            //Mass and density is consistent throughout the body
+	private boolean fixed; 						        // Whether the rigid body can move
 
 	private double scale;
-	private Point2D startCenter;				//Start position of the center of the rigidbody
-	private Point2D startVel;					//Starting velocity of the body
+	private Point2D startCenter;				        //Start position of the center of the rigidbody
+	private Point2D startVel;					        //Starting velocity of the body
 	private double[] startXPoints, startYPoints;//Start polygon points
-	private double startSpin;					//Start angular velocity
+	private double startSpin;					        //Start angular velocity
 
-	private Point2D tmpVel;
-	private double tmpSpin;
-	private int serialNum;
+	private Point2D tmpVel;                             //
+	private double tmpSpin;                             //
+	private int serialNum;                                //Allows rigidbodies to be distinguishable
 
-	protected  Color colour;
-	private Circle circle;
-	private Pane root;
+	protected  Color colour;                            //Object color
+	private Circle circle;                                 //Center of mass marker
+	private Pane root;                                      //Which screen it is being drawn on
 
 	public RigidBody(double mass, boolean fixed, Pane root, Color Colour){
 		this.mass = mass;
@@ -65,7 +63,7 @@ public class RigidBody{
 		double centerX = 0;
 		double centerY = 0;
 		for(int i=0; i < sides; i++){
-			//Thanks Green!
+			//Thanks Green for finding closed form formulas for these quantities.
 			double shoelace = xPoints[i] * yPoints[(i+1) % sides] - xPoints[(i+1) % sides] * yPoints[i];
 			this.area += shoelace;
 			centerX += (xPoints[i] + xPoints[(i+1) % sides]) * shoelace;
@@ -89,14 +87,11 @@ public class RigidBody{
 		this.startSpin = spin;
 		this.tmpSpin = spin;
 		this.angAccel = 0;
-		this.density = mass/this.area;
 		this.restitution = 1;
 		this.xPoints = xPoints;
 		this.yPoints = yPoints;
 		this.startXPoints = xPoints;
 		this.startYPoints = yPoints;
-		this.kineticFriction = 0.1;
-		this.staticFriction = 0.2;
 		this.fixed = fixed;
 		this.scale = 1;
 		this.root = root;
@@ -124,6 +119,7 @@ public class RigidBody{
 		return Arrays.toString(xPoints) + " " + Arrays.toString(yPoints) + " " + this.center;
 	}
 
+	//Creates a copy of the rigidbody for the systemMenu
 	public RigidBody copy(Pane src,Color colour){
 		return new RigidBody(xPoints, yPoints, mass, fixed, src,colour);
 	}
@@ -188,7 +184,6 @@ public class RigidBody{
 			double netY = 0;
 			Point2D prevAccel = acceleration;
 			//Update position based previous frame's forces
-			//this.translate(velocity.getX() * timeStep + (0.5 * prevAccel.getX() * timeStep * timeStep), velocity.getY() * timeStep + (0.5 * prevAccel.getY() * timeStep * timeStep));
 			this.translate(velocity.getX() * timeStep, velocity.getY() * timeStep);
 			//Calculates net force of current frame
 			for (Point2D f : forces) {
@@ -202,10 +197,9 @@ public class RigidBody{
 
 			avgAccel = new Point2D(avgAccel.getX() / 2, avgAccel.getY() / 2);
 
-			//System.out.println(avgAccel.multiply(timeStep));
 			velocity = velocity.add(avgAccel);
-			//System.out.println(avgAccel);
 			if(allowRotate){
+			    //Prevents bouncing when spin approaches 0
 				if(spin > 0.00001){
 					spin -= mass*timeStep/1000.0;
 				}
@@ -228,14 +222,13 @@ public class RigidBody{
 	//If two rigidbodies are intersecting, moves them apart
 	public static void penetrationFix(RigidBody a, RigidBody b, Point2D normal){
 		//How deep the collision point is in the object
-		double penetrationDepth = normal.magnitude();// - Math.abs(relVel)/100*simSpeed;
-        //System.out.println(normal);
+		double penetrationDepth = normal.magnitude();
 
 		//Pushes shapes out of each other if barely in
-		Point2D correction = normal.normalize().multiply(penetrationDepth);
-		double aRatio = b.fixed ? 1 : (b.mass/(a.mass + b.mass));
-		double bRatio = a.fixed ? 1 : (a.mass/(a.mass + b.mass));
-		a.translate(correction.getX() * aRatio, correction.getY() * aRatio);
+		Point2D correction = normal.normalize().multiply(penetrationDepth);                     //How big of a correction we must make
+		double aRatio = b.fixed ? 1 : (b.mass/(a.mass + b.mass));                                       //Multiplier based on a mass
+		double bRatio = a.fixed ? 1 : (a.mass/(a.mass + b.mass));                                       //Multiplier based on b mass
+		a.translate(correction.getX() * aRatio, correction.getY() * aRatio);        //Apply the fix
 		b.translate(-correction.getX() * bRatio, -correction.getY() * bRatio);
 	}
 
@@ -245,11 +238,10 @@ public class RigidBody{
 	public static void resolveCollision(RigidBody a, RigidBody b, Point2D[] info, double simSpeed, boolean allowRotate){
 		//Updates velocities of 2 bodies that have collided
 		Point2D normal = info[0];	//Vector of dist from point to side
-		Point2D vertex = info[1];	//Point of collison
+		Point2D vertex = info[1];	//Point of collision
 
 		//How deep the collision point is in the object
 		Point2D normalUnit = normal.normalize();
-
 
 		//Vector from center to vertex of collision
 		Point2D relA = vertex.subtract(a.center);
@@ -257,21 +249,19 @@ public class RigidBody{
 
 
 		Point2D rv = b.velocity.subtract(a.velocity);	//Relative velocity between 2 bodies
-		double normalVel = rv.dotProduct(normalUnit);// + (relB.dotProduct(normalUnit)*b.spin - relA.dotProduct(normalUnit)*a.spin);	//Find rv relative to normal vector
-
-
+		double normalVel = rv.dotProduct(normalUnit);//Find rv relative to normal vector
 
 		double e = Math.min(a.restitution, b.restitution);	//How sticky the shapes are
-		double rot = allowRotate ?  det(relA, normalUnit) * det(relA, normalUnit) / a.MOI + det(relB, normalUnit) * det(relB, normalUnit) / b.MOI : 0;
+		double rot = allowRotate ?  det(relA, normalUnit) * det(relA, normalUnit) / a.MOI + det(relB, normalUnit) * det(relB, normalUnit) / b.MOI : 0; //2D cross product for size of spin (since we dont incorperate 3D)
 		double numerator = -(1 + e) * normalVel;
 		double denom = (1/a.mass + 1/b.mass + rot);
-		double j = numerator/denom;
+		double j = numerator/denom;                                 //Impulse scaler
 
 		//Apply impulse
 		Point2D impulse = new Point2D(normalUnit.getX() * j, normalUnit.getY() * j);
 
 		a.velocity = a.velocity.subtract(impulse.multiply(1 / a.mass));	//The object doing the collision is slowed
-		b.velocity = b.velocity.add(impulse.multiply(1 / b.mass));	    //The object being hit is sped up
+		b.velocity = b.velocity.add(impulse.multiply(1 / b.mass));	        //The object being hit is sped up
 
 		if(allowRotate) {
 			a.spin += (1 / a.MOI) * det(relA, normalUnit) * j;
@@ -282,13 +272,13 @@ public class RigidBody{
 	//Gets the normal if two rigidbodies are colliding else null
 	public static void isColliding(RigidBody a, RigidBody b, double simSpeed, boolean allowRotate){
 		if(a.polygon.getBoundsInLocal().intersects(b.polygon.getBoundsInLocal())){
-
-			ObservableList<Double> aVertices = a.polygon.getPoints();
+			//First check if they are close together
+			ObservableList<Double> aVertices = a.polygon.getPoints();	//Verticies of polygons
 			ObservableList<Double> bVertices = b.polygon.getPoints();
-			double shortestDist = Double.POSITIVE_INFINITY;
-			Point2D contact = null;
-			Point2D normalDirection = new Point2D(0, 0);
-			Point2D[] info = {normalDirection, contact};
+			double shortestDist = Double.POSITIVE_INFINITY;			//Make the shortest distance as large as possible
+			Point2D contact = null;														//Point of contact (Vertex)
+			Point2D normalDirection = new Point2D(0, 0);			//Normal vector of collison
+			Point2D[] info = {normalDirection, contact};							//Information we need to return
 
 
 			for(int i = 0; i < a.sides*2; i+=2){ //Goes through all a polygon vertices
@@ -299,12 +289,14 @@ public class RigidBody{
 					info[0] = normalDirection; info[1] = contact;
 					for (int j = 0; j < b.sides*2; j += 2){ //Goes through all b polygon vertices
 
-						double x0 = aVertices.get(i); double y0 = aVertices.get(i + 1); //Vertex hitting polygon
-						double x1 = bVertices.get(j); double y1 = bVertices.get(j + 1); //Side being hit
+						double x0 = aVertices.get(i); double y0 = aVertices.get(i + 1); 														//Vertex hitting polygon
+						double x1 = bVertices.get(j); double y1 = bVertices.get(j + 1); 														//x1, x2, y1, y2 form an edge that we test for collison
 						double x2 = bVertices.get((j+2) % (b.sides*2)); double y2 = bVertices.get((j+3) % (b.sides*2));
+
 						double sideLen = Math.sqrt((y2 - y1)*(y2 - y1) + (x2 - x1)*(x2 - x1));
-						double tmpDist2 = Math.abs((y2 - y1)*(x0) - (x2 - x1)*(y0) + x2*y1 - y2*x1)/sideLen;
+						double tmpDist2 = Math.abs((y2 - y1)*(x0) - (x2 - x1)*(y0) + x2*y1 - y2*x1)/sideLen;					//Distance from point to line
 						if(tmpDist2 <= shortestDist){
+							//Update shortest distance if we found one
 							shortestDist = tmpDist2;
 							tmpDist2 = Math.abs((y2 - y1)*(x0) - (x2 - x1)*(y0) + x2*y1 - y2*x1)/sideLen;
 							normalDirection = new Point2D(tmpDist2*(y2 - y1)/sideLen, tmpDist2*(x1 - x2)/sideLen);
@@ -313,11 +305,13 @@ public class RigidBody{
 					}
 					info[0] = normalDirection; info[1] = contact;
 					if (contact != null) {
+						//Push polygons out of each other if a collision happened
 						penetrationFix(a, b, info[0]);
 					}
 				}
 			}
 			if (contact != null) {
+				//Apply forces for the collision
 				resolveCollision(a, b, info, simSpeed, allowRotate);
 			}
 		}
@@ -325,7 +319,7 @@ public class RigidBody{
 
 	//Runs all the methods on the rigidbody
 	public void run(double simSpeed, Point2D gravity, ArrayList<RigidBody> rigidBodies, boolean allowRotate){
-		addForce(gravity.multiply(mass).multiply(simSpeed));
+		addForce(gravity.multiply(mass).multiply(simSpeed));			//Add a constant gravity
 		for(RigidBody body : rigidBodies) {
 			if(!body.equals(this) && (!this.fixed || !body.fixed)){
 				//CircleBody rigidbody collision checking and executing
@@ -335,7 +329,7 @@ public class RigidBody{
 				else{ isColliding(this, body, simSpeed, allowRotate); }
 			}
 		}
-		updateSpin(simSpeed);
+		updateSpin(simSpeed);							//Update object variables
 		updateVelocity(simSpeed, allowRotate);
 		clearForces();
 	}
@@ -359,10 +353,12 @@ public class RigidBody{
 	}
 
 	public Point2D getSize(){
+		//Returns size of bounding box. Used in the systemMenu
 		return new Point2D(polygon.getBoundsInLocal().getWidth(), polygon.getBoundsInLocal().getHeight());
 	}
 
 	public Point2D getMin(){
+		//Returns the min cords of the polygon. Used in the systemMenu
 		return new Point2D(polygon.getBoundsInLocal().getMinX(), polygon.getBoundsInLocal().getMinY());
 	}
 
@@ -378,12 +374,13 @@ public class RigidBody{
 	public void setFixed(boolean fixed) {
 		this.fixed = fixed;
 		if(fixed) {
-			this.velocity = new Point2D(0, 0);
+			this.velocity = new Point2D(0, 0);	//Fixed objects dont move
 			clearForces();
 		}
 	}
 
 	public void setStartCenter(double x, double y) {
+		//reset starting center location
 		for(int i = 0; i < sides; i++){
 			startXPoints[i] += x - startCenter.getX();
 			startYPoints[i] += y - startCenter.getY();
@@ -393,21 +390,21 @@ public class RigidBody{
 
 	public void addForce(Point2D force){
 		this.forces.add(force);
-	}
+	} 		//Add a force to the object
 
 	//Clears all forces and vel from rigid body
 	public void clearForces(){
 		forces.clear();
 	}
 
-
-
 	public void setScale(double newScale) {
+		//Draw the object at a new size
 		scale = newScale;
 		update(xPoints, yPoints, center);
 	}
 
 	public static double det(Point2D a, Point2D b){
+		//Cross product with z=0
 		return a.getX() * b.getY() - a.getY() * b.getX();
 	}
 
@@ -417,15 +414,6 @@ public class RigidBody{
 
 	public Point2D getStartCenter(){
 		return startCenter;
-	}
-
-
-	public RigidBody clone(Pane canvas)
-	{
-		RigidBody temp = new RigidBody(this.xPoints,this.yPoints,this.mass,this.fixed,canvas,this.colour);
-		temp.setScale(Math.max(polygon.getBoundsInLocal().getWidth()/100, polygon.getBoundsInLocal().getHeight()/100));
-		temp.translate(100000, 100000);
-		return new RigidBody(temp.xPoints, temp.yPoints, temp.mass, temp.fixed, canvas,this.colour);
 	}
 
 	public double getRestitution(){
@@ -475,8 +463,7 @@ public class RigidBody{
 	}
 
 	public void removeShape(){
+		//Stops the rigidbody from being displayed onscreen
 		root.getChildren().removeAll(polygon, circle);
 	}
-
-
 }

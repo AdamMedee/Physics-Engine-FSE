@@ -21,24 +21,23 @@ import javafx.stage.WindowEvent;
 import java.util.ArrayList;
 //test comment
 public class PhysicsEngine extends Application {
-    public static Stage window;
-
+    public static Stage window;                         //This is where you see the program
 
     // -------- Menu Initialization
-    public static MainMenu mainMenu;
+    public static MainMenu mainMenu;               //Initialize each menu
     public static SystemMenu systemMenu;
     public static CreditsMenu creditsMenu;
     public static SelectMenu selectMenu;
 
 
     //--------------------------------------
-    String currentScreen = "MainMenu"; //Current menu being used
+    String currentScreen = "MainMenu";          //Current menu being used
 
     //Start method which contains the entire program
     @Override
     public void start(Stage stage)
     {
-        window = stage; //Creates window
+        window = stage;                                         //Creates window
         stage.setTitle( "L.A.G.'s Physics Engine" ); //Sets window title screen
         stage.setResizable(false);
 
@@ -55,7 +54,7 @@ public class PhysicsEngine extends Application {
         final int WIDTH = 1280;
         final int HEIGHT = 720;
 
-        //Puts all the environement data from txt into arraylist of environemnt objects (currently hardcoded for testing)
+        //Puts all the environment data from txt into arraylist of environemnt objects (currently hardcoded for testing)
         ArrayList<Environment> environmentList = new ArrayList<Environment>();
         Environment a = new Environment();
         environmentList.add(a);
@@ -102,7 +101,6 @@ public class PhysicsEngine extends Application {
                 }
     }
 }.start(); }
-
 
     //Main method
     public static void main(String[] args) {
