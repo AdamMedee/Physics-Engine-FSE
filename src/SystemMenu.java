@@ -24,6 +24,7 @@ import javafx.scene.control.*;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
+import javafx.scene.image.ImageView;
 import javafx.scene.image.WritableImage;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.*;
@@ -35,12 +36,16 @@ import javafx.scene.Scene;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.ScrollPane.ScrollBarPolicy;
 import javafx.stage.Stage;
+import javafx.util.Pair;
+
 
 import javax.xml.soap.Text;
 import java.util.ArrayList;
+import java.util.Optional;
 
 
 public class SystemMenu {
+
 
     Environment environment; //The environment being used
     String selected; //System, Object, or Information are the three options
@@ -218,7 +223,7 @@ public class SystemMenu {
         // ------------------------
 
 
-        // CheckBox for ratation
+        // CheckBox for rotation
 
         CheckBox rotateCB = new CheckBox();
         rotateCB.setText("Rotation");
@@ -226,11 +231,45 @@ public class SystemMenu {
         rotateCB.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
-                if(rotateCB.selectedProperty().get()){
-                    environment.setRotate(true);
+
+                rotateCB.setSelected(!rotateCB.isSelected());
+                // This ensures that the checkbox won't change state while the dialog is opened
+
+
+                if (!rotateCB.isSelected())
+                {
+                    Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+                    alert.setTitle("Are you sure?");
+                    alert.setHeaderText("Are you sure you want to add rotation?");
+
+                    ImageView Gary = new ImageView(this.getClass().getResource("resources/images/GARU.png").toString());
+                    Gary.setFitHeight(100);
+                    Gary.setFitWidth(100);
+                    alert.setGraphic(Gary);
+
+
+                    ButtonType OKBtn = new ButtonType("OK", ButtonBar.ButtonData.OK_DONE);
+                    ButtonType CancelBtn = new ButtonType("Cancel", ButtonBar.ButtonData.CANCEL_CLOSE);
+                    alert.getButtonTypes().setAll(OKBtn,CancelBtn);
+
+                    Optional<ButtonType> result = alert.showAndWait();
+                    if (result.get() == OKBtn)
+                    {
+                        rotateCB.setSelected(!rotateCB.isSelected());
+                        environment.setRotate(true);
+                    }
+                    else if (result.get() == CancelBtn)
+                    {
+                        alert.close();
+                        rotateCB.setSelected(false);
+                    }
                 }
-                else{
+
+                else // If switching off rotation
+                {
+                    rotateCB.setSelected(false);
                     environment.setRotate(false);
+
                 }
             }
         });
@@ -339,9 +378,8 @@ public class SystemMenu {
 
 
 
-//        for (int i = 0;i<1;i++)
+
         // Buttons will be affected by fixed object. Only the bottom few would right now.
-        // Uncomment the for loop on top and the comment out the for loop at the bottom to test the object customization page
 
         // --- Create new object
         Menu createObject = new Menu("New");
@@ -350,10 +388,13 @@ public class SystemMenu {
             @Override
             public void handle(ActionEvent actionEvent) {
                 Stage newObjectWindow = new Stage();
+                newObjectWindow.setResizable(false);
                 newObjectWindow.setTitle("Create a New Object");
 
                 GridPane createPane = new GridPane();
                 createPane.setPadding(new Insets(10,10,10,10));
+
+                createPane.setVgap(8);
 
                 Pane selectionPane = new Pane();
                 selectionPane.setStyle("-fx-border-color: black;-fx-border-insets: 10,10,10,10;");
@@ -375,22 +416,22 @@ public class SystemMenu {
                 Label yLabel = new Label("Y:");
                 TextField yInput = new TextField();
 
+                Label massLbl = new Label("Mass:");
+                TextField massInput = new TextField("1");
+
+
                 CheckBox fixed = new CheckBox("Fixed");
                 fixed.setSelected(false);
+
+                ColorPicker colorPicker = new ColorPicker();
+                colorPicker.setValue(Color.BLACK);
 
 
                 Button clickMe = new Button("Add");
                 clickMe.setOnAction(new EventHandler<ActionEvent>() {
                     @Override
                     public void handle(ActionEvent actionEvent) {
-//                        ArrayList<String> list = new ArrayList<String>();
-//
-//                        list.add("India");
-//                        list.add("Switzerland");
-//                        list.add("Italy");
-//                        list.add("France");
-//
-//                        String [] countries = list.toArray(new String[list.size()]);d
+
                         double [] tempX =  new double[x.size()];
                         double [] tempY =  new double[x.size()];
 
@@ -400,10 +441,31 @@ public class SystemMenu {
                             tempY[i] = y.get(i);
                         }
 
-                       environment.rigidBodies.add(new RigidBody(tempX,tempY,1,fixed.isSelected(),leftPane,Color.BLACK));
+                        double mass;
+                        try
+                        {
+                            mass = Double.parseDouble(massInput.getText());
+                        }
+                        catch(Exception ex)
+                        {
+                            mass = 1;
+                            Alert alert = new Alert(Alert.AlertType.WARNING);
+                            alert.setTitle("WARNING!");
+                            alert.setHeaderText("Mass input is invalid!");
+                            alert.show();
+
+                            return;
+
+
+                        }
+
+
+                       environment.rigidBodies.add(new RigidBody(tempX,tempY,mass,fixed.isSelected(),leftPane,colorPicker.getValue()));
 
                     }
                 });
+
+
                 //---------------------------------
 
                 Scene createScene = new Scene(createPane,400,720);
@@ -412,7 +474,6 @@ public class SystemMenu {
                     @Override
                     public void handle(MouseEvent mouseEvent) {
                         createScene.setCursor(Cursor.CROSSHAIR);
-
                         selectionPane.setOnMouseClicked(new EventHandler<MouseEvent>() {
                             @Override
                             public void handle(MouseEvent mouseEvent) {
@@ -443,13 +504,12 @@ public class SystemMenu {
                                     {
                                         selectionPane.getChildren().remove(lines.get(lines.size()-1));
                                         lines.remove(lines.size()-1);
-
-
                                     }
 
                                     Line line = new Line(prevX.get(n-2),prevY.get(n-2),prevX.get(n-1),prevY.get(n-1));
                                     lines.add(line);
                                     selectionPane.getChildren().add(line);
+
                                     // ---- Order matters if you're wondering why I split the two if statements apart
                                     if (n>3)
                                     {
@@ -482,14 +542,18 @@ public class SystemMenu {
 
                 GridPane.setConstraints(selectionPane,0,0,10,10);
                 GridPane.setConstraints(currentPoint,0,10);
-                GridPane.setConstraints(xLabel,0,12);
-                GridPane.setConstraints(xInput,2,12);
-                GridPane.setConstraints(yLabel,0,14);
-                GridPane.setConstraints(yInput,2,14);
-                GridPane.setConstraints(clickMe,0,16);
+                GridPane.setConstraints(xLabel,0,12,4,4);
+                GridPane.setConstraints(xInput,4,12,4,4);
+                GridPane.setConstraints(yLabel,0,16,4,4);
+                GridPane.setConstraints(yInput,4,16,4,4);
+                GridPane.setConstraints(massLbl,0,20,4,4);
+                GridPane.setConstraints(massInput,4,20,4,4);
+                GridPane.setConstraints(fixed,0,24,4,4);
+                GridPane.setConstraints(colorPicker,4,24,4,4);
+                GridPane.setConstraints(clickMe,0,28,4,4);
 
 
-                createPane.getChildren().addAll(selectionPane,currentPoint,xLabel,xInput,yLabel,yInput,clickMe);
+                createPane.getChildren().addAll(selectionPane,currentPoint,xLabel,xInput,yLabel,yInput,fixed,massLbl,massInput,colorPicker,clickMe);
 
                 newObjectWindow.setScene(createScene);
 
@@ -632,7 +696,7 @@ public class SystemMenu {
                     colorPicker.setOnAction(new EventHandler<ActionEvent>() {
                         @Override
                         public void handle(ActionEvent actionEvent) {
-                            Garu.colour = colorPicker.getValue();
+
 
                         }
                     });
@@ -641,6 +705,7 @@ public class SystemMenu {
                     ApplyBtn.setOnAction(new EventHandler<ActionEvent>() {
                         @Override
                         public void handle(ActionEvent actionEvent) {
+                            Garu.colour = colorPicker.getValue();
                             //Edits mass, current and start position, colour, and restitution
                             RigidBody tmp = new RigidBody(Garu.getXPoints(), Garu.getYPoints(), Garu.getMass(), Garu.getFixed(),leftPane, Garu.getColour());
 
@@ -689,10 +754,10 @@ public class SystemMenu {
                     newWindow.show();
                 }
             });
-            GridPane.setConstraints(MassInfo,4,i*4);
-            GridPane.setConstraints(SidesInfo,4,i*4+1);
-            GridPane.setConstraints(CMInfo,4,i*4+2);
-            GridPane.setConstraints(EditBtn,4,i*4+3);
+            GridPane.setConstraints(MassInfo,4,i*4+1);
+            GridPane.setConstraints(SidesInfo,4,i*4+2);
+            GridPane.setConstraints(CMInfo,4,i*4+3);
+            GridPane.setConstraints(EditBtn,4,i*4+4);
 
             objectPane.getChildren().addAll(temp,MassInfo,SidesInfo,CMInfo,EditBtn);
         }
