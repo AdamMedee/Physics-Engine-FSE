@@ -806,12 +806,56 @@ public class SystemMenu {
                     newWindow.show();
                 }
             });
+
+
+            //Deleting a selected rigidbody
+            Button DeleteBtn = new Button("Delete");
+
+
+
+
+            DeleteBtn.setOnAction(new EventHandler<ActionEvent>() {
+                @Override
+                public void handle(ActionEvent event) {
+                    if(running) {runBtn.fire();}
+                    Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+                    alert.setTitle("Are you sure?");
+                    alert.setHeaderText("Are you sure you want to delete this object?");
+
+                    ImageView Gary = new ImageView(this.getClass().getResource("resources/images/GARU.png").toString());
+                    Gary.setFitHeight(100);
+                    Gary.setFitWidth(100);
+                    alert.setGraphic(Gary);
+
+
+                    ButtonType OKBtn = new ButtonType("OK", ButtonBar.ButtonData.OK_DONE);
+                    ButtonType CancelBtn = new ButtonType("Cancel", ButtonBar.ButtonData.CANCEL_CLOSE);
+                    alert.getButtonTypes().setAll(OKBtn,CancelBtn);
+
+                    Optional<ButtonType> result = alert.showAndWait();
+                    if (result.get() == OKBtn)
+                    {
+                        Garu.removeShape();
+                        for(int i = Garu.getSerialNum(); i < environment.rigidBodies.size(); i++){
+                            environment.rigidBodies.get(i).setSerialNum(environment.rigidBodies.get(i).getSerialNum()-1);
+                        }
+                            environment.rigidBodies.remove(Garu);
+                        }
+                    else if (result.get() == CancelBtn) { alert.close(); }
+                }
+            });
+
+
+
+
             GridPane.setConstraints(MassInfo,4,i*4+1);
             GridPane.setConstraints(SidesInfo,4,i*4+2);
             GridPane.setConstraints(CMInfo,4,i*4+3);
             GridPane.setConstraints(EditBtn,4,i*4+4);
+            GridPane.setConstraints(DeleteBtn,5,i*4+4);
+            DeleteBtn.setTranslateX(-40);
 
-            objectPane.getChildren().addAll(temp,MassInfo,SidesInfo,CMInfo,EditBtn);
+            objectPane.getChildren().addAll(temp,MassInfo,SidesInfo,CMInfo,EditBtn, DeleteBtn);
         }
 
 
