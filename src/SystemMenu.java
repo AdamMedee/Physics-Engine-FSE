@@ -410,7 +410,7 @@ public class SystemMenu {
 
                 ArrayList<Line> lines = new ArrayList<Line>();
 
-                ArrayList<Circle> highlights = new ArrayList<Circle>();
+                ArrayList<Circle> highlights = new ArrayList<Circle>(1);
 
 
 
@@ -453,6 +453,19 @@ public class SystemMenu {
                             }
 
                         }
+
+                        if (highlights.size()==1)
+                        {
+                            selectionPane.getChildren().remove(highlights.get(0));
+                            highlights.remove(0);
+                        }
+
+                        Circle hltPoint = new Circle(6,Color.YELLOW);
+                        hltPoint.setLayoutX(prevX.get(index));
+                        hltPoint.setLayoutY(prevY.get(index));
+
+                        highlights.add(hltPoint);
+                        selectionPane.getChildren().add(hltPoint);
 
                         xInput.setText(String.format("%.2f",x.get(index)));
                         yInput.setText(String.format("%.2f",y.get(index)));
