@@ -395,6 +395,7 @@ public class SystemMenu {
                 createPane.setPadding(new Insets(10,10,10,10));
 
                 createPane.setVgap(8);
+                createPane.setHgap(10);
 
                 Pane selectionPane = new Pane();
                 selectionPane.setStyle("-fx-border-color: black;-fx-border-insets: 10,10,10,10;");
@@ -408,7 +409,19 @@ public class SystemMenu {
                 ArrayList<Double> prevY = new ArrayList<Double>();
 
                 ArrayList<Line> lines = new ArrayList<Line>();
+
+                ArrayList<Circle> highlights = new ArrayList<Circle>();
+
+
+
                 //---------------Information-------------
+                ComboBox comboBox = new ComboBox();
+                comboBox.setPrefWidth(200);
+
+
+                HBox hbox = new HBox();
+                hbox.getChildren().add(comboBox);
+
                 Label currentPoint = new Label("Current Point");
                 Label xLabel = new Label("X:");
 
@@ -425,7 +438,26 @@ public class SystemMenu {
 
                 ColorPicker colorPicker = new ColorPicker();
                 colorPicker.setValue(Color.BLACK);
+                colorPicker.setPrefWidth(60);
 
+
+                comboBox.setOnAction(new EventHandler<ActionEvent>() {
+                    @Override
+                    public void handle(ActionEvent actionEvent) {
+                        int index = 0; // Initialize to zero b/c java
+                        for (int i=0;i<comboBox.getItems().size();i++)
+                        {
+                            if (comboBox.getItems().get(i)==comboBox.getValue())
+                            {
+                                index = i;
+                            }
+
+                        }
+
+                        xInput.setText(String.format("%.2f",x.get(index)));
+                        yInput.setText(String.format("%.2f",y.get(index)));
+                    }
+                });
 
                 Button clickMe = new Button("Add");
                 clickMe.setOnAction(new EventHandler<ActionEvent>() {
@@ -453,7 +485,6 @@ public class SystemMenu {
                             alert.setTitle("WARNING!");
                             alert.setHeaderText("Mass input is invalid!");
                             alert.show();
-
                             return;
 
 
@@ -490,6 +521,7 @@ public class SystemMenu {
                                 y.add(newY);
 
 
+
                                 xInput.setText(String.format("%.2f",newX));
                                 yInput.setText(String.format("%.2f",newY));
 
@@ -497,7 +529,14 @@ public class SystemMenu {
                                 tmpPoint.setLayoutX(oldX);
                                 tmpPoint.setLayoutY(oldY);
 
+
+
                                 int n = x.size();
+
+                                comboBox.getItems().add(String.format("Point %d",n));
+                                comboBox.setValue(comboBox.getItems().get(n-1));
+
+
                                 if (n>=2)
                                 {
                                     if (n>3)
@@ -541,7 +580,8 @@ public class SystemMenu {
                 });
 
                 GridPane.setConstraints(selectionPane,0,0,10,10);
-                GridPane.setConstraints(currentPoint,0,10);
+//                GridPane.setConstraints(currentPoint,0,10);
+                GridPane.setConstraints(hbox,0,10);
                 GridPane.setConstraints(xLabel,0,12,4,4);
                 GridPane.setConstraints(xInput,4,12,4,4);
                 GridPane.setConstraints(yLabel,0,16,4,4);
@@ -553,7 +593,7 @@ public class SystemMenu {
                 GridPane.setConstraints(clickMe,0,28,4,4);
 
 
-                createPane.getChildren().addAll(selectionPane,currentPoint,xLabel,xInput,yLabel,yInput,fixed,massLbl,massInput,colorPicker,clickMe);
+                createPane.getChildren().addAll(selectionPane,hbox,xLabel,xInput,yLabel,yInput,fixed,massLbl,massInput,colorPicker,clickMe);
 
                 newObjectWindow.setScene(createScene);
 
