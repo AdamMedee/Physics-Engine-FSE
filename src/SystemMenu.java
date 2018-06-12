@@ -480,7 +480,6 @@ public class SystemMenu {
                         }
                         catch(Exception ex)
                         {
-                            mass = 1;
                             Alert alert = new Alert(Alert.AlertType.WARNING);
                             alert.setTitle("WARNING!");
                             alert.setHeaderText("Mass input is invalid!");
