@@ -14,15 +14,18 @@ import javafx.application.Application;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Point2D;
+import javafx.geometry.Rectangle2D;
 import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.Button;
 import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
+import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
@@ -37,6 +40,11 @@ public class CreditsMenu {
     private Environment bg;           //The background of the screen
     private Pane bgSim;
 
+    private Image adam = new Image("resources/images/adam.png");
+    private Image gary = new Image("resources/images/gary.png");
+    private Image leo = new Image("resources/images/leo.png");
+    private Image green = new Image("resources/images/GREEN.png");
+
     public CreditsMenu(){
         //Init scene and group
         newScene = "CreditsMenu";
@@ -48,30 +56,51 @@ public class CreditsMenu {
         this.startSim();
 
         //Text for credits
-        Text creditsTitle = new Text("Thank you for using this semi-functional Physics Engine!");
-        creditsTitle.setX(350); creditsTitle.setY(300);
-        creditsTitle.setFont(Font.loadFont(getClass().getResourceAsStream("resources/fonts/GiantRobotArmy-Medium.ttf"),15));
+        Text creditsTitle = new Text("L.A.G.'s Hall of Fame");
+        creditsTitle.setX(500); creditsTitle.setY(250);
+        creditsTitle.setFont(Font.loadFont(getClass().getResourceAsStream("resources/fonts/GiantRobotArmy-Medium.ttf"),30));
         creditsTitle.setFill(Color.RED);
-        Text contributors = new Text("Created by: Leo Chen, Adam Mehdi, and Gary Sun");
-        contributors.setX(350);  contributors.setY(340);
-        contributors.setFont(Font.loadFont(getClass().getResourceAsStream("resources/fonts/GiantRobotArmy-Medium.ttf"),15));
-        contributors.setFill(Color.RED);
-        Text description1 = new Text("This is an attempt to simulate the laws that govern the universe.");
-        description1.setX(350); description1.setY(380);
-        description1.setFont(Font.loadFont(getClass().getResourceAsStream("resources/fonts/GiantRobotArmy-Medium.ttf"),15));
-        description1.setFill(Color.RED);
-        Text description2 = new Text("It's so accurate that we even incorporated quantum tunneling :D");
-        description2.setX(350); description2.setY(420);
-        description2.setFont(Font.loadFont(getClass().getResourceAsStream("resources/fonts/GiantRobotArmy-Medium.ttf"),15));
-        description2.setFill(Color.RED);
-        Text description3 = new Text("Also a thanks to dead mathmetician George Green for supplying us");
-        description3.setX(350); description3.setY(460);
-        description3.setFont(Font.loadFont(getClass().getResourceAsStream("resources/fonts/GiantRobotArmy-Medium.ttf"),15));
-        description3.setFill(Color.RED);
-        Text description4 = new Text("with more than half of the math we used <3");
-        description4.setX(350); description4.setY(500);
-        description4.setFont(Font.loadFont(getClass().getResourceAsStream("resources/fonts/GiantRobotArmy-Medium.ttf"),15));
-        description4.setFill(Color.RED);
+
+        ImageView iv1 = new ImageView();
+        iv1.setImage(leo);
+        iv1.setX(350); iv1.setY(300);
+
+        ImageView iv2 = new ImageView();
+        iv2.setImage(adam);
+        iv2.setX(500); iv2.setY(300);
+
+        ImageView iv3 = new ImageView();
+        iv3.setImage(gary);
+        iv3.setX(650); iv3.setY(300);
+
+        ImageView iv4 = new ImageView();
+        iv4.setImage(green);
+        iv4.setX(800); iv4.setY(300);
+
+        Rectangle cover = new Rectangle(500,300, 300,200);
+        cover.setFill(Color.BLACK);
+
+        Text leoCaption = new Text("Leo Chen");
+        leoCaption.setX(350); leoCaption.setY(450);
+        leoCaption.setFont(Font.loadFont(getClass().getResourceAsStream("resources/fonts/GiantRobotArmy-Medium.ttf"),15));
+        leoCaption.setFill(Color.RED);
+
+        Text adamCaption = new Text("Adam Mehdi");
+        adamCaption.setX(500); adamCaption.setY(450);
+        adamCaption.setFont(Font.loadFont(getClass().getResourceAsStream("resources/fonts/GiantRobotArmy-Medium.ttf"),15));
+        adamCaption.setFill(Color.RED);
+
+        Text garyCaption = new Text("Gary Sun");
+        garyCaption.setX(650); garyCaption.setY(450);
+        garyCaption.setFont(Font.loadFont(getClass().getResourceAsStream("resources/fonts/GiantRobotArmy-Medium.ttf"),15));
+        garyCaption.setFill(Color.RED);
+
+        Text greenCaption = new Text("George Green");
+        greenCaption.setX(800); greenCaption.setY(450);
+        greenCaption.setFont(Font.loadFont(getClass().getResourceAsStream("resources/fonts/GiantRobotArmy-Medium.ttf"),15));
+        greenCaption.setFill(Color.RED);
+
+
 
         //Init back button
         back = new Button("Back");
@@ -88,7 +117,7 @@ public class CreditsMenu {
         });
 
         //Add everything to the layout so it is displayed to the screen
-        creditsLayout.getChildren().addAll(back, creditsTitle, description1, description2, description3, description4, contributors);
+        creditsLayout.getChildren().addAll(back, creditsTitle, cover, iv1, iv2, iv3, iv4, leoCaption, adamCaption, garyCaption, greenCaption);
     }
 
     //Init environment variables
