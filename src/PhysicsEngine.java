@@ -15,11 +15,13 @@ import javafx.application.Platform;
 import javafx.event.EventHandler;
 import javafx.scene.Group;
 import javafx.scene.Scene;
+import javafx.scene.media.Media;
+import javafx.scene.media.MediaPlayer;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
+import javafx.util.Duration;
 
 import java.util.ArrayList;
-//test comment
 public class PhysicsEngine extends Application {
     public static Stage window;                         //This is where you see the program
 
@@ -64,6 +66,17 @@ public class PhysicsEngine extends Application {
         creditsMenu = new CreditsMenu();
         selectMenu = new SelectMenu();
         systemMenu = new SystemMenu(environmentList.get(0));
+
+        String uriString = PhysicsEngine.class.getResource("resources/music/menuSong.mp3").toString();
+        Media media = new Media(uriString);
+        MediaPlayer player = new MediaPlayer(media);
+        player.setOnEndOfMedia(new Runnable() {
+            public void run() {
+                player.seek(Duration.ZERO);
+            }
+        });
+        player.setVolume(1);
+        player.play();
 
         //Sets default scene to main menu
         window.setScene(mainMenu.mainMenuScene);

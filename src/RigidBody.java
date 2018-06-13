@@ -73,8 +73,8 @@ public class RigidBody{
 		this.area = Math.abs(this.area / 2);
 		this.mass = fixed ? Double.POSITIVE_INFINITY : mass;
 		this.MOI = this.MOI*mass/this.area/24;
-		centerX = centerX / (6 * this.area);
-		centerY = centerY / (6 * this.area);
+		centerX = Math.abs(centerX) / (6 * this.area);
+		centerY = Math.abs(centerY) / (6 * this.area);
 
 		this.center = new Point2D(centerX, centerY);
 		this.startCenter = center;

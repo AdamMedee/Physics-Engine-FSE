@@ -208,11 +208,12 @@ public class Environment {
         rigidBodies.clear();
         for (int x = 200; x < 1000; x += 100) {
             for (int y = 150; y < 500; y += 100) {
-                if (Math.random() > 0.6) {
+                if (Math.random() > 0.5) {
                     double x1[] = {x + 20 * (0.5 - Math.random()), x + 45 + 20 * (0.5 - Math.random()), x + 45 + 20 * (0.5 - Math.random()), x + 20 * (0.5 - Math.random())};
                     double y1[] = {y + 20 * (0.5 - Math.random()), y + 20 * (0.5 - Math.random()), y + 45 + 20 * (0.5 - Math.random()), y + 45 + 20 * (0.5 - Math.random())};
 
                     RigidBody rect = new RigidBody(x1, y1, 1, false, environmentLayout,Color.BLACK);
+                    rect.setRestitution(0.99);
                     rigidBodies.add(rect);
                 }
             }
