@@ -504,6 +504,7 @@ public class SystemMenu {
                         }
 
 
+
                         comboBox.getItems().remove(index);
 
 
