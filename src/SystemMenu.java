@@ -67,6 +67,8 @@ public class SystemMenu {
     public Scene systemScene;
     public BorderPane SystemLayout = new BorderPane();
     public Button systemB,objectB,back;
+    public Pane leftPane;
+    public GridPane objectPane;
 
 
     //------
@@ -90,7 +92,7 @@ public class SystemMenu {
         environment.setGravity(new Point2D(sideForceVal, gravityVal));
         environment.setSimulationSpeed(speedVal);
 
-        Pane leftPane = new Pane();
+        leftPane = new Pane();
 
         TabPane tabs = new TabPane();
 
@@ -366,7 +368,7 @@ public class SystemMenu {
         systemUI.setVbarPolicy(ScrollBarPolicy.AS_NEEDED);
         systemUI.setHbarPolicy(ScrollBarPolicy.AS_NEEDED);
 
-        GridPane objectPane = new GridPane();
+        objectPane = new GridPane();
         objectPane.setPadding(new Insets(10,10,10,10));
         objectPane.setVgap(8);
         objectPane.setVgap(10);
@@ -380,358 +382,8 @@ public class SystemMenu {
 
 
         // Buttons will be affected by fixed object. Only the bottom few would right now.
+        addShape();
 
-        // --- Create new object
-        Menu createObject = new Menu("New");
-        MenuItem newRigidBody = new MenuItem("Rigid Body");
-        newRigidBody.setOnAction(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent actionEvent) {
-                Stage newObjectWindow = new Stage();
-                newObjectWindow.setResizable(false);
-                newObjectWindow.setTitle("Create a New Object");
-
-                GridPane createPane = new GridPane();
-                createPane.setPadding(new Insets(10,10,10,10));
-
-                createPane.setVgap(8);
-                createPane.setHgap(10);
-
-                Pane selectionPane = new Pane();
-                selectionPane.setStyle("-fx-border-color: black;-fx-border-insets: 10,10,10,10;");
-                selectionPane.setPrefSize(400,400);
-
-
-                ArrayList<Double> x = new ArrayList<Double>();
-                ArrayList<Double> y = new ArrayList<Double>();
-
-                ArrayList<Double> prevX = new ArrayList<Double>();
-                ArrayList<Double> prevY = new ArrayList<Double>();
-
-                ArrayList<Line> lines = new ArrayList<Line>();
-
-                ArrayList<Circle> highlights = new ArrayList<Circle>(1);
-
-
-
-                //---------------Information-------------
-                ComboBox comboBox = new ComboBox();
-                comboBox.setPrefWidth(200);
-
-
-                HBox hbox = new HBox();
-                hbox.getChildren().add(comboBox);
-
-
-                Label xLabel = new Label("X:");
-
-                TextField xInput = new TextField();
-                Label yLabel = new Label("Y:");
-                TextField yInput = new TextField();
-
-                Label massLbl = new Label("Mass:");
-                TextField massInput = new TextField("1");
-
-
-                CheckBox fixed = new CheckBox("Fixed");
-                fixed.setSelected(false);
-
-                ColorPicker colorPicker = new ColorPicker();
-                colorPicker.setValue(Color.BLACK);
-                colorPicker.setPrefWidth(60);
-
-
-                comboBox.setOnAction(new EventHandler<ActionEvent>() {
-                    @Override
-                    public void handle(ActionEvent actionEvent) {
-                        int index = -1; // Initialize to zero b/c java
-                        for (int i=0;i<comboBox.getItems().size();i++)
-                        {
-                            if (comboBox.getItems().get(i)==comboBox.getValue())
-                            {
-                                index = i;
-                            }
-                        }
-
-                        if (highlights.size()==1)
-                        {
-                            selectionPane.getChildren().remove(highlights.get(0));
-                            highlights.remove(0);
-                        }
-
-                        Circle hltPoint = new Circle(6,Color.YELLOW);
-                        hltPoint.setLayoutX(prevX.get(index));
-                        hltPoint.setLayoutY(prevY.get(index));
-
-                        highlights.add(hltPoint);
-                        selectionPane.getChildren().add(hltPoint);
-
-                        xInput.setText(String.format("%.2f",x.get(index)));
-                        yInput.setText(String.format("%.2f",y.get(index)));
-                    }
-                });
-
-                Button deletePoint = new Button("Delete Point");
-                deletePoint.setOnAction(new EventHandler<ActionEvent>() {
-                    @Override
-                    public void handle(ActionEvent actionEvent) {
-                        int index = getPointIndex(comboBox,comboBox.getValue());
-
-                        Circle tmpPoint = new Circle();
-                        tmpPoint.setLayoutX(x.get(index));
-                        tmpPoint.setLayoutY(y.get(index));
-
-                        x.remove(index);
-                        y.remove(index);
-
-                        if (index!=0)
-                        {
-                            selectionPane.getChildren().remove(lines.get(index-1));
-                            selectionPane.getChildren().remove(lines.get(index));
-
-                            lines.remove(index-1);
-                            lines.remove(index);
-
-
-
-
-
-                        }
-                        else
-                        {
-                            lines.remove(index);
-                            lines.remove(lines.size()-1);
-                        }
-
-
-
-                        comboBox.getItems().remove(index);
-
-
-
-
-                    }
-                });
-
-                Button clickMe = new Button("Add");
-
-                clickMe.setOnAction(new EventHandler<ActionEvent>() {
-                    @Override
-                    public void handle(ActionEvent actionEvent) {
-
-                        double [] tempX =  new double[x.size()];
-                        double [] tempY =  new double[x.size()];
-
-                        for (int i=0;i<x.size();i++)
-                        {
-                            tempX[i] = x.get(i);
-                            tempY[i] = y.get(i);
-                        }
-
-                        double mass;
-                        try
-                        {
-                            mass = Double.parseDouble(massInput.getText());
-                        }
-                        catch(Exception ex)
-                        {
-                            Alert alert = new Alert(Alert.AlertType.WARNING);
-                            alert.setTitle("WARNING!");
-                            alert.setHeaderText("Mass input is invalid!");
-                            alert.show();
-                            return;
-                        }
-
-                       environment.rigidBodies.add(new RigidBody(tempX,tempY,mass,fixed.isSelected(),leftPane,colorPicker.getValue()));
-                    }
-                });
-
-
-                //---------------------------------
-
-                Scene createScene = new Scene(createPane,400,720);
-
-                selectionPane.setOnMouseEntered(new EventHandler<MouseEvent>() {
-                    @Override
-                    public void handle(MouseEvent mouseEvent) {
-                        createScene.setCursor(Cursor.CROSSHAIR);
-                        selectionPane.setOnMouseClicked(new EventHandler<MouseEvent>() {
-                            @Override
-                            public void handle(MouseEvent mouseEvent) {
-
-                                Double oldX = mouseEvent.getX();
-                                Double oldY = mouseEvent.getY();
-
-                                prevX.add(oldX);
-                                prevY.add(oldY);
-
-                                Double newX = oldX*2.45;
-                                Double newY = oldY*1.8;
-
-                                x.add(newX);
-                                y.add(newY);
-
-
-
-                                xInput.setText(String.format("%.2f",newX));
-                                yInput.setText(String.format("%.2f",newY));
-
-                                Circle tmpPoint = new Circle(1,Color.BLACK);
-                                tmpPoint.setLayoutX(oldX);
-                                tmpPoint.setLayoutY(oldY);
-
-
-
-                                int n = x.size();
-
-                                comboBox.getItems().add(String.format("Point %d",n));
-                                comboBox.setValue(comboBox.getItems().get(n-1));
-
-
-                                if (n>=2)
-                                {
-                                    if (n>3)
-                                    {
-                                        selectionPane.getChildren().remove(lines.get(lines.size()-1));
-                                        lines.remove(lines.size()-1);
-                                    }
-
-                                    Line line = new Line(prevX.get(n-2),prevY.get(n-2),prevX.get(n-1),prevY.get(n-1));
-                                    lines.add(line);
-                                    selectionPane.getChildren().add(line);
-
-                                    // ---- Order matters if you're wondering why I split the two if-statements apart
-                                    if (n>3)
-                                    {
-                                        Line tmpline = new Line(prevX.get(n-1),prevY.get(n-1),prevX.get(0),prevY.get(0));
-                                        lines.add(tmpline);
-                                        selectionPane.getChildren().add(tmpline);
-                                    }
-
-                                    if (n==3)
-                                    {
-                                        Line tmpline = new Line(prevX.get(n-1),prevY.get(n-1),prevX.get(0),prevY.get(0));
-                                        lines.add(tmpline);
-                                        selectionPane.getChildren().add(tmpline);
-
-                                    }
-                                }
-                                System.out.println(getPointIndex(comboBox,comboBox.getValue()));
-                                for (Line x : lines)
-                                {
-                                    System.out.println(x);
-
-                                }
-                                selectionPane.getChildren().add(tmpPoint);
-
-                            }
-                        });
-                    }
-                });
-
-                selectionPane.setOnMouseExited(new EventHandler<MouseEvent>() {
-                    @Override
-                    public void handle(MouseEvent mouseEvent) {
-                        createScene.setCursor(Cursor.DEFAULT);
-                    }
-                });
-
-                GridPane.setConstraints(selectionPane,0,0,10,10);
-                GridPane.setConstraints(hbox,0,10);
-                GridPane.setConstraints(xLabel,0,12,4,4);
-                GridPane.setConstraints(xInput,4,12,4,4);
-                GridPane.setConstraints(yLabel,0,16,4,4);
-                GridPane.setConstraints(yInput,4,16,4,4);
-                GridPane.setConstraints(massLbl,0,20,4,4);
-                GridPane.setConstraints(massInput,4,20,4,4);
-                GridPane.setConstraints(fixed,0,24,4,4);
-                GridPane.setConstraints(colorPicker,4,24,4,4);
-                GridPane.setConstraints(clickMe,0,28,4,4);
-
-
-                createPane.getChildren().addAll(selectionPane,hbox,xLabel,xInput,yLabel,yInput,fixed,massLbl,massInput,colorPicker,clickMe);
-
-                newObjectWindow.setScene(createScene);
-
-                newObjectWindow.show();
-
-            }
-        });
-        MenuItem newCircle = new MenuItem("Circle");
-        newCircle.setOnAction(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent actionEvent) {
-                Stage newObjectWindow = new Stage();
-                newObjectWindow.setTitle("Create a New Object");
-
-                GridPane createPane = new GridPane();
-                createPane.setPadding(new Insets(10,10,10,10));
-                createPane.setVgap(20);
-
-
-
-                Label xLabel = new Label("X:");
-                TextField xInput = new TextField();
-
-                Label yLabel = new Label("Y:");
-                TextField yInput = new TextField();
-
-                Label radLabel = new Label("Radius:");
-                TextField radInput = new TextField();
-
-                CheckBox fixed = new CheckBox("Fixed");
-                fixed.setSelected(false);
-
-                Button clickMe = new Button("Add");
-                clickMe.setOnAction(new EventHandler<ActionEvent>() {
-                    @Override
-                    public void handle(ActionEvent actionEvent) {
-                        double x = 0;
-                        double y = 0;
-                        double radius = 0;
-                        if (isDouble(xInput.getText())) x = Double.parseDouble(xInput.getText());
-                        if (isDouble(yInput.getText())) y = Double.parseDouble(yInput.getText());
-                        if (isDouble(radInput.getText())) radius = Double.parseDouble(radInput.getText());
-
-                        double[] xTmp = new double[40];
-                        double[] yTmp = new double[40];
-
-                        for(int i=0; i<40; i++){
-                            xTmp[i] = x + radius * Math.cos(2 * i * Math.PI / 40);
-                            yTmp[i] = y + radius * Math.sin(2 * i * Math.PI / 40);
-                        }
-
-                        environment.rigidBodies.add(new RigidBody(xTmp, yTmp,1,fixed.isSelected(),leftPane,Color.BLACK));
-
-                    }
-                });
-
-
-                GridPane.setConstraints(xLabel,0,12,4,4);
-                GridPane.setConstraints(xInput,4,12,4,4);
-                GridPane.setConstraints(yLabel,0,16,4,4);
-                GridPane.setConstraints(yInput,4,16,4,4);
-                GridPane.setConstraints(radLabel,0,20,4,4);
-                GridPane.setConstraints(radInput,4,20,4,4);
-                GridPane.setConstraints(fixed,0,24,4,4);
-                GridPane.setConstraints(clickMe,0,28,4,4);
-
-            createPane.getChildren().addAll(xLabel,xInput,yLabel,yInput,radLabel,radInput,fixed,clickMe);
-
-
-            Scene createScene = new Scene(createPane,400,720);
-            newObjectWindow.setScene(createScene);
-            newObjectWindow.show();
-            }
-        });
-        createObject.getItems().addAll(newRigidBody,newCircle);
-
-        MenuBar menubar = new MenuBar();
-        menubar.getMenus().add(createObject);
-
-        GridPane.setConstraints(menubar,0,0);
-
-        objectPane.getChildren().add(menubar);
 
 
         for (int i = 0;i<environment.rigidBodies.size();i++)
@@ -905,8 +557,6 @@ public class SystemMenu {
             });
 
 
-
-
             GridPane.setConstraints(MassInfo,4,i*4+1);
             GridPane.setConstraints(SidesInfo,4,i*4+2);
             GridPane.setConstraints(CMInfo,4,i*4+3);
@@ -951,6 +601,386 @@ public class SystemMenu {
         SystemLayout.setRight(tabs);
 
     }
+
+    //The add function in the menu
+    public void addShape(){
+        // --- Create new object
+
+        Menu createObject = new Menu("New");
+        MenuItem newRigidBody = new MenuItem("Rigid Body");
+        newRigidBody.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent actionEvent) {
+                Stage newObjectWindow = new Stage();
+                newObjectWindow.setResizable(false);
+                newObjectWindow.setTitle("Create a New Object");
+
+                GridPane createPane = new GridPane();
+                createPane.setPadding(new Insets(10,10,10,10));
+
+                createPane.setVgap(8);
+                createPane.setHgap(10);
+
+                Pane selectionPane = new Pane();
+                selectionPane.setStyle("-fx-border-color: black;-fx-border-insets: 10,10,10,10;");
+                selectionPane.setPrefSize(400,400);
+
+
+                ArrayList<Double> x = new ArrayList<Double>();
+                ArrayList<Double> y = new ArrayList<Double>();
+
+                ArrayList<Double> prevX = new ArrayList<Double>();
+                ArrayList<Double> prevY = new ArrayList<Double>();
+
+                ArrayList<Line> lines = new ArrayList<Line>();
+
+                ArrayList<Circle> highlights = new ArrayList<Circle>(1);
+
+
+
+                //---------------Information-------------
+                ComboBox comboBox = new ComboBox();
+                comboBox.setPrefWidth(200);
+
+
+                HBox hbox = new HBox();
+                hbox.getChildren().add(comboBox);
+
+
+                Label xLabel = new Label("X:");
+
+                TextField xInput = new TextField();
+                Label yLabel = new Label("Y:");
+                TextField yInput = new TextField();
+
+                Label massLbl = new Label("Mass:");
+                TextField massInput = new TextField("1");
+
+
+                CheckBox fixed = new CheckBox("Fixed");
+                fixed.setSelected(false);
+
+                ColorPicker colorPicker = new ColorPicker();
+                colorPicker.setValue(Color.BLACK);
+                colorPicker.setPrefWidth(60);
+
+
+                comboBox.setOnAction(new EventHandler<ActionEvent>() {
+                    @Override
+                    public void handle(ActionEvent actionEvent) {
+                        int index = -1; // Initialize to zero b/c java
+                        for (int i=0;i<comboBox.getItems().size();i++)
+                        {
+                            if (comboBox.getItems().get(i)==comboBox.getValue())
+                            {
+                                index = i;
+                            }
+                        }
+
+                        if (highlights.size()==1)
+                        {
+                            selectionPane.getChildren().remove(highlights.get(0));
+                            highlights.remove(0);
+                        }
+
+                        Circle hltPoint = new Circle(6,Color.YELLOW);
+                        hltPoint.setLayoutX(prevX.get(index));
+                        hltPoint.setLayoutY(prevY.get(index));
+
+                        highlights.add(hltPoint);
+                        selectionPane.getChildren().add(hltPoint);
+
+                        xInput.setText(String.format("%.2f",x.get(index)));
+                        yInput.setText(String.format("%.2f",y.get(index)));
+                    }
+                });
+
+                Button deletePoint = new Button("Delete Point");
+                deletePoint.setOnAction(new EventHandler<ActionEvent>() {
+                    @Override
+                    public void handle(ActionEvent actionEvent) {
+                        int index = getPointIndex(comboBox,comboBox.getValue());
+
+                        Circle tmpPoint = new Circle();
+                        tmpPoint.setLayoutX(x.get(index));
+                        tmpPoint.setLayoutY(y.get(index));
+
+                        x.remove(index);
+                        y.remove(index);
+
+                        if (index!=0)
+                        {
+                            selectionPane.getChildren().remove(lines.get(index-1));
+                            selectionPane.getChildren().remove(lines.get(index));
+
+                            lines.remove(index-1);
+                            lines.remove(index);
+
+
+
+
+
+                        }
+                        else
+                        {
+                            lines.remove(index);
+                            lines.remove(lines.size()-1);
+                        }
+
+
+
+                        comboBox.getItems().remove(index);
+
+
+
+
+                    }
+                });
+
+                Button clickMe = new Button("Add");
+
+                clickMe.setOnAction(new EventHandler<ActionEvent>() {
+                    @Override
+                    public void handle(ActionEvent actionEvent) {
+
+                        double [] tempX =  new double[x.size()];
+                        double [] tempY =  new double[x.size()];
+
+                        for (int i=0;i<x.size();i++)
+                        {
+                            tempX[i] = x.get(i);
+                            tempY[i] = y.get(i);
+                        }
+
+                        double mass;
+                        try
+                        {
+                            mass = Double.parseDouble(massInput.getText());
+                        }
+                        catch(Exception ex)
+                        {
+                            Alert alert = new Alert(Alert.AlertType.WARNING);
+                            alert.setTitle("WARNING!");
+                            alert.setHeaderText("Mass input is invalid!");
+                            alert.show();
+                            return;
+                        }
+                        environment.rigidBodies.add(new RigidBody(tempX,tempY,mass,fixed.isSelected(),leftPane,colorPicker.getValue()));
+                    }
+                });
+
+
+                //---------------------------------
+
+                Scene createScene = new Scene(createPane,400,720);
+
+                selectionPane.setOnMouseEntered(new EventHandler<MouseEvent>() {
+                    @Override
+                    public void handle(MouseEvent mouseEvent) {
+                        createScene.setCursor(Cursor.CROSSHAIR);
+                        selectionPane.setOnMouseClicked(new EventHandler<MouseEvent>() {
+                            @Override
+                            public void handle(MouseEvent mouseEvent) {
+
+                                Double oldX = mouseEvent.getX();
+                                Double oldY = mouseEvent.getY();
+
+                                prevX.add(oldX);
+                                prevY.add(oldY);
+
+                                Double newX = oldX*2.45;
+                                Double newY = oldY*1.8;
+
+                                x.add(newX);
+                                y.add(newY);
+
+
+
+                                xInput.setText(String.format("%.2f",newX));
+                                yInput.setText(String.format("%.2f",newY));
+
+                                Circle tmpPoint = new Circle(1,Color.BLACK);
+                                tmpPoint.setLayoutX(oldX);
+                                tmpPoint.setLayoutY(oldY);
+
+
+
+                                int n = x.size();
+
+                                comboBox.getItems().add(String.format("Point %d",n));
+                                comboBox.setValue(comboBox.getItems().get(n-1));
+
+
+                                if (n>=2)
+                                {
+                                    if (n>3)
+                                    {
+                                        selectionPane.getChildren().remove(lines.get(lines.size()-1));
+                                        lines.remove(lines.size()-1);
+                                    }
+
+                                    Line line = new Line(prevX.get(n-2),prevY.get(n-2),prevX.get(n-1),prevY.get(n-1));
+                                    lines.add(line);
+                                    selectionPane.getChildren().add(line);
+
+                                    // ---- Order matters if you're wondering why I split the two if-statements apart
+                                    if (n>3)
+                                    {
+                                        Line tmpline = new Line(prevX.get(n-1),prevY.get(n-1),prevX.get(0),prevY.get(0));
+                                        lines.add(tmpline);
+                                        selectionPane.getChildren().add(tmpline);
+                                    }
+
+                                    if (n==3)
+                                    {
+                                        Line tmpline = new Line(prevX.get(n-1),prevY.get(n-1),prevX.get(0),prevY.get(0));
+                                        lines.add(tmpline);
+                                        selectionPane.getChildren().add(tmpline);
+
+                                    }
+                                }
+                                System.out.println(getPointIndex(comboBox,comboBox.getValue()));
+                                for (Line x : lines)
+                                {
+                                    System.out.println(x);
+                                }
+                                selectionPane.getChildren().add(tmpPoint);
+
+                            }
+                        });
+                    }
+                });
+
+                selectionPane.setOnMouseExited(new EventHandler<MouseEvent>() {
+                    @Override
+                    public void handle(MouseEvent mouseEvent) {
+                        createScene.setCursor(Cursor.DEFAULT);
+                    }
+                });
+
+                GridPane.setConstraints(selectionPane,0,0,10,10);
+                GridPane.setConstraints(hbox,0,10);
+                GridPane.setConstraints(xLabel,0,12,4,4);
+                GridPane.setConstraints(xInput,4,12,4,4);
+                GridPane.setConstraints(yLabel,0,16,4,4);
+                GridPane.setConstraints(yInput,4,16,4,4);
+                GridPane.setConstraints(massLbl,0,20,4,4);
+                GridPane.setConstraints(massInput,4,20,4,4);
+                GridPane.setConstraints(fixed,0,24,4,4);
+                GridPane.setConstraints(colorPicker,4,24,4,4);
+                GridPane.setConstraints(clickMe,0,28,4,4);
+
+
+                createPane.getChildren().addAll(selectionPane,hbox,xLabel,xInput,yLabel,yInput,fixed,massLbl,massInput,colorPicker,clickMe);
+
+                newObjectWindow.setScene(createScene);
+
+                newObjectWindow.show();
+
+            }
+        });
+        MenuItem newCircle = new MenuItem("Circle");
+        newCircle.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent actionEvent) {
+                Stage newObjectWindow = new Stage();
+                newObjectWindow.setTitle("Create a New Object");
+
+                GridPane createPane = new GridPane();
+                createPane.setPadding(new Insets(10,10,10,10));
+                createPane.setVgap(20);
+
+
+
+                Label xLabel = new Label("X:");
+                TextField xInput = new TextField();
+
+                Label yLabel = new Label("Y:");
+                TextField yInput = new TextField();
+
+                Label radLabel = new Label("Radius:");
+                TextField radInput = new TextField();
+
+                CheckBox fixed = new CheckBox("Fixed");
+                fixed.setSelected(false);
+
+                Label massLbl = new Label("Mass:");
+                TextField massInput = new TextField("1");
+
+                ColorPicker colorPicker = new ColorPicker();
+                colorPicker.setValue(Color.BLACK);
+                colorPicker.setPrefWidth(60);
+
+                Button clickMe = new Button("Add");
+                clickMe.setOnAction(new EventHandler<ActionEvent>() {
+                    @Override
+                    public void handle(ActionEvent actionEvent) {
+                        double x = 0;
+                        double y = 0;
+                        double radius = 0;
+                        if (isDouble(xInput.getText())) x = Double.parseDouble(xInput.getText());
+                        if (isDouble(yInput.getText())) y = Double.parseDouble(yInput.getText());
+                        if (isDouble(radInput.getText())) radius = Double.parseDouble(radInput.getText());
+
+                        double[] xTmp = new double[40];
+                        double[] yTmp = new double[40];
+
+                        for(int i=0; i<40; i++){
+                            xTmp[i] = x + radius * Math.cos(2 * i * Math.PI / 40);
+                            yTmp[i] = y + radius * Math.sin(2 * i * Math.PI / 40);
+                        }
+
+                        double mass;
+                        try
+                        {
+                            mass = Double.parseDouble(massInput.getText());
+                        }
+                        catch(Exception ex)
+                        {
+                            Alert alert = new Alert(Alert.AlertType.WARNING);
+                            alert.setTitle("WARNING!");
+                            alert.setHeaderText("Mass input is invalid!");
+                            alert.show();
+                            return;
+                        }
+
+                        environment.rigidBodies.add(new RigidBody(xTmp, yTmp,mass,fixed.isSelected(),leftPane,colorPicker.getValue()));
+
+                    }
+                });
+
+
+                GridPane.setConstraints(xLabel,0,12,4,4);
+                GridPane.setConstraints(xInput,4,12,4,4);
+                GridPane.setConstraints(yLabel,0,16,4,4);
+                GridPane.setConstraints(yInput,4,16,4,4);
+                GridPane.setConstraints(radLabel,0,20,4,4);
+                GridPane.setConstraints(radInput,4,20,4,4);
+                GridPane.setConstraints(fixed,0,24,4,4);
+                GridPane.setConstraints(colorPicker,4,26,4,4);
+                GridPane.setConstraints(clickMe,0,28,4,4);
+                GridPane.setConstraints(massLbl,0,30,4,4);
+                GridPane.setConstraints(massInput,4,32,4,4);
+
+
+                createPane.getChildren().addAll(xLabel,xInput,yLabel,yInput,radLabel,radInput,fixed,clickMe, colorPicker, massInput, massLbl);
+
+
+                Scene createScene = new Scene(createPane,400,720);
+                newObjectWindow.setScene(createScene);
+                newObjectWindow.show();
+            }
+        });
+        createObject.getItems().addAll(newRigidBody,newCircle);
+
+        MenuBar menubar = new MenuBar();
+        menubar.getMenus().add(createObject);
+
+        GridPane.setConstraints(menubar,0,0);
+
+        objectPane.getChildren().add(menubar);
+    }
+
 
     public static boolean isDouble(String s)
     {
