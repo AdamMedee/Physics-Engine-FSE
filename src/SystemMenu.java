@@ -422,7 +422,7 @@ public class SystemMenu {
                 HBox hbox = new HBox();
                 hbox.getChildren().add(comboBox);
 
-                Label currentPoint = new Label("Current Point");
+
                 Label xLabel = new Label("X:");
 
                 TextField xInput = new TextField();
@@ -444,14 +444,13 @@ public class SystemMenu {
                 comboBox.setOnAction(new EventHandler<ActionEvent>() {
                     @Override
                     public void handle(ActionEvent actionEvent) {
-                        int index = 0; // Initialize to zero b/c java
+                        int index = -1; // Initialize to zero b/c java
                         for (int i=0;i<comboBox.getItems().size();i++)
                         {
                             if (comboBox.getItems().get(i)==comboBox.getValue())
                             {
                                 index = i;
                             }
-
                         }
 
                         if (highlights.size()==1)
@@ -472,7 +471,49 @@ public class SystemMenu {
                     }
                 });
 
+                Button deletePoint = new Button("Delete Point");
+                deletePoint.setOnAction(new EventHandler<ActionEvent>() {
+                    @Override
+                    public void handle(ActionEvent actionEvent) {
+                        int index = getPointIndex(comboBox,comboBox.getValue());
+
+                        Circle tmpPoint = new Circle();
+                        tmpPoint.setLayoutX(x.get(index));
+                        tmpPoint.setLayoutY(y.get(index));
+
+                        x.remove(index);
+                        y.remove(index);
+
+                        if (index!=0)
+                        {
+                            selectionPane.getChildren().remove(lines.get(index-1));
+                            selectionPane.getChildren().remove(lines.get(index));
+
+                            lines.remove(index-1);
+                            lines.remove(index);
+
+
+
+
+
+                        }
+                        else
+                        {
+                            lines.remove(index);
+                            lines.remove(lines.size()-1);
+                        }
+
+
+                        comboBox.getItems().remove(index);
+
+
+
+
+                    }
+                });
+
                 Button clickMe = new Button("Add");
+
                 clickMe.setOnAction(new EventHandler<ActionEvent>() {
                     @Override
                     public void handle(ActionEvent actionEvent) {
@@ -498,13 +539,9 @@ public class SystemMenu {
                             alert.setHeaderText("Mass input is invalid!");
                             alert.show();
                             return;
-
-
                         }
 
-
                        environment.rigidBodies.add(new RigidBody(tempX,tempY,mass,fixed.isSelected(),leftPane,colorPicker.getValue()));
-
                     }
                 });
 
@@ -520,6 +557,7 @@ public class SystemMenu {
                         selectionPane.setOnMouseClicked(new EventHandler<MouseEvent>() {
                             @Override
                             public void handle(MouseEvent mouseEvent) {
+
                                 Double oldX = mouseEvent.getX();
                                 Double oldY = mouseEvent.getY();
 
@@ -561,7 +599,7 @@ public class SystemMenu {
                                     lines.add(line);
                                     selectionPane.getChildren().add(line);
 
-                                    // ---- Order matters if you're wondering why I split the two if statements apart
+                                    // ---- Order matters if you're wondering why I split the two if-statements apart
                                     if (n>3)
                                     {
                                         Line tmpline = new Line(prevX.get(n-1),prevY.get(n-1),prevX.get(0),prevY.get(0));
@@ -576,6 +614,12 @@ public class SystemMenu {
                                         selectionPane.getChildren().add(tmpline);
 
                                     }
+                                }
+                                System.out.println(getPointIndex(comboBox,comboBox.getValue()));
+                                for (Line x : lines)
+                                {
+                                    System.out.println(x);
+
                                 }
                                 selectionPane.getChildren().add(tmpPoint);
 
@@ -592,7 +636,6 @@ public class SystemMenu {
                 });
 
                 GridPane.setConstraints(selectionPane,0,0,10,10);
-//                GridPane.setConstraints(currentPoint,0,10);
                 GridPane.setConstraints(hbox,0,10);
                 GridPane.setConstraints(xLabel,0,12,4,4);
                 GridPane.setConstraints(xInput,4,12,4,4);
@@ -622,10 +665,9 @@ public class SystemMenu {
 
                 GridPane createPane = new GridPane();
                 createPane.setPadding(new Insets(10,10,10,10));
+                createPane.setVgap(20);
 
-                Pane selectionPane = new Pane();
-                selectionPane.setStyle("-fx-border-color: black;-fx-border-insets: 10,10,10,10;");
-                selectionPane.setPrefSize(400,400);
+
 
                 Label xLabel = new Label("X:");
                 TextField xInput = new TextField();
@@ -650,18 +692,35 @@ public class SystemMenu {
                         if (isDouble(yInput.getText())) y = Double.parseDouble(yInput.getText());
                         if (isDouble(radInput.getText())) radius = Double.parseDouble(radInput.getText());
 
-                        double[] xTmp = new double[10];
-                        double[] yTmp = new double[10];
+                        double[] xTmp = new double[40];
+                        double[] yTmp = new double[40];
 
-                        for(int i=0; i<20; i++){
-                            xTmp[i] = radius * Math.cos(i * Math.PI / 20);
-                            yTmp[i] = radius * Math.sin(i * Math.PI / 20);
+                        for(int i=0; i<40; i++){
+                            xTmp[i] = x + radius * Math.cos(2 * i * Math.PI / 40);
+                            yTmp[i] = y + radius * Math.sin(2 * i * Math.PI / 40);
                         }
 
                         environment.rigidBodies.add(new RigidBody(xTmp, yTmp,1,fixed.isSelected(),leftPane,Color.BLACK));
 
                     }
                 });
+
+
+                GridPane.setConstraints(xLabel,0,12,4,4);
+                GridPane.setConstraints(xInput,4,12,4,4);
+                GridPane.setConstraints(yLabel,0,16,4,4);
+                GridPane.setConstraints(yInput,4,16,4,4);
+                GridPane.setConstraints(radLabel,0,20,4,4);
+                GridPane.setConstraints(radInput,4,20,4,4);
+                GridPane.setConstraints(fixed,0,24,4,4);
+                GridPane.setConstraints(clickMe,0,28,4,4);
+
+            createPane.getChildren().addAll(xLabel,xInput,yLabel,yInput,radLabel,radInput,fixed,clickMe);
+
+
+            Scene createScene = new Scene(createPane,400,720);
+            newObjectWindow.setScene(createScene);
+            newObjectWindow.show();
             }
         });
         createObject.getItems().addAll(newRigidBody,newCircle);
@@ -695,7 +754,6 @@ public class SystemMenu {
 
 
             temp.setPrefSize(128,128);
-
 
 
 
@@ -883,6 +941,20 @@ public class SystemMenu {
         }
 
         return result;
+    }
+
+    public static int getPointIndex (ComboBox temp,Object s)
+    {
+        int index = -1; // If value is not found
+
+        for (int i=0;i<temp.getItems().size();i++)
+        {
+            if (temp.getItems().get(i) == s)
+            {
+                index = i;
+            }
+        }
+        return index;
     }
 
     //Displayes menu to the screen
