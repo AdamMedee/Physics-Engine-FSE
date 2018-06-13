@@ -69,12 +69,16 @@ public class SystemMenu {
     public Button systemB,objectB,back;
     public Pane leftPane;
     public GridPane objectPane;
+    public GridPane SystemPane;
 
 
     //------
     //Scroll Pane----------
     ScrollPane objectsUI =  new ScrollPane();
     ScrollPane systemUI = new ScrollPane();
+
+    //Buttons
+    Button runBtn;
 
 
     private String newScene;
@@ -93,19 +97,20 @@ public class SystemMenu {
         environment.setSimulationSpeed(speedVal);
 
         leftPane = new Pane();
+        SystemPane = new GridPane();
 
         TabPane tabs = new TabPane();
 
         tabs.setTabClosingPolicy(TabPane.TabClosingPolicy.UNAVAILABLE);
 
 
-        GridPane SystemPane = new GridPane();
+
         //SystemPane.setPrefSize();
 
+        //Tab system to switch between objects and systems
         Tab SystemTab = new Tab();
         SystemTab.setText("System");
         SystemTab.setStyle("-fx-pref-width: 125");
-
 
         Tab ObjectTab = new Tab();
         ObjectTab.setText("Objects");
@@ -226,65 +231,13 @@ public class SystemMenu {
 
 
         // CheckBox for rotation
-
-        CheckBox rotateCB = new CheckBox();
-        rotateCB.setText("Rotation");
-        rotateCB.setSelected(false);
-        rotateCB.setOnAction(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent event) {
-
-                rotateCB.setSelected(!rotateCB.isSelected());
-                // This ensures that the checkbox won't change state while the dialog is opened
-
-
-                if (!rotateCB.isSelected())
-                {
-                    Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
-                    alert.setTitle("Are you sure?");
-                    alert.setHeaderText("Are you sure you want to add rotation?");
-
-                    ImageView Gary = new ImageView(this.getClass().getResource("resources/images/GARU.png").toString());
-                    Gary.setFitHeight(100);
-                    Gary.setFitWidth(100);
-                    alert.setGraphic(Gary);
-
-
-                    ButtonType OKBtn = new ButtonType("OK", ButtonBar.ButtonData.OK_DONE);
-                    ButtonType CancelBtn = new ButtonType("Cancel", ButtonBar.ButtonData.CANCEL_CLOSE);
-                    alert.getButtonTypes().setAll(OKBtn,CancelBtn);
-
-                    Optional<ButtonType> result = alert.showAndWait();
-                    if (result.get() == OKBtn)
-                    {
-                        rotateCB.setSelected(!rotateCB.isSelected());
-                        environment.setRotate(true);
-                    }
-                    else if (result.get() == CancelBtn)
-                    {
-                        alert.close();
-                        rotateCB.setSelected(false);
-                    }
-                }
-
-                else // If switching off rotation
-                {
-                    rotateCB.setSelected(false);
-                    environment.setRotate(false);
-
-                }
-            }
-        });
-
-        GridPane.setConstraints(rotateCB,0,5);
-
-        SystemPane.getChildren().add(rotateCB);
+        createRotationBox();
 
         //Three buttons at the bottom (run, reset, clear)
         HBox bottomrow = new HBox(30);
 
         //Pause button for the system
-        Button runBtn  = new Button(" Run ");
+        runBtn  = new Button(" Run ");
         runBtn.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent actionEvent) {
@@ -382,12 +335,27 @@ public class SystemMenu {
 
 
         // Buttons will be affected by fixed object. Only the bottom few would right now.
+
+        createBodyInfoBoxes();
+        createBackButton();
+
+        objectsUI.setContent(objectPane);
+        systemUI.setContent(SystemPane);
+
+        ObjectTab.setContent(objectsUI);
+        SystemTab.setContent(systemUI);
+
+        SystemLayout.setLeft(leftPane);
+        SystemLayout.setRight(tabs);
+
+    }
+
+    private  void createBodyInfoBoxes(){
+        objectPane.getChildren().clear();
         addShape();
-
-
-
         for (int i = 0;i<environment.rigidBodies.size();i++)
         {
+
             Pane temp = new Pane();
             temp.setStyle("-fx-border-color: black;-fx-border-insets: 10,10,10,10;");
 
@@ -413,7 +381,6 @@ public class SystemMenu {
             Label CMInfo = new Label(String.format("X: %.2f\nY: %.2f",Garu.getCenter().getX(),Garu.getCenter().getY()));
 
             Button EditBtn = new Button("Edit");
-
             EditBtn.setOnAction(new EventHandler<ActionEvent>() {
                 @Override
                 public void handle(ActionEvent actionEvent) {
@@ -518,10 +485,6 @@ public class SystemMenu {
 
             //Deleting a selected rigidbody
             Button DeleteBtn = new Button("Delete");
-
-
-
-
             DeleteBtn.setOnAction(new EventHandler<ActionEvent>() {
                 @Override
                 public void handle(ActionEvent event) {
@@ -547,38 +510,79 @@ public class SystemMenu {
                         for(int i = Garu.getSerialNum(); i < environment.rigidBodies.size(); i++){
                             environment.rigidBodies.get(i).setSerialNum(environment.rigidBodies.get(i).getSerialNum()-1);
                         }
-                            environment.rigidBodies.remove(Garu);
-                        }
+                        environment.rigidBodies.remove(Garu);
+                        createBodyInfoBoxes();
+                    }
                     else if (result.get() == CancelBtn) { alert.close(); }
                 }
             });
-
+            GridPane.setConstraints(DeleteBtn,5,i*4+4);
 
             GridPane.setConstraints(MassInfo,4,i*4+1);
             GridPane.setConstraints(SidesInfo,4,i*4+2);
             GridPane.setConstraints(CMInfo,4,i*4+3);
             GridPane.setConstraints(EditBtn,4,i*4+4);
-            GridPane.setConstraints(DeleteBtn,5,i*4+4);
+
             DeleteBtn.setTranslateX(-40);
 
             objectPane.getChildren().addAll(temp,MassInfo,SidesInfo,CMInfo,EditBtn, DeleteBtn);
         }
+    }
+
+    private void createRotationBox(){
+        CheckBox rotateCB = new CheckBox();
+        rotateCB.setText("Rotation");
+        rotateCB.setSelected(false);
+        rotateCB.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+
+                rotateCB.setSelected(!rotateCB.isSelected());
+                // This ensures that the checkbox won't change state while the dialog is opened
 
 
+                if (!rotateCB.isSelected())
+                {
+                    Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+                    alert.setTitle("Are you sure?");
+                    alert.setHeaderText("Are you sure you want to add rotation?");
+
+                    ImageView Gary = new ImageView(this.getClass().getResource("resources/images/GARU.png").toString());
+                    Gary.setFitHeight(100);
+                    Gary.setFitWidth(100);
+                    alert.setGraphic(Gary);
 
 
-        objectsUI.setContent(objectPane);
-        systemUI.setContent(SystemPane);
+                    ButtonType OKBtn = new ButtonType("OK", ButtonBar.ButtonData.OK_DONE);
+                    ButtonType CancelBtn = new ButtonType("Cancel", ButtonBar.ButtonData.CANCEL_CLOSE);
+                    alert.getButtonTypes().setAll(OKBtn,CancelBtn);
 
-        ObjectTab.setContent(objectsUI);
-        SystemTab.setContent(systemUI);
+                    Optional<ButtonType> result = alert.showAndWait();
+                    if (result.get() == OKBtn)
+                    {
+                        rotateCB.setSelected(!rotateCB.isSelected());
+                        environment.setRotate(true);
+                    }
+                    else if (result.get() == CancelBtn)
+                    {
+                        alert.close();
+                        rotateCB.setSelected(false);
+                    }
+                }
 
-        SystemLayout.setLeft(leftPane);
+                else // If switching off rotation
+                {
+                    rotateCB.setSelected(false);
+                    environment.setRotate(false);
 
+                }
+            }
+        });
+        GridPane.setConstraints(rotateCB,0,5);
+        SystemPane.getChildren().add(rotateCB);
+    }
 
-
-
-
+    private void createBackButton(){
         back = new Button("Back");
         back.setLayoutX(20);
         back.setLayoutY(20);
@@ -591,16 +595,12 @@ public class SystemMenu {
                 newScene = "MainMenu";
             }
         });
-
         // Adds nodes to group
-
         leftPane.getChildren().add(back);
-        SystemLayout.setRight(tabs);
-
     }
 
     //The add function in the menu
-    public void addShape(){
+    private void addShape(){
         // --- Create new object
 
         Menu createObject = new Menu("New");
@@ -942,7 +942,7 @@ public class SystemMenu {
                         }
 
                         environment.rigidBodies.add(new RigidBody(xTmp, yTmp,mass,fixed.isSelected(),leftPane,colorPicker.getValue()));
-
+                        createBodyInfoBoxes();
                     }
                 });
 
