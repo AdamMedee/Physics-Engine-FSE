@@ -67,7 +67,7 @@ public class PhysicsEngine extends Application {
         selectMenu = new SelectMenu();
         systemMenu = new SystemMenu(environmentList.get(0));
 
-        String uriString = PhysicsEngine.class.getResource("resources/music/menuSong.mp3").toString();
+        String uriString = PhysicsEngine.class.getResource("resources/music/menuSong.wav").toString();
         Media media = new Media(uriString);
         MediaPlayer player = new MediaPlayer(media);
         player.setOnEndOfMedia(new Runnable() {
