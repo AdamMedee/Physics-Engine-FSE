@@ -815,6 +815,7 @@ public class SystemMenu {
 
                             }
 
+
                             comboBox.getItems().remove(index);
 
                             comboBox.setValue(comboBox.getItems().get(comboBox.getItems().size()-1));
