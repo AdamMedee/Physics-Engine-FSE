@@ -17,15 +17,12 @@ import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.geometry.Point2D;
 import javafx.scene.Cursor;
-import javafx.scene.Group;
 import javafx.scene.Node;
-import javafx.scene.canvas.Canvas;
 import javafx.scene.control.*;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.image.ImageView;
-import javafx.scene.image.WritableImage;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
@@ -36,10 +33,8 @@ import javafx.scene.Scene;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.ScrollPane.ScrollBarPolicy;
 import javafx.stage.Stage;
-import javafx.util.Pair;
 
 
-import javax.xml.soap.Text;
 import java.util.ArrayList;
 import java.util.Optional;
 
@@ -77,6 +72,8 @@ public class SystemMenu {
     ScrollPane objectsUI =  new ScrollPane();
     ScrollPane systemUI = new ScrollPane();
 
+    Tab SystemTab;
+
     //Buttons
     Button runBtn;
 
@@ -108,7 +105,7 @@ public class SystemMenu {
         //SystemPane.setPrefSize();
 
         //Tab system to switch between objects and systems
-        Tab SystemTab = new Tab();
+        SystemTab = new Tab();
         SystemTab.setText("System");
         SystemTab.setStyle("-fx-pref-width: 125");
 
@@ -118,6 +115,51 @@ public class SystemMenu {
 
         tabs.getTabs().addAll(SystemTab, ObjectTab);
 
+
+
+
+
+        leftPane.setPrefSize(900,720);
+        leftPane.setMaxWidth(980);
+
+        tabs.setPrefSize(300,720);
+
+        //Environment being run
+        this.environment = environment;
+
+        leftPane.toBack();
+
+
+
+        //ObjectUI Initialization
+        objectsUI.setVbarPolicy(ScrollBarPolicy.ALWAYS);
+        objectsUI.setHbarPolicy(ScrollBarPolicy.AS_NEEDED);
+        systemUI.setVbarPolicy(ScrollBarPolicy.AS_NEEDED);
+        systemUI.setHbarPolicy(ScrollBarPolicy.AS_NEEDED);
+
+        objectPane = new GridPane();
+        objectPane.setPadding(new Insets(10,10,10,10));
+        objectPane.setVgap(8);
+        objectPane.setVgap(10);
+
+        createBodyInfoBoxes();
+        createBackButton();
+
+        createSystemMenu();
+
+        objectsUI.setContent(objectPane);
+        systemUI.setContent(SystemPane);
+
+        ObjectTab.setContent(objectsUI);
+        SystemTab.setContent(systemUI);
+
+        SystemLayout.setLeft(leftPane);
+        SystemLayout.setRight(tabs);
+
+    }
+
+    //Creates the system editing menu
+    private void createSystemMenu(){
 
         // ---------SystemPane Initialization
         SystemPane.setPadding(new Insets(10, 10, 10, 10));
@@ -277,8 +319,8 @@ public class SystemMenu {
         });
 
         //Resets environment to default settings
-        Button clearBtn = new Button("Apply");
-        clearBtn.setOnAction(new EventHandler<ActionEvent>() {
+        Button applyBtn = new Button("Apply");
+        applyBtn.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent actionEvent) {
                 if (isDouble(xInput.getText())) OriginX = Double.parseDouble(xInput.getText());
@@ -296,49 +338,35 @@ public class SystemMenu {
                 environment.reset(false);
             }
         });
-        bottomrow.getChildren().addAll(runBtn,resetBtn,clearBtn);
+        bottomrow.getChildren().addAll(runBtn,resetBtn,applyBtn);
 
         GridPane.setConstraints(bottomrow,0,6,2,4);
 
         SystemPane.getChildren().add(bottomrow);
 
-
-        leftPane.setPrefSize(900,720);
-        leftPane.setMaxWidth(980);
-
-        tabs.setPrefSize(300,720);
-
-        //Environment being run
-        this.environment = environment;
-        this.environment.setGroup(leftPane);
-
-        leftPane.toBack();
-
-
-        //ObjectUI Initialization
-        objectsUI.setVbarPolicy(ScrollBarPolicy.ALWAYS);
-        objectsUI.setHbarPolicy(ScrollBarPolicy.AS_NEEDED);
-        systemUI.setVbarPolicy(ScrollBarPolicy.AS_NEEDED);
-        systemUI.setHbarPolicy(ScrollBarPolicy.AS_NEEDED);
-
-        objectPane = new GridPane();
-        objectPane.setPadding(new Insets(10,10,10,10));
-        objectPane.setVgap(8);
-        objectPane.setVgap(10);
-
-        createBodyInfoBoxes();
-        createBackButton();
-
-        objectsUI.setContent(objectPane);
-        systemUI.setContent(SystemPane);
-
-        ObjectTab.setContent(objectsUI);
-        SystemTab.setContent(systemUI);
-
-        SystemLayout.setLeft(leftPane);
-        SystemLayout.setRight(tabs);
-
+        createClear();
     }
+
+
+
+    //Empties the environments of all rigidbodies
+    private void createClear(){
+        Button clearBtn = new Button("Clear");
+        clearBtn.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent actionEvent) {
+                for(RigidBody body : environment.rigidBodies){
+                    body.removeShape();
+                }
+                environment.rigidBodies.clear();
+                createBodyInfoBoxes();
+            }
+        });
+        GridPane.setConstraints(clearBtn,1,0);
+        objectPane.getChildren().add(clearBtn);
+    }
+
+
 
     //Creates the object info pane for a given rigidbody with index "i"
     private void createBodyPane(int i){
@@ -366,6 +394,9 @@ public class SystemMenu {
         Label SidesInfo = new Label(String.format("Number of sides: %d",Garu.getSides()));
         Label CMInfo = new Label(String.format("X: %.2f\nY: %.2f",Garu.getCenter().getX(),Garu.getCenter().getY()));
 
+
+        Button DeleteBtn = new Button("Delete");
+        //Defines the edit rigidbody window
         Button EditBtn = new Button("Edit");
         EditBtn.setOnAction(new EventHandler<ActionEvent>() {
             @Override
@@ -415,6 +446,7 @@ public class SystemMenu {
                 });
 
                 Button ApplyBtn = new Button("Apply");
+
                 ApplyBtn.setOnAction(new EventHandler<ActionEvent>() {
                     @Override
                     public void handle(ActionEvent actionEvent) {
@@ -431,10 +463,9 @@ public class SystemMenu {
                         //tmp.setScale(environment.scale);
                         Garu.removeShape();
                         environment.rigidBodies.set(Garu.getSerialNum(),tmp);
-
-
-                        MassInfo.setText(String.format("Mass: %f",tmp.getMass()));
-
+                        tmp.setSerialNum(Garu.getSerialNum());
+                        objectPane.getChildren().removeAll(temp,MassInfo,SidesInfo,CMInfo,EditBtn, DeleteBtn);
+                        createBodyPane(tmp.getSerialNum());
                         newWindow.close();
                     }
                 });
@@ -471,7 +502,6 @@ public class SystemMenu {
 
 
         //Deleting a selected rigidbody
-        Button DeleteBtn = new Button("Delete");
         DeleteBtn.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
@@ -515,10 +545,14 @@ public class SystemMenu {
         objectPane.getChildren().addAll(temp,MassInfo,SidesInfo,CMInfo,EditBtn, DeleteBtn);
     }
 
+    //Opens a screen to edit a given rigidbody
+
+
     //Create the list of info boxes on the right
-    private  void createBodyInfoBoxes(){
+    public  void createBodyInfoBoxes(){
         objectPane.getChildren().clear();
         addShape();
+        createClear();
         for (int i = 0; i<environment.rigidBodies.size(); i++)
         {
             createBodyPane(i);
@@ -710,11 +744,6 @@ public class SystemMenu {
 
                             lines.remove(index-1);
                             lines.remove(index);
-
-
-
-
-
                         }
                         else
                         {
@@ -1029,6 +1058,8 @@ public class SystemMenu {
         }
         return index;
     }
+
+
 
     //Displayes menu to the screen
     public void update(){
