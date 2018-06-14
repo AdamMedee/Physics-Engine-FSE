@@ -326,16 +326,6 @@ public class SystemMenu {
         objectPane.setVgap(8);
         objectPane.setVgap(10);
 
-
-
-
-        //--- Iterating through every rigid body
-
-
-
-
-        // Buttons will be affected by fixed object. Only the bottom few would right now.
-
         createBodyInfoBoxes();
         createBackButton();
 
@@ -350,6 +340,7 @@ public class SystemMenu {
 
     }
 
+    //Creates the object info pane for a given rigidbody with index "i"
     private void createBodyPane(int i){
         Pane temp = new Pane();
         temp.setStyle("-fx-border-color: black;-fx-border-insets: 10,10,10,10;");
@@ -523,6 +514,7 @@ public class SystemMenu {
         objectPane.getChildren().addAll(temp,MassInfo,SidesInfo,CMInfo,EditBtn, DeleteBtn);
     }
 
+    //Create the list of info boxes on the right
     private  void createBodyInfoBoxes(){
         objectPane.getChildren().clear();
         addShape();
@@ -532,6 +524,7 @@ public class SystemMenu {
         }
     }
 
+    //Check box and warning screen to turn on W.I.P. rotation
     private void createRotationBox(){
         CheckBox rotateCB = new CheckBox();
         rotateCB.setText("Rotation");
@@ -585,6 +578,7 @@ public class SystemMenu {
         SystemPane.getChildren().add(rotateCB);
     }
 
+    //Button to go back to the main menu
     private void createBackButton(){
         back = new Button("Back");
         back.setLayoutX(20);
@@ -602,7 +596,7 @@ public class SystemMenu {
         leftPane.getChildren().add(back);
     }
 
-    //The add function in the menu
+    //Allows you to create and add a circle or rigidbody to the environment
     private void addShape(){
         // --- Create new object
 
@@ -983,6 +977,7 @@ public class SystemMenu {
     }
 
 
+    //Checks if a given string can be converted to a double
     public static boolean isDouble(String s)
     {
         try
