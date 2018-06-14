@@ -17,15 +17,12 @@ import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.geometry.Point2D;
 import javafx.scene.Cursor;
-import javafx.scene.Group;
 import javafx.scene.Node;
-import javafx.scene.canvas.Canvas;
 import javafx.scene.control.*;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.image.ImageView;
-import javafx.scene.image.WritableImage;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
@@ -36,10 +33,8 @@ import javafx.scene.Scene;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.ScrollPane.ScrollBarPolicy;
 import javafx.stage.Stage;
-import javafx.util.Pair;
 
 
-import javax.xml.soap.Text;
 import java.util.ArrayList;
 import java.util.Optional;
 
@@ -131,7 +126,6 @@ public class SystemMenu {
 
         //Environment being run
         this.environment = environment;
-        this.environment.setGroup(leftPane);
 
         leftPane.toBack();
 
@@ -368,7 +362,7 @@ public class SystemMenu {
                 createBodyInfoBoxes();
             }
         });
-        GridPane.setConstraints(clearBtn,4,0);
+        GridPane.setConstraints(clearBtn,1,0);
         objectPane.getChildren().add(clearBtn);
     }
 
@@ -555,9 +549,10 @@ public class SystemMenu {
 
 
     //Create the list of info boxes on the right
-    private  void createBodyInfoBoxes(){
+    public  void createBodyInfoBoxes(){
         objectPane.getChildren().clear();
         addShape();
+        createClear();
         for (int i = 0; i<environment.rigidBodies.size(); i++)
         {
             createBodyPane(i);
@@ -1063,6 +1058,8 @@ public class SystemMenu {
         }
         return index;
     }
+
+
 
     //Displayes menu to the screen
     public void update(){

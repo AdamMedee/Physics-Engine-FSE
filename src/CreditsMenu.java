@@ -132,6 +132,7 @@ public class CreditsMenu {
         creditsLayout.getChildren().add(bgSim);
         bgSim.toBack();
     }
+
     //Run the screen
     public String run(){
         bg.run();

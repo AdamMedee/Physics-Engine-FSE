@@ -69,73 +69,31 @@ public class Environment {
         return environmentLayout;
     }
 
-    public void setGroup (Pane src)
+    public void startDefaultSim(Pane src)
     {
-        environmentLayout = src;
-        double[] x = {30, 40, 50, 30};
-        double[] y = {100, 120, 130, 140};
-        double[] x2 = {0, 1000, 1000, 0};
-        double[] y2 = {600, 600, 700, 700};
-        double[] x3 = {700,600,500,450};
-        double[] y3 = {120,240,200,120};
-        double[] x4 = {0, 1000, 1000, 0};
-        double[] y4 = {10, 10, 50, 50};
-        double[] x5 = {-30, 20, 20, -30};
-        double[] y5 = {0, 0, 700, 700};
-        double[] x6 = {960, 1000, 1000, 960};
-        double[] y6 = {0, 0, 700, 700};
-        double[] x7 = {400, 900, 900, 400};
-        double[] y7 = {400, 400, 450, 450};
-        double[] x8 = {400, 600, 600, 400};
-        double[] y8 = {250, 250, 295, 295};
-        double[] x9 = {520, 500, 480, 490, 500};
-        double[] y9 = {400, 460, 450, 440, 420};
-
-        RigidBody leo = new RigidBody(x, y, 1, false, environmentLayout, Color.BLACK);
-        RigidBody leoo = new RigidBody(x2, y2, 1, true, environmentLayout,Color.BLACK);
-        RigidBody leoooooo = new RigidBody(x3, y3, 4, false, environmentLayout,Color.BLACK);
-        RigidBody leooo = new RigidBody(x4, y4, 1, true, environmentLayout,Color.BLACK);
-        RigidBody leoooo = new RigidBody(x5, y5, 1, true, environmentLayout,Color.BLACK);
-        RigidBody leooooo = new RigidBody(x6, y6, 1, true, environmentLayout,Color.BLACK);
-        RigidBody leooooooooo = new RigidBody(x9, y9, 2, false, environmentLayout,Color.BLACK);
-        leo.setSerialNum(rigidBodies.size());
-        rigidBodies.add(leo);
-        leoo.setSerialNum(rigidBodies.size());
-        rigidBodies.add(leoo);
-        leooo.setSerialNum(rigidBodies.size());
-        rigidBodies.add(leooo);
-        leoooo.setSerialNum(rigidBodies.size());
-        rigidBodies.add(leoooo);
-        leooooo.setSerialNum(rigidBodies.size());
-        rigidBodies.add(leooooo);
-        leoooooo.setSerialNum(rigidBodies.size());
-        rigidBodies.add(leoooooo);
-        leooooooooo.setSerialNum(rigidBodies.size());
-        rigidBodies.add(leooooooooo);
-
-        /*
-        for(int i = 100; i < 800; i += 10){
-            for(int j = 500; j < 650; j += 10){
-                double[] x10 = {};
-                double[] y10 = {};
-                rigidBodies.add(new RigidBody(x10, y10, 1, false, environmentLayout, Color.BLACK));
-            }
+        for(RigidBody body : rigidBodies){
+            body.removeShape();
         }
-        */
-        /*
-        double[] x10 = {900, 1000, 1000, 900};
-        double[] y10 = {500, 500, 550,550};
-        RigidBody adamBogBoi = new RigidBody(x10, y10, 1.45, true, environmentLayout);
-        rigidBodies.add(adamBogBoi);
-        */
-        /*
+        rigidBodies.clear();
+        environmentLayout = src;
+        double[] x1 = {0, 1000, 1000, 0};        double[] y1 = {600, 600, 700, 700};
+        double[] x2 = {0, 1000, 1000, 0};        double[] y2 = {10, 10, 50, 50};
+        double[] x3 = {-30, 20, 20, -30};        double[] y3 = {0, 0, 700, 700};
+        double[] x4 = {960, 1000, 1000, 960};    double[] y4 = {0, 0, 700, 700};
 
-        RigidBody leooooooo = new RigidBody(x7, y7, 1, true, environmentLayout);
-        RigidBody leoooooooo = new RigidBody(x8, y8, 1, false, environmentLayout);
-        rigidBodies.add(leooooooo);
-        rigidBodies.add(leoooooooo);
-           */
+        RigidBody bottom = new RigidBody(x1, y1, 1, true, environmentLayout,Color.BLACK);
+        RigidBody top = new RigidBody(x2, y2, 1, true, environmentLayout,Color.BLACK);
+        RigidBody left = new RigidBody(x3, y3, 1, true, environmentLayout,Color.BLACK);
+        RigidBody right = new RigidBody(x4, y4, 1, true, environmentLayout,Color.BLACK);
 
+        bottom.setSerialNum(rigidBodies.size());
+        rigidBodies.add(bottom);
+        top.setSerialNum(rigidBodies.size());
+        rigidBodies.add(top);
+        left.setSerialNum(rigidBodies.size());
+        rigidBodies.add(left);
+        right.setSerialNum(rigidBodies.size());
+        rigidBodies.add(right);
     }
 
     //Adds a rigidbody to the rigidbody arraylist

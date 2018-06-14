@@ -73,6 +73,9 @@ public class MainMenu {
             @Override
             public void handle(ActionEvent actionEvent) {
                 PhysicsEngine.window.setScene(PhysicsEngine.systemMenu.systemScene);
+                PhysicsEngine.systemMenu.environment.startDefaultSim(PhysicsEngine.systemMenu.leftPane);
+                PhysicsEngine.systemMenu.createBodyInfoBoxes();
+                PhysicsEngine.systemMenu.back.toFront();
                 newScene = "SystemMenu";
             }
         });
