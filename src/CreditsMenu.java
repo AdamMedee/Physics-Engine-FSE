@@ -40,9 +40,9 @@ public class CreditsMenu {
     private Environment bg;           //The background of the screen
     private Pane bgSim;
 
-    private Image adam = new Image("resources/images/adam.png");
-    private Image gary = new Image("resources/images/gary.png");
-    private Image leo = new Image("resources/images/leo.png");
+    private Image adam = new Image("resources/images/Adam.png");
+    private Image gary = new Image("resources/images/Gary.png");
+    private Image leo = new Image("resources/images/Leo.png");
     private Image green = new Image("resources/images/GREEN.png");
 
     public CreditsMenu(){
