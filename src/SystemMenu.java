@@ -432,6 +432,7 @@ public class SystemMenu {
                         Garu.removeShape();
                         environment.rigidBodies.set(Garu.getSerialNum(),tmp);
 
+
                         MassInfo.setText(String.format("Mass: %f",tmp.getMass()));
 
                         newWindow.close();
@@ -493,10 +494,10 @@ public class SystemMenu {
                 if (result.get() == OKBtn)
                 {
                     Garu.removeShape();
-                    for(int i = Garu.getSerialNum(); i < environment.rigidBodies.size(); i++){
-                        environment.rigidBodies.get(i).setSerialNum(environment.rigidBodies.get(i).getSerialNum()-1);
-                    }
                     environment.rigidBodies.remove(Garu);
+                    for(int i = 0; i < environment.rigidBodies.size(); i++){
+                        environment.rigidBodies.get(i).setSerialNum(i);
+                    }
                     createBodyInfoBoxes();
                 }
                 else if (result.get() == CancelBtn) { alert.close(); }
@@ -518,7 +519,7 @@ public class SystemMenu {
     private  void createBodyInfoBoxes(){
         objectPane.getChildren().clear();
         addShape();
-        for (int i = 0;i<environment.rigidBodies.size();i++)
+        for (int i = 0; i<environment.rigidBodies.size(); i++)
         {
             createBodyPane(i);
         }
@@ -760,6 +761,7 @@ public class SystemMenu {
                             return;
                         }
                         environment.rigidBodies.add(new RigidBody(tempX,tempY,mass,fixed.isSelected(),leftPane,colorPicker.getValue()));
+                        createBodyPane(environment.rigidBodies.size()-1);
                     }
                 });
 

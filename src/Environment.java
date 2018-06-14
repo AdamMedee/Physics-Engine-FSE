@@ -114,6 +114,15 @@ public class Environment {
         rigidBodies.add(leooooooooo);
 
         /*
+        for(int i = 100; i < 800; i += 10){
+            for(int j = 500; j < 650; j += 10){
+                double[] x10 = {};
+                double[] y10 = {};
+                rigidBodies.add(new RigidBody(x10, y10, 1, false, environmentLayout, Color.BLACK));
+            }
+        }
+        */
+        /*
         double[] x10 = {900, 1000, 1000, 900};
         double[] y10 = {500, 500, 550,550};
         RigidBody adamBogBoi = new RigidBody(x10, y10, 1.45, true, environmentLayout);
