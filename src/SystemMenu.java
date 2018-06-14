@@ -67,12 +67,18 @@ public class SystemMenu {
     public Scene systemScene;
     public BorderPane SystemLayout = new BorderPane();
     public Button systemB,objectB,back;
+    public Pane leftPane;
+    public GridPane objectPane;
+    public GridPane SystemPane;
 
 
     //------
     //Scroll Pane----------
     ScrollPane objectsUI =  new ScrollPane();
     ScrollPane systemUI = new ScrollPane();
+
+    //Buttons
+    Button runBtn;
 
 
     private String newScene;
@@ -90,20 +96,21 @@ public class SystemMenu {
         environment.setGravity(new Point2D(sideForceVal, gravityVal));
         environment.setSimulationSpeed(speedVal);
 
-        Pane leftPane = new Pane();
+        leftPane = new Pane();
+        SystemPane = new GridPane();
 
         TabPane tabs = new TabPane();
 
         tabs.setTabClosingPolicy(TabPane.TabClosingPolicy.UNAVAILABLE);
 
 
-        GridPane SystemPane = new GridPane();
+
         //SystemPane.setPrefSize();
 
+        //Tab system to switch between objects and systems
         Tab SystemTab = new Tab();
         SystemTab.setText("System");
         SystemTab.setStyle("-fx-pref-width: 125");
-
 
         Tab ObjectTab = new Tab();
         ObjectTab.setText("Objects");
@@ -224,65 +231,13 @@ public class SystemMenu {
 
 
         // CheckBox for rotation
-
-        CheckBox rotateCB = new CheckBox();
-        rotateCB.setText("Rotation");
-        rotateCB.setSelected(false);
-        rotateCB.setOnAction(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent event) {
-
-                rotateCB.setSelected(!rotateCB.isSelected());
-                // This ensures that the checkbox won't change state while the dialog is opened
-
-
-                if (!rotateCB.isSelected())
-                {
-                    Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
-                    alert.setTitle("Are you sure?");
-                    alert.setHeaderText("Are you sure you want to add rotation?");
-
-                    ImageView Gary = new ImageView(this.getClass().getResource("resources/images/GARU.png").toString());
-                    Gary.setFitHeight(100);
-                    Gary.setFitWidth(100);
-                    alert.setGraphic(Gary);
-
-
-                    ButtonType OKBtn = new ButtonType("OK", ButtonBar.ButtonData.OK_DONE);
-                    ButtonType CancelBtn = new ButtonType("Cancel", ButtonBar.ButtonData.CANCEL_CLOSE);
-                    alert.getButtonTypes().setAll(OKBtn,CancelBtn);
-
-                    Optional<ButtonType> result = alert.showAndWait();
-                    if (result.get() == OKBtn)
-                    {
-                        rotateCB.setSelected(!rotateCB.isSelected());
-                        environment.setRotate(true);
-                    }
-                    else if (result.get() == CancelBtn)
-                    {
-                        alert.close();
-                        rotateCB.setSelected(false);
-                    }
-                }
-
-                else // If switching off rotation
-                {
-                    rotateCB.setSelected(false);
-                    environment.setRotate(false);
-
-                }
-            }
-        });
-
-        GridPane.setConstraints(rotateCB,0,5);
-
-        SystemPane.getChildren().add(rotateCB);
+        createRotationBox();
 
         //Three buttons at the bottom (run, reset, clear)
         HBox bottomrow = new HBox(30);
 
         //Pause button for the system
-        Button runBtn  = new Button(" Run ");
+        runBtn  = new Button(" Run ");
         runBtn.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent actionEvent) {
@@ -366,22 +321,286 @@ public class SystemMenu {
         systemUI.setVbarPolicy(ScrollBarPolicy.AS_NEEDED);
         systemUI.setHbarPolicy(ScrollBarPolicy.AS_NEEDED);
 
-        GridPane objectPane = new GridPane();
+        objectPane = new GridPane();
         objectPane.setPadding(new Insets(10,10,10,10));
         objectPane.setVgap(8);
         objectPane.setVgap(10);
 
+        createBodyInfoBoxes();
+        createBackButton();
+
+        objectsUI.setContent(objectPane);
+        systemUI.setContent(SystemPane);
+
+        ObjectTab.setContent(objectsUI);
+        SystemTab.setContent(systemUI);
+
+        SystemLayout.setLeft(leftPane);
+        SystemLayout.setRight(tabs);
+
+    }
+
+    //Creates the object info pane for a given rigidbody with index "i"
+    private void createBodyPane(int i){
+        Pane temp = new Pane();
+        temp.setStyle("-fx-border-color: black;-fx-border-insets: 10,10,10,10;");
+
+        // Garu is only a shallow copy. Changes made to Garu will affect the original object.
+        // DeepGaru is a deep copy. Changes made to DeepGaru will not affect the original object
+        RigidBody Garu = environment.getRigidBodies().get(i);
+        RigidBody DeepGaru = Garu.copy(temp,Garu.getColour());
+        Point2D size = DeepGaru.getSize();
+        Point2D min = DeepGaru.getMin();
+        DeepGaru.setScale(Math.max(size.getX()/100, size.getY()/100));
+        DeepGaru.translate((-size.getX()/2-min.getX()), ((-size.getY()/2-min.getY())));
+        DeepGaru.translate(64*DeepGaru.getScale(), 64*DeepGaru.getScale());
 
 
 
-        //--- Iterating through every rigid body
+        temp.setPrefSize(128,128);
 
 
 
+        GridPane.setConstraints(temp,0,i*4+1,4,4);
+        Label MassInfo = new Label(String.format("Mass: %f",Garu.getMass()));
+        Label SidesInfo = new Label(String.format("Number of sides: %d",Garu.getSides()));
+        Label CMInfo = new Label(String.format("X: %.2f\nY: %.2f",Garu.getCenter().getX(),Garu.getCenter().getY()));
 
-        // Buttons will be affected by fixed object. Only the bottom few would right now.
+        Button EditBtn = new Button("Edit");
+        EditBtn.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent actionEvent) {
+                if(running) runBtn.fire();
+                Stage newWindow = new Stage();
+                newWindow.setTitle("Edit");
+                GridPane EditPane = new GridPane();
+                EditPane.setPadding(new Insets(10,10,10,10));
+                EditPane.setVgap(8);
+                EditPane.setVgap(10);
 
+                Label massLabel = new Label("Mass");
+                TextField massInput = new TextField(String.format("%.2f",Garu.getMass()));
+
+                //Where the shape currently is
+                Label CMLabel = new Label("Current Center of Mass:");
+
+                Label CMLabelx = new Label("X:");
+                TextField CMxInput = new TextField(String.format("%.2f",Garu.getCenter().getX()));
+
+                Label CMLabely = new Label("Y:");
+                TextField CMyInput = new TextField(String.format("%.2f",Garu.getCenter().getY()));
+
+                //Where the shape starts
+                Label SCMLabel = new Label("Starting Center of Mass:");
+
+                Label SCMLabelx = new Label("X:");
+                TextField SCMxInput = new TextField(String.format("%.2f",Garu.getStartCenter().getX()));
+
+                Label SCMLabely = new Label("Y:");
+                TextField SCMyInput = new TextField(String.format("%.2f",Garu.getStartCenter().getY()));
+
+                //How bouncy the shape is
+                Label RestLabel = new Label("Restitution:");
+                TextField RestInput = new TextField(String.format("%.3f",Garu.getRestitution()));
+
+                //For editing shape colour
+                ColorPicker colorPicker = new ColorPicker();
+                colorPicker.setValue(Garu.colour);
+                colorPicker.setOnAction(new EventHandler<ActionEvent>() {
+                    @Override
+                    public void handle(ActionEvent actionEvent) {
+
+
+                    }
+                });
+
+                Button ApplyBtn = new Button("Apply");
+                ApplyBtn.setOnAction(new EventHandler<ActionEvent>() {
+                    @Override
+                    public void handle(ActionEvent actionEvent) {
+                        Garu.colour = colorPicker.getValue();
+                        //Edits mass, current and start position, colour, and restitution
+                        RigidBody tmp = new RigidBody(Garu.getXPoints(), Garu.getYPoints(), Garu.getMass(), Garu.getFixed(),leftPane, Garu.getColour());
+
+                        if (isDouble(massInput.getText())) tmp.setMass(Double.parseDouble(massInput.getText()));
+                        if (isDouble(CMxInput.getText()))  tmp.translate(Double.parseDouble(CMxInput.getText())-tmp.getCenter().getX(),0);
+                        if (isDouble(CMyInput.getText()))  tmp.translate(0,Double.parseDouble(CMyInput.getText())-tmp.getCenter().getY());
+                        if (isDouble(SCMxInput.getText())) tmp.setStartCenter(Double.parseDouble(SCMxInput.getText()), tmp.getStartCenter().getY());
+                        if (isDouble(SCMyInput.getText())) tmp.setStartCenter(tmp.getStartCenter().getX(), Double.parseDouble(SCMyInput.getText()));
+                        if (isDouble(RestInput.getText())) tmp.setRestitution(Double.parseDouble(RestInput.getText()));
+                        //tmp.setScale(environment.scale);
+                        Garu.removeShape();
+                        environment.rigidBodies.set(Garu.getSerialNum(),tmp);
+
+
+                        MassInfo.setText(String.format("Mass: %f",tmp.getMass()));
+
+                        newWindow.close();
+                    }
+                });
+
+                GridPane.setConstraints(massLabel,0,0);
+                GridPane.setConstraints(massInput,1,0);
+                GridPane.setConstraints(CMLabel,0,3);
+                GridPane.setConstraints(CMLabelx,0,4);
+                GridPane.setConstraints(CMxInput,1,4);
+                GridPane.setConstraints(CMLabely,0,5);
+                GridPane.setConstraints(CMyInput,1,5);
+
+                GridPane.setConstraints(SCMLabel,0,8);
+                GridPane.setConstraints(SCMLabelx,0,9);
+                GridPane.setConstraints(SCMxInput,1,9);
+                GridPane.setConstraints(SCMLabely,0,10);
+                GridPane.setConstraints(SCMyInput,1,10);
+
+                GridPane.setConstraints(RestLabel,0,13);
+                GridPane.setConstraints(RestInput,1,13);
+
+                GridPane.setConstraints(colorPicker,0,15);
+                GridPane.setConstraints(ApplyBtn,0,17);
+
+                EditPane.getChildren().addAll(massLabel,massInput,CMLabel,CMLabelx,CMxInput,CMLabely,CMyInput,colorPicker,ApplyBtn, SCMLabel, SCMLabelx, SCMLabely, SCMxInput, SCMyInput, RestLabel, RestInput);
+
+
+                Scene editScene = new Scene(EditPane,400,720);
+                newWindow.setScene(editScene);
+
+                newWindow.show();
+            }
+        });
+
+
+        //Deleting a selected rigidbody
+        Button DeleteBtn = new Button("Delete");
+        DeleteBtn.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                if(running) {runBtn.fire();}
+                Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+                alert.setTitle("Are you sure?");
+                alert.setHeaderText("Are you sure you want to delete this object?");
+
+                ImageView Gary = new ImageView(this.getClass().getResource("resources/images/GARU.png").toString());
+                Gary.setFitHeight(100);
+                Gary.setFitWidth(100);
+                alert.setGraphic(Gary);
+
+
+                ButtonType OKBtn = new ButtonType("OK", ButtonBar.ButtonData.OK_DONE);
+                ButtonType CancelBtn = new ButtonType("Cancel", ButtonBar.ButtonData.CANCEL_CLOSE);
+                alert.getButtonTypes().setAll(OKBtn,CancelBtn);
+
+                Optional<ButtonType> result = alert.showAndWait();
+                if (result.get() == OKBtn)
+                {
+                    Garu.removeShape();
+                    environment.rigidBodies.remove(Garu);
+                    for(int i = 0; i < environment.rigidBodies.size(); i++){
+                        environment.rigidBodies.get(i).setSerialNum(i);
+                    }
+                    createBodyInfoBoxes();
+                }
+                else if (result.get() == CancelBtn) { alert.close(); }
+            }
+        });
+        GridPane.setConstraints(DeleteBtn,5,i*4+4);
+
+        GridPane.setConstraints(MassInfo,4,i*4+1);
+        GridPane.setConstraints(SidesInfo,4,i*4+2);
+        GridPane.setConstraints(CMInfo,4,i*4+3);
+        GridPane.setConstraints(EditBtn,4,i*4+4);
+
+        DeleteBtn.setTranslateX(-40);
+
+        objectPane.getChildren().addAll(temp,MassInfo,SidesInfo,CMInfo,EditBtn, DeleteBtn);
+    }
+
+    //Create the list of info boxes on the right
+    private  void createBodyInfoBoxes(){
+        objectPane.getChildren().clear();
+        addShape();
+        for (int i = 0; i<environment.rigidBodies.size(); i++)
+        {
+            createBodyPane(i);
+        }
+    }
+
+    //Check box and warning screen to turn on W.I.P. rotation
+    private void createRotationBox(){
+        CheckBox rotateCB = new CheckBox();
+        rotateCB.setText("Rotation");
+        rotateCB.setSelected(false);
+        rotateCB.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+
+                rotateCB.setSelected(!rotateCB.isSelected());
+                // This ensures that the checkbox won't change state while the dialog is opened
+
+
+                if (!rotateCB.isSelected())
+                {
+                    Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+                    alert.setTitle("Are you sure?");
+                    alert.setHeaderText("Are you sure you want to add rotation?");
+
+                    ImageView Gary = new ImageView(this.getClass().getResource("resources/images/GARU.png").toString());
+                    Gary.setFitHeight(100);
+                    Gary.setFitWidth(100);
+                    alert.setGraphic(Gary);
+
+
+                    ButtonType OKBtn = new ButtonType("OK", ButtonBar.ButtonData.OK_DONE);
+                    ButtonType CancelBtn = new ButtonType("Cancel", ButtonBar.ButtonData.CANCEL_CLOSE);
+                    alert.getButtonTypes().setAll(OKBtn,CancelBtn);
+
+                    Optional<ButtonType> result = alert.showAndWait();
+                    if (result.get() == OKBtn)
+                    {
+                        rotateCB.setSelected(!rotateCB.isSelected());
+                        environment.setRotate(true);
+                    }
+                    else if (result.get() == CancelBtn)
+                    {
+                        alert.close();
+                        rotateCB.setSelected(false);
+                    }
+                }
+
+                else // If switching off rotation
+                {
+                    rotateCB.setSelected(false);
+                    environment.setRotate(false);
+
+                }
+            }
+        });
+        GridPane.setConstraints(rotateCB,0,5);
+        SystemPane.getChildren().add(rotateCB);
+    }
+
+    //Button to go back to the main menu
+    private void createBackButton(){
+        back = new Button("Back");
+        back.setLayoutX(20);
+        back.setLayoutY(20);
+
+        back.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                PhysicsEngine.window.setScene(PhysicsEngine.mainMenu.mainMenuScene);
+                PhysicsEngine.mainMenu.startSim();
+                newScene = "MainMenu";
+            }
+        });
+        // Adds nodes to group
+        leftPane.getChildren().add(back);
+    }
+
+    //Allows you to create and add a circle or rigidbody to the environment
+    private void addShape(){
         // --- Create new object
+
         Menu createObject = new Menu("New");
         MenuItem newRigidBody = new MenuItem("Rigid Body");
         newRigidBody.setOnAction(new EventHandler<ActionEvent>() {
@@ -541,8 +760,8 @@ public class SystemMenu {
                             alert.show();
                             return;
                         }
-
-                       environment.rigidBodies.add(new RigidBody(tempX,tempY,mass,fixed.isSelected(),leftPane,colorPicker.getValue()));
+                        environment.rigidBodies.add(new RigidBody(tempX,tempY,mass,fixed.isSelected(),leftPane,colorPicker.getValue()));
+                        createBodyPane(environment.rigidBodies.size()-1);
                     }
                 });
 
@@ -620,7 +839,6 @@ public class SystemMenu {
                                 for (Line x : lines)
                                 {
                                     System.out.println(x);
-
                                 }
                                 selectionPane.getChildren().add(tmpPoint);
 
@@ -682,6 +900,13 @@ public class SystemMenu {
                 CheckBox fixed = new CheckBox("Fixed");
                 fixed.setSelected(false);
 
+                Label massLbl = new Label("Mass:");
+                TextField massInput = new TextField("1");
+
+                ColorPicker colorPicker = new ColorPicker();
+                colorPicker.setValue(Color.BLACK);
+                colorPicker.setPrefWidth(60);
+
                 Button clickMe = new Button("Add");
                 clickMe.setOnAction(new EventHandler<ActionEvent>() {
                     @Override
@@ -701,27 +926,46 @@ public class SystemMenu {
                             yTmp[i] = y + radius * Math.sin(2 * i * Math.PI / 40);
                         }
 
-                        environment.rigidBodies.add(new RigidBody(xTmp, yTmp,1,fixed.isSelected(),leftPane,Color.BLACK));
+                        double mass;
+                        try
+                        {
+                            mass = Double.parseDouble(massInput.getText());
+                        }
+                        catch(Exception ex)
+                        {
+                            Alert alert = new Alert(Alert.AlertType.WARNING);
+                            alert.setTitle("WARNING!");
+                            alert.setHeaderText("Mass input is invalid!");
+                            alert.show();
+                            return;
+                        }
 
+                        environment.rigidBodies.add(new RigidBody(xTmp, yTmp,mass,fixed.isSelected(),leftPane,colorPicker.getValue()));
+                        createBodyPane(environment.rigidBodies.size()-1);
                     }
                 });
 
 
-                GridPane.setConstraints(xLabel,0,12,4,4);
-                GridPane.setConstraints(xInput,4,12,4,4);
-                GridPane.setConstraints(yLabel,0,16,4,4);
-                GridPane.setConstraints(yInput,4,16,4,4);
-                GridPane.setConstraints(radLabel,0,20,4,4);
-                GridPane.setConstraints(radInput,4,20,4,4);
-                GridPane.setConstraints(fixed,0,24,4,4);
-                GridPane.setConstraints(clickMe,0,28,4,4);
+                GridPane.setConstraints(xLabel,0,2,4,4);
+                GridPane.setConstraints(xInput,4,2,4,4);
+                GridPane.setConstraints(yLabel,0,4,4,4);
+                GridPane.setConstraints(yInput,4,4,4,4);
+                GridPane.setConstraints(radLabel,0,6,4,4);
+                GridPane.setConstraints(radInput,4,6,4,4);
+                GridPane.setConstraints(massLbl,0,8,4,4);
+                GridPane.setConstraints(massInput,4,8,4,4);
+                GridPane.setConstraints(fixed,0,10,4,4);
+                GridPane.setConstraints(colorPicker,0,12,4,4);
+                GridPane.setConstraints(clickMe,0,16,4,4);
 
-            createPane.getChildren().addAll(xLabel,xInput,yLabel,yInput,radLabel,radInput,fixed,clickMe);
 
 
-            Scene createScene = new Scene(createPane,400,720);
-            newObjectWindow.setScene(createScene);
-            newObjectWindow.show();
+                createPane.getChildren().addAll(xLabel,xInput,yLabel,yInput,radLabel,radInput,fixed,clickMe, colorPicker, massInput, massLbl);
+
+
+                Scene createScene = new Scene(createPane,400,500);
+                newObjectWindow.setScene(createScene);
+                newObjectWindow.show();
             }
         });
         createObject.getItems().addAll(newRigidBody,newCircle);
@@ -732,226 +976,10 @@ public class SystemMenu {
         GridPane.setConstraints(menubar,0,0);
 
         objectPane.getChildren().add(menubar);
-
-
-        for (int i = 0;i<environment.rigidBodies.size();i++)
-        {
-            if(environment.rigidBodies.get(i) instanceof CircleBody){
-                continue;
-            }
-            Pane temp = new Pane();
-            temp.setStyle("-fx-border-color: black;-fx-border-insets: 10,10,10,10;");
-
-            // Garu is only a shallow copy. Changes made to Garu will affect the original object.
-            // DeepGaru is a deep copy. Changes made to DeepGaru will not affect the original object
-            RigidBody Garu = environment.getRigidBodies().get(i);
-            RigidBody DeepGaru = Garu.copy(temp,Garu.getColour());
-            Point2D size = DeepGaru.getSize();
-            Point2D min = DeepGaru.getMin();
-            DeepGaru.setScale(Math.max(size.getX()/100, size.getY()/100));
-            DeepGaru.translate((-size.getX()/2-min.getX()), ((-size.getY()/2-min.getY())));
-            DeepGaru.translate(64*DeepGaru.getScale(), 64*DeepGaru.getScale());
-
-
-
-            temp.setPrefSize(128,128);
-
-
-
-            GridPane.setConstraints(temp,0,i*4+1,4,4);
-            Label MassInfo = new Label(String.format("Mass: %f",Garu.getMass()));
-            Label SidesInfo = new Label(String.format("Number of sides: %d",Garu.getSides()));
-            Label CMInfo = new Label(String.format("X: %.2f\nY: %.2f",Garu.getCenter().getX(),Garu.getCenter().getY()));
-
-            Button EditBtn = new Button("Edit");
-
-            EditBtn.setOnAction(new EventHandler<ActionEvent>() {
-                @Override
-                public void handle(ActionEvent actionEvent) {
-                    if(running) runBtn.fire();
-                    Stage newWindow = new Stage();
-                    newWindow.setTitle("Edit");
-                    GridPane EditPane = new GridPane();
-                    EditPane.setPadding(new Insets(10,10,10,10));
-                    EditPane.setVgap(8);
-                    EditPane.setVgap(10);
-
-                    Label massLabel = new Label("Mass");
-                    TextField massInput = new TextField(String.format("%.2f",Garu.getMass()));
-
-                    //Where the shape currently is
-                    Label CMLabel = new Label("Current Center of Mass:");
-
-                    Label CMLabelx = new Label("X:");
-                    TextField CMxInput = new TextField(String.format("%.2f",Garu.getCenter().getX()));
-
-                    Label CMLabely = new Label("Y:");
-                    TextField CMyInput = new TextField(String.format("%.2f",Garu.getCenter().getY()));
-
-                    //Where the shape starts
-                    Label SCMLabel = new Label("Starting Center of Mass:");
-
-                    Label SCMLabelx = new Label("X:");
-                    TextField SCMxInput = new TextField(String.format("%.2f",Garu.getStartCenter().getX()));
-
-                    Label SCMLabely = new Label("Y:");
-                    TextField SCMyInput = new TextField(String.format("%.2f",Garu.getStartCenter().getY()));
-
-                    //How bouncy the shape is
-                    Label RestLabel = new Label("Restitution:");
-                    TextField RestInput = new TextField(String.format("%.3f",Garu.getRestitution()));
-
-                    //For editing shape colour
-                    ColorPicker colorPicker = new ColorPicker();
-                    colorPicker.setValue(Garu.colour);
-                    colorPicker.setOnAction(new EventHandler<ActionEvent>() {
-                        @Override
-                        public void handle(ActionEvent actionEvent) {
-
-
-                        }
-                    });
-
-                    Button ApplyBtn = new Button("Apply");
-                    ApplyBtn.setOnAction(new EventHandler<ActionEvent>() {
-                        @Override
-                        public void handle(ActionEvent actionEvent) {
-                            Garu.colour = colorPicker.getValue();
-                            //Edits mass, current and start position, colour, and restitution
-                            RigidBody tmp = new RigidBody(Garu.getXPoints(), Garu.getYPoints(), Garu.getMass(), Garu.getFixed(),leftPane, Garu.getColour());
-
-                            if (isDouble(massInput.getText())) tmp.setMass(Double.parseDouble(massInput.getText()));
-                            if (isDouble(CMxInput.getText()))  tmp.translate(Double.parseDouble(CMxInput.getText())-tmp.getCenter().getX(),0);
-                            if (isDouble(CMyInput.getText()))  tmp.translate(0,Double.parseDouble(CMyInput.getText())-tmp.getCenter().getY());
-                            if (isDouble(SCMxInput.getText())) tmp.setStartCenter(Double.parseDouble(SCMxInput.getText()), tmp.getStartCenter().getY());
-                            if (isDouble(SCMyInput.getText())) tmp.setStartCenter(tmp.getStartCenter().getX(), Double.parseDouble(SCMyInput.getText()));
-                            if (isDouble(RestInput.getText())) tmp.setRestitution(Double.parseDouble(RestInput.getText()));
-                            //tmp.setScale(environment.scale);
-                            Garu.removeShape();
-                            environment.rigidBodies.set(Garu.getSerialNum(),tmp);
-
-                            MassInfo.setText(String.format("Mass: %f",tmp.getMass()));
-
-                            newWindow.close();
-                        }
-                    });
-
-                    GridPane.setConstraints(massLabel,0,0);
-                    GridPane.setConstraints(massInput,1,0);
-                    GridPane.setConstraints(CMLabel,0,3);
-                    GridPane.setConstraints(CMLabelx,0,4);
-                    GridPane.setConstraints(CMxInput,1,4);
-                    GridPane.setConstraints(CMLabely,0,5);
-                    GridPane.setConstraints(CMyInput,1,5);
-
-                    GridPane.setConstraints(SCMLabel,0,8);
-                    GridPane.setConstraints(SCMLabelx,0,9);
-                    GridPane.setConstraints(SCMxInput,1,9);
-                    GridPane.setConstraints(SCMLabely,0,10);
-                    GridPane.setConstraints(SCMyInput,1,10);
-
-                    GridPane.setConstraints(RestLabel,0,13);
-                    GridPane.setConstraints(RestInput,1,13);
-
-                    GridPane.setConstraints(colorPicker,0,15);
-                    GridPane.setConstraints(ApplyBtn,0,17);
-
-                    EditPane.getChildren().addAll(massLabel,massInput,CMLabel,CMLabelx,CMxInput,CMLabely,CMyInput,colorPicker,ApplyBtn, SCMLabel, SCMLabelx, SCMLabely, SCMxInput, SCMyInput, RestLabel, RestInput);
-
-
-                    Scene editScene = new Scene(EditPane,400,720);
-                    newWindow.setScene(editScene);
-
-                    newWindow.show();
-                }
-            });
-
-
-            //Deleting a selected rigidbody
-            Button DeleteBtn = new Button("Delete");
-
-
-
-
-            DeleteBtn.setOnAction(new EventHandler<ActionEvent>() {
-                @Override
-                public void handle(ActionEvent event) {
-                    if(running) {runBtn.fire();}
-                    Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
-                    alert.setTitle("Are you sure?");
-                    alert.setHeaderText("Are you sure you want to delete this object?");
-
-                    ImageView Gary = new ImageView(this.getClass().getResource("resources/images/GARU.png").toString());
-                    Gary.setFitHeight(100);
-                    Gary.setFitWidth(100);
-                    alert.setGraphic(Gary);
-
-
-                    ButtonType OKBtn = new ButtonType("OK", ButtonBar.ButtonData.OK_DONE);
-                    ButtonType CancelBtn = new ButtonType("Cancel", ButtonBar.ButtonData.CANCEL_CLOSE);
-                    alert.getButtonTypes().setAll(OKBtn,CancelBtn);
-
-                    Optional<ButtonType> result = alert.showAndWait();
-                    if (result.get() == OKBtn)
-                    {
-                        Garu.removeShape();
-                        for(int i = Garu.getSerialNum(); i < environment.rigidBodies.size(); i++){
-                            environment.rigidBodies.get(i).setSerialNum(environment.rigidBodies.get(i).getSerialNum()-1);
-                        }
-                            environment.rigidBodies.remove(Garu);
-                        }
-                    else if (result.get() == CancelBtn) { alert.close(); }
-                }
-            });
-
-
-
-
-            GridPane.setConstraints(MassInfo,4,i*4+1);
-            GridPane.setConstraints(SidesInfo,4,i*4+2);
-            GridPane.setConstraints(CMInfo,4,i*4+3);
-            GridPane.setConstraints(EditBtn,4,i*4+4);
-            GridPane.setConstraints(DeleteBtn,5,i*4+4);
-            DeleteBtn.setTranslateX(-40);
-
-            objectPane.getChildren().addAll(temp,MassInfo,SidesInfo,CMInfo,EditBtn, DeleteBtn);
-        }
-
-
-
-
-        objectsUI.setContent(objectPane);
-        systemUI.setContent(SystemPane);
-
-        ObjectTab.setContent(objectsUI);
-        SystemTab.setContent(systemUI);
-
-        SystemLayout.setLeft(leftPane);
-
-
-
-
-
-        back = new Button("Back");
-        back.setLayoutX(20);
-        back.setLayoutY(20);
-
-        back.setOnAction(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent event) {
-                PhysicsEngine.window.setScene(PhysicsEngine.mainMenu.mainMenuScene);
-                PhysicsEngine.mainMenu.startSim();
-                newScene = "MainMenu";
-            }
-        });
-
-        // Adds nodes to group
-
-        leftPane.getChildren().add(back);
-        SystemLayout.setRight(tabs);
-
     }
 
+
+    //Checks if a given string can be converted to a double
     public static boolean isDouble(String s)
     {
         try

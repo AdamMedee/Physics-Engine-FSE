@@ -319,14 +319,10 @@ public class RigidBody{
 
 	//Runs all the methods on the rigidbody
 	public void run(double simSpeed, Point2D gravity, ArrayList<RigidBody> rigidBodies, boolean allowRotate){
-		addForce(gravity.multiply(mass).multiply(simSpeed));			//Add a constant gravity
+		addForce(gravity.multiply(mass));			//Add a constant gravity
 		for(RigidBody body : rigidBodies) {
 			if(!body.equals(this) && (!this.fixed || !body.fixed)){
-				//CircleBody rigidbody collision checking and executing
-				if(this instanceof CircleBody && body instanceof CircleBody) { CircleBody.isCollidingCC((CircleBody)body, (CircleBody)this, simSpeed, allowRotate); }
-				else if(this instanceof CircleBody){ CircleBody.isCollidingCR((CircleBody)this, body, simSpeed, allowRotate); }
-				else if(body instanceof CircleBody){ CircleBody.isCollidingRC(this, (CircleBody)body, simSpeed,allowRotate); }
-				else{ isColliding(this, body, simSpeed, allowRotate); }
+				isColliding(this, body, simSpeed, allowRotate);
 			}
 		}
 		updateSpin(simSpeed);							//Update object variables

@@ -75,15 +75,15 @@ public class Environment {
         double[] x = {30, 40, 50, 30};
         double[] y = {100, 120, 130, 140};
         double[] x2 = {0, 1000, 1000, 0};
-        double[] y2 = {580, 500, 700, 700};
+        double[] y2 = {600, 600, 700, 700};
         double[] x3 = {700,600,500,450};
         double[] y3 = {120,240,200,120};
         double[] x4 = {0, 1000, 1000, 0};
         double[] y4 = {10, 10, 50, 50};
-        double[] x5 = {0, 10, 10, 0};
-        double[] y5 = {100, 100, 495, 495};
-        double[] x6 = {980, 1000, 1000, 980};
-        double[] y6 = {100, 100, 750, 750};
+        double[] x5 = {-30, 20, 20, -30};
+        double[] y5 = {0, 0, 700, 700};
+        double[] x6 = {960, 1000, 1000, 960};
+        double[] y6 = {0, 0, 700, 700};
         double[] x7 = {400, 900, 900, 400};
         double[] y7 = {400, 400, 450, 450};
         double[] x8 = {400, 600, 600, 400};
@@ -98,7 +98,6 @@ public class Environment {
         RigidBody leoooo = new RigidBody(x5, y5, 1, true, environmentLayout,Color.BLACK);
         RigidBody leooooo = new RigidBody(x6, y6, 1, true, environmentLayout,Color.BLACK);
         RigidBody leooooooooo = new RigidBody(x9, y9, 2, false, environmentLayout,Color.BLACK);
-        //CircleBody garuu = new CircleBody(50, 250, 20, 1, false, environmentLayout, Color.BLACK);
         leo.setSerialNum(rigidBodies.size());
         rigidBodies.add(leo);
         leoo.setSerialNum(rigidBodies.size());
@@ -113,8 +112,16 @@ public class Environment {
         rigidBodies.add(leoooooo);
         leooooooooo.setSerialNum(rigidBodies.size());
         rigidBodies.add(leooooooooo);
-        //rigidBodies.add(garuu);
-        //rigidBodies.add(new CircleBody(400,500,30, 3, false, environmentLayout));
+
+        /*
+        for(int i = 100; i < 800; i += 10){
+            for(int j = 500; j < 650; j += 10){
+                double[] x10 = {};
+                double[] y10 = {};
+                rigidBodies.add(new RigidBody(x10, y10, 1, false, environmentLayout, Color.BLACK));
+            }
+        }
+        */
         /*
         double[] x10 = {900, 1000, 1000, 900};
         double[] y10 = {500, 500, 550,550};
