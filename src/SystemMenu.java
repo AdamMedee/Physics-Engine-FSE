@@ -771,107 +771,121 @@ public class SystemMenu {
                 deletePoint.setOnAction(new EventHandler<ActionEvent>() {
                     @Override
                     public void handle(ActionEvent actionEvent) {
-                        int index = getPointIndex(comboBox,comboBox.getValue());
 
-                        selectionPane.getChildren().remove(points.get(index));
-                        // Remove the point from the pane
+                       try
+                       {
+                           int index = getPointIndex(comboBox,comboBox.getValue());
 
-                        points.remove(index);
+                           selectionPane.getChildren().remove(points.get(index));
+                           // Remove the point from the pane
 
-                        x.remove(index);
-                        y.remove(index);
+                           points.remove(index);
 
-                        prevX.remove(index);
-                        prevY.remove(index);
+                           x.remove(index);
+                           y.remove(index);
 
-                        selectionPane.getChildren().remove(highlights.get(0));
+                           prevX.remove(index);
+                           prevY.remove(index);
 
-                        highlights.remove(0);
+                           selectionPane.getChildren().remove(highlights.get(0));
 
-
-                        if (x.size()== 0) // If there are no points left
-                        {
-
-                            comboBox.getItems().remove(index);
-                            comboBox.setValue("");
-
-                            return;
-                        }
-                        else if (x.size()==1) // If there is one point left
-                        {
-                            comboBox.getItems().remove(index);
-                            comboBox.setValue(comboBox.getItems().get(comboBox.getItems().size()-1));
-
-                            selectionPane.getChildren().remove(lines.get(0));
-                            lines.remove(0);
-
-                            return;
-                        }
-                        else
-                        {
-                            if (index == 0)
-                            {
-                                selectionPane.getChildren().remove(0);
-                                selectionPane.getChildren().remove(lines.get(lines.size()-1));
-
-                                lines.remove(0);
-                                lines.remove(lines.size()-1);
-
-                                if (comboBox.getItems().size()>0) // If there is a point allowed to be selected
-                                {
-                                    comboBox.getItems().remove(index);
-                                    if (comboBox.getItems().size()!=0) {
-                                        comboBox.setValue(comboBox.getItems().get(comboBox.getItems().size() - 1));
-                                    }
-                                    else
-                                    {
-                                        comboBox.setValue("");
-                                    }
-                                }
+                           highlights.remove(0);
 
 
-                                if (x.size()!=2)
-                                {
+                           if (x.size()== 0) // If there are no points left
+                           {
+
+                               comboBox.getItems().remove(index);
+                               comboBox.setValue("");
+
+                               return;
+                           }
+                           else if (x.size()==1) // If there is one point left
+                           {
+                               comboBox.getItems().remove(index);
+                               comboBox.setValue(comboBox.getItems().get(comboBox.getItems().size()-1));
+
+                               selectionPane.getChildren().remove(lines.get(0));
+                               lines.remove(0);
+
+                               return;
+                           }
+                           else
+                           {
+                               if (index == 0)
+                               {
+                                   selectionPane.getChildren().remove(0);
+                                   selectionPane.getChildren().remove(lines.get(lines.size()-1));
+
+                                   lines.remove(0);
+                                   lines.remove(lines.size()-1);
+
+                                   if (comboBox.getItems().size()>0) // If there is a point allowed to be selected
+                                   {
+                                       comboBox.getItems().remove(index);
+                                       if (comboBox.getItems().size()!=0) {
+                                           comboBox.setValue(comboBox.getItems().get(comboBox.getItems().size() - 1));
+                                       }
+                                       else
+                                       {
+                                           comboBox.setValue("");
+                                       }
+                                   }
 
 
-                                    Line tmpLine = new Line(prevX.get(0),prevY.get(0),prevX.get(prevX.size()-1),prevY.get(prevY.size()-1));
-
-                                    selectionPane.getChildren().add(tmpLine);
-                                }
-                                return;
-
-                            }
-                            else
-                            {
-
-                                selectionPane.getChildren().remove(lines.get(index-1));
-                                selectionPane.getChildren().remove(lines.get(index));
+                                   if (x.size()!=2)
+                                   {
 
 
-                                lines.remove(index-1);
-                                //lines.remove(index-1);
+                                       Line tmpLine = new Line(prevX.get(0),prevY.get(0),prevX.get(prevX.size()-1),prevY.get(prevY.size()-1));
 
-                                if (x.size()==2)
-                                {
-                                    comboBox.getItems().remove(index);
-                                    comboBox.setValue(comboBox.getItems().get(comboBox.getItems().size()-1));
+                                       selectionPane.getChildren().add(tmpLine);
+                                   }
+                                   return;
 
-                                    return;
-                                }
+                               }
+                               else
+                               {
 
-                                Line tmpLine = new Line(prevX.get(index-1),prevY.get(index-1), prevX.get(index%x.size()),prevY.get(index%x.size()));
-                                selectionPane.getChildren().add(tmpLine);
-                                lines.add(index-1,tmpLine);
-
-                            }
-
-                            }
+                                   selectionPane.getChildren().remove(lines.get(index-1));
+                                   selectionPane.getChildren().remove(lines.get(index));
 
 
-                            comboBox.getItems().remove(index);
-                            comboBox.setValue(comboBox.getItems().get(comboBox.getItems().size()-1));
+                                   lines.remove(index-1);
+                                   //lines.remove(index-1);
 
-                        }
+                                   if (x.size()==2)
+                                   {
+                                       comboBox.getItems().remove(index);
+                                       comboBox.setValue(comboBox.getItems().get(comboBox.getItems().size()-1));
+
+                                       return;
+                                   }
+
+                                   Line tmpLine = new Line(prevX.get(index-1),prevY.get(index-1), prevX.get(index%x.size()),prevY.get(index%x.size()));
+                                   selectionPane.getChildren().add(tmpLine);
+                                   lines.add(index-1,tmpLine);
+
+                               }
+
+                           }
+
+
+                           comboBox.getItems().remove(index);
+                           comboBox.setValue(comboBox.getItems().get(comboBox.getItems().size()-1));
+
+                       }
+                       catch (IndexOutOfBoundsException ex)
+                       {
+                           Alert alert = new Alert(Alert.AlertType.WARNING);
+                           alert.setTitle("Error");
+                           alert.setHeaderText("Delete operation cannot be completed!");
+                           alert.setContentText("We recommend you to reconstruct your object");
+                           alert.show();
+                           return;
+
+                       }
+                       }
 
                 });
 
