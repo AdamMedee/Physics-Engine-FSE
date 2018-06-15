@@ -46,18 +46,6 @@ public class Environment {
         for(RigidBody rigidBody : rigidBodies){
             rigidBody.run(simulationSpeed, gravity, rigidBodies, allowRotate);  //Run each rigidbody every frame
         }
-        removeOffscreen(1080, 720);                                     //Get rid of rigidbodies off screen
-    }
-    public void removeOffscreen(int maxX, int maxY){
-        for(int i=rigidBodies.size(); i < 0; i  --){
-            RigidBody r = rigidBodies.get(i);
-            Point2D min = new Point2D(r.getPolygon().getBoundsInLocal().getMinX(), r.getPolygon().getBoundsInLocal().getMinY());
-            Point2D max = new Point2D(r.getPolygon().getBoundsInLocal().getMaxX(), r.getPolygon().getBoundsInLocal().getMaxY());
-            if(min.getX() > maxX + 200 || min.getY() > maxY + 200 || max.getX() < -200 || max.getY() < -200){
-                //Remove object if completely offscreen
-                rigidBodies.remove(r);
-            }
-        }
     }
 
     public void update(){
@@ -76,24 +64,52 @@ public class Environment {
         }
         rigidBodies.clear();
         environmentLayout = src;
-        double[] x1 = {0, 1000, 1000, 0};        double[] y1 = {600, 600, 700, 700};
-        double[] x2 = {0, 1000, 1000, 0};        double[] y2 = {10, 10, 50, 50};
-        double[] x3 = {-30, 20, 20, -30};        double[] y3 = {0, 0, 700, 700};
-        double[] x4 = {960, 1000, 1000, 960};    double[] y4 = {0, 0, 700, 700};
 
-        RigidBody bottom = new RigidBody(x1, y1, 1, true, environmentLayout,Color.BLACK);
-        RigidBody top = new RigidBody(x2, y2, 1, true, environmentLayout,Color.BLACK);
-        RigidBody left = new RigidBody(x3, y3, 1, true, environmentLayout,Color.BLACK);
-        RigidBody right = new RigidBody(x4, y4, 1, true, environmentLayout,Color.BLACK);
+        double[] x = {30, 40, 50, 30};
+        double[] y = {100, 120, 130, 140};
 
-        bottom.setSerialNum(rigidBodies.size());
-        rigidBodies.add(bottom);
-        top.setSerialNum(rigidBodies.size());
-        rigidBodies.add(top);
-        left.setSerialNum(rigidBodies.size());
-        rigidBodies.add(left);
-        right.setSerialNum(rigidBodies.size());
-        rigidBodies.add(right);
+        double[] x2 = {0, 1000, 1000, 0};
+        double[] y2 = {600, 600, 700, 700};
+
+        double[] x3 = {700,600,500,450};
+        double[] y3 = {120,240,200,120};
+
+        double[] x4 = {0, 1000, 1000, 0};
+        double[] y4 = {10, 10, 50, 50};
+
+        double[] x5 = {-30, 20, 20, -30};
+        double[] y5 = {0, 0, 700, 700};
+
+        double[] x6 = {960, 1000, 1000, 960};
+        double[] y6 = {0, 0, 700, 700};
+
+        double[] x9 = {520, 500, 480, 490, 500};
+        double[] y9 = {400, 460, 450, 440, 420};
+
+
+        RigidBody triangle = new RigidBody(x, y, 1, false, environmentLayout, Color.BLACK);
+        RigidBody quadrilateral = new RigidBody(x3, y3, 4, false, environmentLayout,Color.BLACK);
+        RigidBody pentagon = new RigidBody(x9, y9, 2, false, environmentLayout,Color.BLACK);
+        RigidBody topWall = new RigidBody(x4, y4, 1, true, environmentLayout,Color.BLACK);
+        RigidBody bottomWall = new RigidBody(x2, y2, 1, true, environmentLayout,Color.BLACK);
+        RigidBody leftWall = new RigidBody(x5, y5, 1, true, environmentLayout,Color.BLACK);
+        RigidBody rightWall = new RigidBody(x6, y6, 1, true, environmentLayout,Color.BLACK);
+
+
+        triangle.setSerialNum(rigidBodies.size());
+        rigidBodies.add(triangle);
+        quadrilateral.setSerialNum(rigidBodies.size());
+        rigidBodies.add(quadrilateral);
+        pentagon.setSerialNum(rigidBodies.size());
+        rigidBodies.add(pentagon);
+        topWall.setSerialNum(rigidBodies.size());
+        rigidBodies.add(topWall);
+        bottomWall.setSerialNum(rigidBodies.size());
+        rigidBodies.add(bottomWall);
+        leftWall.setSerialNum(rigidBodies.size());
+        rigidBodies.add(leftWall);
+        rightWall.setSerialNum(rigidBodies.size());
+        rigidBodies.add(rightWall);
     }
 
     //Adds a rigidbody to the rigidbody arraylist

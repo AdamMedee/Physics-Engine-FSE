@@ -22,6 +22,7 @@ import javafx.scene.control.*;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
+import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.*;
@@ -32,6 +33,7 @@ import javafx.scene.shape.Rectangle;
 import javafx.scene.Scene;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.ScrollPane.ScrollBarPolicy;
+import javafx.scene.text.Font;
 import javafx.stage.Stage;
 
 
@@ -43,14 +45,8 @@ public class SystemMenu {
 
 
     Environment environment; //The environment being used
-    String selected; //System, Object, or Information are the three options
-
-    //Shape graphics
-    Rectangle BGrect;
-    Rectangle BGborder;
 
     // Inputs we're keeping track of
-    double OriginX,OriginY;    //Origin (x,y) of simulation
     double ScaleVal;               //Scale of simulation
     double gravityVal;            //Verical gravity
     double sideForceVal;        //Horizontal gravity
@@ -66,6 +62,12 @@ public class SystemMenu {
     public GridPane objectPane;
     public GridPane SystemPane;
 
+    //Images
+    private Image adam = new Image("resources/images/ADAMM.png");
+    private Image leo = new Image("resources/images/LEOO.png");
+    private Image gary = new Image("resources/images/GARU.png");
+    private Image green = new Image("resources/images/GREENN.jpg");
+
 
     //------
     //Scroll Pane----------
@@ -77,8 +79,8 @@ public class SystemMenu {
     //Buttons
     Button runBtn;
 
-
     private String newScene;
+    private int updateWait;
 
 
     //Constructor for the menu
@@ -100,8 +102,6 @@ public class SystemMenu {
 
         tabs.setTabClosingPolicy(TabPane.TabClosingPolicy.UNAVAILABLE);
 
-
-
         //SystemPane.setPrefSize();
 
         //Tab system to switch between objects and systems
@@ -115,10 +115,6 @@ public class SystemMenu {
 
         tabs.getTabs().addAll(SystemTab, ObjectTab);
 
-
-
-
-
         leftPane.setPrefSize(900,720);
         leftPane.setMaxWidth(980);
 
@@ -128,8 +124,6 @@ public class SystemMenu {
         this.environment = environment;
 
         leftPane.toBack();
-
-
 
         //ObjectUI Initialization
         objectsUI.setVbarPolicy(ScrollBarPolicy.ALWAYS);
@@ -156,6 +150,8 @@ public class SystemMenu {
         SystemLayout.setLeft(leftPane);
         SystemLayout.setRight(tabs);
 
+        updateWait = 60;
+
     }
 
     //Creates the system editing menu
@@ -165,50 +161,10 @@ public class SystemMenu {
         SystemPane.setPadding(new Insets(10, 10, 10, 10));
         SystemPane.setVgap(30);
         SystemPane.setHgap(10);
-
-
-
-        // ----- First row
-        HBox OriginBox = new HBox();
-
-        Label orgLabel = new Label("Origin");
-        orgLabel.setPrefWidth(100);
-        //orgLabel.setMaxWidth(60);
-
-        Label xLabel = new Label("x:");
-        xLabel.setMaxWidth(60);
-        //xLabel.setStyle("-fx-font-size: 15");
-
-        TextField xInput = new TextField("0");
-        xInput.setMaxWidth(60);
-
-        Label blkLabel = new Label("");
-        blkLabel.setStyle("-fx-pref-width: 40;");
-        //blkLabel.setPrefWidth(20);
-
-
-        Label yLabel = new Label("y:");
-        yLabel.setMaxWidth(60);
-        yLabel.setStyle("-fx-font-size: 15");
-
-
-        TextField yInput = new TextField("0");
-
-        yInput.setMaxWidth(60);
-        OriginBox.getChildren().addAll(orgLabel,xLabel,xInput,blkLabel,yLabel,yInput);
-
-
-        GridPane.setConstraints(OriginBox,0,0,2,1);
-
-        SystemPane.getChildren().add(OriginBox);
-
         SystemTab.setContent(SystemPane);
 
 
-
-
-
-        // --- -Second row
+        // --- -First row (Scale)
 
         Label scaleLabel = new Label("Scale:");
         scaleLabel.setPrefWidth(80);
@@ -222,7 +178,7 @@ public class SystemMenu {
         SystemPane.getChildren().addAll(scaleLabel,scaleInput);
         //---------------------
 
-        //-----Third Row (Gravity)---------
+        //-----Second Row (Gravity)---------
 
         Label gravityLabel = new Label("Ver. Gravity:");
         gravityLabel.setPrefWidth(80);
@@ -237,7 +193,7 @@ public class SystemMenu {
 
         // -------------------------------
 
-        //----- Fourth Row (SideForce)
+        //----- Third Row (SideForce)
 
         Label sideForceLabel = new Label("Hor. Gravity:");
         sideForceLabel.setPrefWidth(80);
@@ -250,7 +206,7 @@ public class SystemMenu {
 
         SystemPane.getChildren().addAll(sideForceLabel,sideForceInput);
 
-        //------Fifth Row (SimulationSpeed)-----
+        //------Fourth Row (SimulationSpeed)-----
 
         Label speedLabel = new Label("Simulation Speed:");
 
@@ -262,13 +218,6 @@ public class SystemMenu {
 
         SystemPane.getChildren().addAll(speedLabel,speedInput);
 
-        // -------------------------------
-        Label Disclaimer1 = new Label("                               *Lower = More Accurate");
-        Disclaimer1.setPrefWidth(160);
-        Disclaimer1.setStyle("-fx-font-size: 10;");
-
-        GridPane.setConstraints(Disclaimer1,0,5,2,1);
-        SystemPane.getChildren().add(Disclaimer1);
         // ------------------------
 
 
@@ -301,20 +250,39 @@ public class SystemMenu {
             @Override
             public void handle(ActionEvent actionEvent) {
                 //Takes all the text box input for environment settings and applies them
+                Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+                alert.setTitle("Are you sure?");
+                alert.setHeaderText("If multiple objects have the same starting position, the simulation may lag. Are you sure you want to reset?");
 
-                if (isDouble(xInput.getText())) OriginX = Double.parseDouble(xInput.getText());
-                if (isDouble(yInput.getText())) OriginY = Double.parseDouble(yInput.getText());
-                if (isDouble(scaleInput.getText())) ScaleVal = Double.parseDouble(scaleInput.getText());
-                if (isDouble(sideForceInput.getText())) sideForceVal = Double.parseDouble(sideForceInput.getText());
-                if (isDouble(gravityInput.getText())) gravityVal = Double.parseDouble(gravityInput.getText());
-                if (isDouble(speedInput.getText())) speedVal = Double.parseDouble(speedInput.getText());
+                ImageView alertPic = new ImageView(adam);
+                alertPic.setFitHeight(100);
+                alertPic.setFitWidth(100);
+                alert.setGraphic(alertPic);
 
-                //Updates environment
-                environment.setGravity(new Point2D(sideForceVal, gravityVal));
-                environment.setSimulationSpeed(speedVal);
-                environment.setScale(ScaleVal);
 
-                environment.reset(true);
+                ButtonType OKBtn = new ButtonType("Reset", ButtonBar.ButtonData.OK_DONE);
+                ButtonType CancelBtn = new ButtonType("Cancel", ButtonBar.ButtonData.CANCEL_CLOSE);
+                alert.getButtonTypes().setAll(OKBtn,CancelBtn);
+
+                Optional<ButtonType> result = alert.showAndWait();
+                if (result.get() == OKBtn)
+                {
+                    if (isDouble(scaleInput.getText())) ScaleVal = Double.parseDouble(scaleInput.getText());
+                    if (isDouble(sideForceInput.getText())) sideForceVal = Double.parseDouble(sideForceInput.getText());
+                    if (isDouble(gravityInput.getText())) gravityVal = Double.parseDouble(gravityInput.getText());
+                    if (isDouble(speedInput.getText())) speedVal = Double.parseDouble(speedInput.getText());
+
+                    //Updates environment
+                    environment.setGravity(new Point2D(sideForceVal, gravityVal));
+                    environment.setSimulationSpeed(speedVal);
+                    environment.setScale(ScaleVal);
+
+                    environment.reset(true);
+                }
+                else if (result.get() == CancelBtn)
+                {
+                    alert.close();
+                }
             }
         });
 
@@ -323,8 +291,6 @@ public class SystemMenu {
         applyBtn.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent actionEvent) {
-                if (isDouble(xInput.getText())) OriginX = Double.parseDouble(xInput.getText());
-                if (isDouble(yInput.getText())) OriginY = Double.parseDouble(yInput.getText());
                 if (isDouble(scaleInput.getText())) ScaleVal = Double.parseDouble(scaleInput.getText());
                 if (isDouble(sideForceInput.getText())) sideForceVal = Double.parseDouble(sideForceInput.getText());
                 if (isDouble(gravityInput.getText())) gravityVal = Double.parseDouble(gravityInput.getText());
@@ -355,11 +321,34 @@ public class SystemMenu {
         clearBtn.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent actionEvent) {
-                for(RigidBody body : environment.rigidBodies){
-                    body.removeShape();
+                Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+                alert.setTitle("Are you sure?");
+                alert.setHeaderText("Are you sure you want to clear?\nThere is no way of undoing this action!");
+
+                ImageView alertPic = new ImageView(adam);
+                alertPic.setFitHeight(100);
+                alertPic.setFitWidth(100);
+                alert.setGraphic(alertPic);
+
+
+                ButtonType OKBtn = new ButtonType("Clear", ButtonBar.ButtonData.OK_DONE);
+                ButtonType CancelBtn = new ButtonType("Cancel", ButtonBar.ButtonData.CANCEL_CLOSE);
+                alert.getButtonTypes().setAll(OKBtn,CancelBtn);
+
+                Optional<ButtonType> result = alert.showAndWait();
+                if (result.get() == OKBtn)
+                {
+                    for(RigidBody body : environment.rigidBodies){
+                        body.removeShape();
+                    }
+                    environment.rigidBodies.clear();
+                    createBodyInfoBoxes();
                 }
-                environment.rigidBodies.clear();
-                createBodyInfoBoxes();
+                else if (result.get() == CancelBtn)
+                {
+                    alert.close();
+                }
+
             }
         });
         GridPane.setConstraints(clearBtn,1,0);
@@ -467,6 +456,7 @@ public class SystemMenu {
                         objectPane.getChildren().removeAll(temp,MassInfo,SidesInfo,CMInfo,EditBtn, DeleteBtn);
                         createBodyPane(tmp.getSerialNum());
                         newWindow.close();
+                        runBtn.fire();
                     }
                 });
 
@@ -510,10 +500,10 @@ public class SystemMenu {
                 alert.setTitle("Are you sure?");
                 alert.setHeaderText("Are you sure you want to delete this object?");
 
-                ImageView Gary = new ImageView(this.getClass().getResource("resources/images/GARU.png").toString());
-                Gary.setFitHeight(100);
-                Gary.setFitWidth(100);
-                alert.setGraphic(Gary);
+                ImageView alertPic = new ImageView(leo);
+                alertPic.setFitHeight(100);
+                alertPic.setFitWidth(100);
+                alert.setGraphic(alertPic);
 
 
                 ButtonType OKBtn = new ButtonType("OK", ButtonBar.ButtonData.OK_DONE);
@@ -529,6 +519,7 @@ public class SystemMenu {
                         environment.rigidBodies.get(i).setSerialNum(i);
                     }
                     createBodyInfoBoxes();
+                    runBtn.fire();
                 }
                 else if (result.get() == CancelBtn) { alert.close(); }
             }
@@ -578,10 +569,10 @@ public class SystemMenu {
                     alert.setTitle("Are you sure?");
                     alert.setHeaderText("Are you sure you want to add rotation?");
 
-                    ImageView Gary = new ImageView(this.getClass().getResource("resources/images/GARU.png").toString());
-                    Gary.setFitHeight(100);
-                    Gary.setFitWidth(100);
-                    alert.setGraphic(Gary);
+                    ImageView alertPic = new ImageView(this.getClass().getResource("resources/images/GARU.png").toString());
+                    alertPic.setFitHeight(100);
+                    alertPic.setFitWidth(100);
+                    alert.setGraphic(alertPic);
 
 
                     ButtonType OKBtn = new ButtonType("OK", ButtonBar.ButtonData.OK_DONE);
@@ -616,15 +607,40 @@ public class SystemMenu {
     //Button to go back to the main menu
     private void createBackButton(){
         back = new Button("Back");
-        back.setLayoutX(20);
-        back.setLayoutY(20);
+        back.setLayoutX(15);
+        back.setLayoutY(10);
+        back.setFont(Font.loadFont(getClass().getResourceAsStream("resources/fonts/GiantRobotArmy-Medium.ttf"),16));
+        back.setMinSize(50, 30);
 
         back.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
-                PhysicsEngine.window.setScene(PhysicsEngine.mainMenu.mainMenuScene);
-                PhysicsEngine.mainMenu.startSim();
-                newScene = "MainMenu";
+                Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+                alert.setTitle("Are you sure?");
+                alert.setHeaderText("Is it really in your best interest to leave the beautiful world of physics??");
+
+                ImageView alertPic = new ImageView(green);
+                alertPic.setFitHeight(100);
+                alertPic.setFitWidth(100);
+                alert.setGraphic(alertPic);
+
+                ButtonType OKBtn = new ButtonType("Yes", ButtonBar.ButtonData.OK_DONE);
+                ButtonType CancelBtn = new ButtonType("No I was just kidding", ButtonBar.ButtonData.CANCEL_CLOSE);
+                alert.getButtonTypes().setAll(OKBtn,CancelBtn);
+
+                Optional<ButtonType> result = alert.showAndWait();
+                if (result.get() == OKBtn)
+                {
+                    PhysicsEngine.window.setScene(PhysicsEngine.mainMenu.mainMenuScene);
+                    PhysicsEngine.mainMenu.startSim();
+                    newScene = "MainMenu";
+                }
+                else if (result.get() == CancelBtn)
+                {
+                    alert.close();
+                }
+
+
             }
         });
         // Adds nodes to group
@@ -663,8 +679,6 @@ public class SystemMenu {
 
                 ArrayList<Line> lines = new ArrayList<Line>();
 
-                ArrayList<Circle> points = new ArrayList<Circle>();
-
                 ArrayList<Circle> highlights = new ArrayList<Circle>(1);
 
 
@@ -699,10 +713,6 @@ public class SystemMenu {
                 comboBox.setOnAction(new EventHandler<ActionEvent>() {
                     @Override
                     public void handle(ActionEvent actionEvent) {
-                        if (x.size() == 0)
-                        {
-                            return;
-                        }
                         int index = -1; // Initialize to zero b/c java
                         for (int i=0;i<comboBox.getItems().size();i++)
                         {
@@ -736,96 +746,29 @@ public class SystemMenu {
                     public void handle(ActionEvent actionEvent) {
                         int index = getPointIndex(comboBox,comboBox.getValue());
 
-
-
-
-                        selectionPane.getChildren().remove(points.get(index));
-
-                        points.remove(index);
+                        Circle tmpPoint = new Circle();
+                        tmpPoint.setLayoutX(x.get(index));
+                        tmpPoint.setLayoutY(y.get(index));
 
                         x.remove(index);
                         y.remove(index);
 
-                        prevX.remove(index);
-                        prevY.remove(index);
-
-                        selectionPane.getChildren().remove(highlights.get(0));
-
-                        highlights.remove(0);
-
-
-                        if (x.size()== 0)
+                        if (index!=0)
                         {
+                            selectionPane.getChildren().remove(lines.get(index-1));
+                            selectionPane.getChildren().remove(lines.get(index));
 
-                            comboBox.getItems().remove(index);
-                            comboBox.setValue("");
-
-                            return;
-                        }
-                        else if (x.size()==1)
-                        {
-                            comboBox.getItems().remove(index);
-                            comboBox.setValue(comboBox.getItems().get(comboBox.getItems().size()-1));
-
-                            selectionPane.getChildren().remove(lines.get(0));
-                            lines.remove(0);
-
-                            return;
+                            lines.remove(index-1);
+                            lines.remove(index);
                         }
                         else
                         {
-                            if (index == 0)
-                            {
-                                selectionPane.getChildren().remove(0);
-                                selectionPane.getChildren().remove(lines.size()-1);
-
-                                lines.remove(0);
-                                lines.remove(lines.size()-1);
-
-                                if (x.size()!=2)
-                                {
-
-                                    Line tmpLine = new Line(prevX.get(0),prevY.get(0),prevX.get(lines.size()-1),prevY.get(lines.size()-1));
-                                    selectionPane.getChildren().add(tmpLine);
-                                }
-                            }
-                            else
-                            {
-
-                                selectionPane.getChildren().remove(lines.get(index-1));
-                                selectionPane.getChildren().remove(lines.get(index));
-
-
-                                lines.remove(index-1);
-                                lines.remove(index-1);
-
-                                if (x.size()==2)
-                                {
-                                    comboBox.getItems().remove(index);
-                                    comboBox.setValue(comboBox.getItems().get(comboBox.getItems().size()-1));
-
-                                    return;
-                                }
-
-                                Line tmpLine = new Line(prevX.get(index-1),prevY.get(index-1), prevX.get(index%x.size()),prevY.get(index%x.size()));
-                                selectionPane.getChildren().add(tmpLine);
-                                lines.add(index-1,tmpLine);
-
-                            }
-
-                            }
-
-
-                            comboBox.getItems().remove(index);
-
-                            comboBox.setValue(comboBox.getItems().get(comboBox.getItems().size()-1));
-
-
-
-
-
+                            lines.remove(index);
+                            lines.remove(lines.size()-1);
                         }
 
+                        comboBox.getItems().remove(index);
+                    }
                 });
 
                 Button clickMe = new Button("Add");
@@ -874,7 +817,6 @@ public class SystemMenu {
                             @Override
                             public void handle(MouseEvent mouseEvent) {
 
-
                                 Double oldX = mouseEvent.getX();
                                 Double oldY = mouseEvent.getY();
 
@@ -886,6 +828,7 @@ public class SystemMenu {
 
                                 x.add(newX);
                                 y.add(newY);
+
 
 
                                 xInput.setText(String.format("%.2f",newX));
@@ -931,10 +874,12 @@ public class SystemMenu {
 
                                     }
                                 }
-
+                                //System.out.println(getPointIndex(comboBox,comboBox.getValue()));
+                                for (Line x : lines)
+                                {
+                                    //System.out.println(x);
+                                }
                                 selectionPane.getChildren().add(tmpPoint);
-                                points.add(tmpPoint);
-
 
                             }
                         });
@@ -954,16 +899,14 @@ public class SystemMenu {
                 GridPane.setConstraints(xInput,4,12,4,4);
                 GridPane.setConstraints(yLabel,0,16,4,4);
                 GridPane.setConstraints(yInput,4,16,4,4);
-                GridPane.setConstraints(deletePoint,0,20,4,4);
-                GridPane.setConstraints(massLbl,0,24,4,4);
-                GridPane.setConstraints(massInput,4,24,4,4);
-                GridPane.setConstraints(fixed,0,28,4,4);
-                GridPane.setConstraints(colorPicker,4,28,4,4);
-                GridPane.setConstraints(clickMe,0,32,4,4);
+                GridPane.setConstraints(massLbl,0,20,4,4);
+                GridPane.setConstraints(massInput,4,20,4,4);
+                GridPane.setConstraints(fixed,0,24,4,4);
+                GridPane.setConstraints(colorPicker,4,24,4,4);
+                GridPane.setConstraints(clickMe,0,28,4,4);
 
 
-
-                createPane.getChildren().addAll(selectionPane,hbox,xLabel,xInput,yLabel,yInput,fixed,massLbl,massInput,colorPicker,clickMe,deletePoint);
+                createPane.getChildren().addAll(selectionPane,hbox,xLabel,xInput,yLabel,yInput,fixed,massLbl,massInput,colorPicker,clickMe);
 
                 newObjectWindow.setScene(createScene);
 
@@ -1074,6 +1017,20 @@ public class SystemMenu {
         objectPane.getChildren().add(menubar);
     }
 
+    public void removeOffscreen(){
+        for(int i=environment.rigidBodies.size()-1; i>=0; i--){
+            RigidBody check = environment.rigidBodies.get(i);
+            if(check.getPolygon().getBoundsInLocal().getMaxX() < 0 || check.getPolygon().getBoundsInLocal().getMinX() > 1280  || check.getPolygon().getBoundsInLocal().getMaxY() < 0  || check.getPolygon().getBoundsInLocal().getMinY() > 720 ){
+                check.removeShape();
+                environment.rigidBodies.remove(check);
+                for(int j = 0; j < environment.rigidBodies.size(); j++){
+                    environment.rigidBodies.get(j).setSerialNum(j);
+                }
+                createBodyInfoBoxes();
+            }
+        }
+    }
+
 
     //Checks if a given string can be converted to a double
     public static boolean isDouble(String s)
@@ -1093,6 +1050,11 @@ public class SystemMenu {
     public String run(){
         if(running) {
             environment.run();
+            removeOffscreen();
+            if(updateWait-- <= 0){
+                createBodyInfoBoxes();
+                updateWait = 30;
+            }
         }
         return newScene;
     }

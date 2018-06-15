@@ -43,7 +43,7 @@ public class CreditsMenu {
     private Image adam = new Image("resources/images/Adam.png");
     private Image gary = new Image("resources/images/Gary.png");
     private Image leo = new Image("resources/images/Leo.png");
-    private Image green = new Image("resources/images/GREEN.png");
+    private Image green = new Image("resources/images/Green.png");
 
     public CreditsMenu(){
         //Init scene and group
@@ -81,32 +81,49 @@ public class CreditsMenu {
         cover.setFill(Color.BLACK);
 
         Text leoCaption = new Text("Leo Chen");
-        leoCaption.setX(350); leoCaption.setY(450);
         leoCaption.setFont(Font.loadFont(getClass().getResourceAsStream("resources/fonts/GiantRobotArmy-Medium.ttf"),15));
+        leoCaption.setX(350 + 62 - leoCaption.getBoundsInLocal().getMaxX() / 2); leoCaption.setY(450);
         leoCaption.setFill(Color.RED);
+        Text leoDesc = new Text("Java FX Guru");
+        leoDesc.setFont(Font.loadFont(getClass().getResourceAsStream("resources/fonts/GiantRobotArmy-Medium.ttf"),10));
+        leoDesc.setX(350 + 62 - leoDesc.getBoundsInLocal().getMaxX() / 2); leoDesc.setY(470);
+        leoDesc.setFill(Color.RED);
 
         Text adamCaption = new Text("Adam Mehdi");
-        adamCaption.setX(500); adamCaption.setY(450);
         adamCaption.setFont(Font.loadFont(getClass().getResourceAsStream("resources/fonts/GiantRobotArmy-Medium.ttf"),15));
+        adamCaption.setX(500 + 62 - adamCaption.getBoundsInLocal().getMaxX() / 2); adamCaption.setY(450);
         adamCaption.setFill(Color.RED);
+        Text adamDesc = new Text("The Hard Carry");
+        adamDesc.setFont(Font.loadFont(getClass().getResourceAsStream("resources/fonts/GiantRobotArmy-Medium.ttf"),10));
+        adamDesc.setX(500 + 62 - adamDesc.getBoundsInLocal().getMaxX() / 2); adamDesc.setY(470);
+        adamDesc.setFill(Color.RED);
+
 
         Text garyCaption = new Text("Gary Sun");
-        garyCaption.setX(650); garyCaption.setY(450);
         garyCaption.setFont(Font.loadFont(getClass().getResourceAsStream("resources/fonts/GiantRobotArmy-Medium.ttf"),15));
+        garyCaption.setX(650 + 62 - garyCaption.getBoundsInLocal().getMaxX() / 2); garyCaption.setY(450);
         garyCaption.setFill(Color.RED);
+        Text garyDesc = new Text("The Physics Guy");
+        garyDesc.setFont(Font.loadFont(getClass().getResourceAsStream("resources/fonts/GiantRobotArmy-Medium.ttf"),10));
+        garyDesc.setX(650 + 62 - garyDesc.getBoundsInLocal().getMaxX() / 2); garyDesc.setY(470);
+        garyDesc.setFill(Color.RED);
 
         Text greenCaption = new Text("George Green");
-        greenCaption.setX(800); greenCaption.setY(450);
         greenCaption.setFont(Font.loadFont(getClass().getResourceAsStream("resources/fonts/GiantRobotArmy-Medium.ttf"),15));
+        greenCaption.setX(800 + 62 - greenCaption.getBoundsInLocal().getMaxX() / 2); greenCaption.setY(450);
         greenCaption.setFill(Color.RED);
+        Text greenDesc = new Text("Master of Polygons");
+        greenDesc.setFont(Font.loadFont(getClass().getResourceAsStream("resources/fonts/GiantRobotArmy-Medium.ttf"),10));
+        greenDesc.setX(800 + 62 - greenDesc.getBoundsInLocal().getMaxX() / 2); greenDesc.setY(470);
+        greenDesc.setFill(Color.RED);
 
 
 
         //Init back button
         back = new Button("Back");
-        back.setLayoutX(20); back.setLayoutY(20);
-        back.setFont(Font.loadFont(getClass().getResourceAsStream("resources/fonts/GiantRobotArmy-Medium.ttf"),40));
-        back.setMinSize(100, 50);
+        back.setLayoutX(15); back.setLayoutY(10);
+        back.setFont(Font.loadFont(getClass().getResourceAsStream("resources/fonts/GiantRobotArmy-Medium.ttf"),16));
+        back.setMinSize(50, 30);
         back.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
@@ -117,7 +134,7 @@ public class CreditsMenu {
         });
 
         //Add everything to the layout so it is displayed to the screen
-        creditsLayout.getChildren().addAll(back, creditsTitle, cover, iv1, iv2, iv3, iv4, leoCaption, adamCaption, garyCaption, greenCaption);
+        creditsLayout.getChildren().addAll(back, creditsTitle, cover, iv1, iv2, iv3, iv4, leoCaption, adamCaption, garyCaption, greenCaption, leoDesc, adamDesc, garyDesc, greenDesc);
     }
 
     //Init environment variables
