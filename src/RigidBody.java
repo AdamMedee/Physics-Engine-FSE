@@ -42,8 +42,6 @@ public class RigidBody{
 	private double[] startXPoints, startYPoints;//Start polygon points
 	private double startSpin;					        //Start angular velocity
 
-	private Point2D tmpVel;                             //
-	private double tmpSpin;                             //
 	private int serialNum;                                //Allows rigidbodies to be distinguishable
 
 	protected  Color colour;                            //Object color
@@ -81,11 +79,9 @@ public class RigidBody{
 		this.forces = new ArrayList<>();
 		this.velocity = new Point2D(0,1);
 		this.startVel = velocity;
-		this.tmpVel = velocity;
 		this.acceleration = new Point2D(0,0);
 		this.spin = 0;
 		this.startSpin = spin;
-		this.tmpSpin = spin;
 		this.angAccel = 0;
 		this.restitution = 1;
 		this.xPoints = xPoints;
@@ -170,7 +166,6 @@ public class RigidBody{
 	}
 
 	public void updateSpin(double timeStep){
-		spin += tmpSpin;
 		if(!fixed) {
 			this.rotate(spin);
 		}
@@ -179,25 +174,20 @@ public class RigidBody{
 	//Moves the rigid body based on the forces acting on it
 	public void updateVelocity(double timeStep, boolean allowRotate){
 		if(!fixed) {
-			velocity = velocity.add(tmpVel);
 			double netX = 0;
 			double netY = 0;
 			Point2D prevAccel = acceleration;
 			//Update position based previous frame's forces
 			this.translate(velocity.getX() * timeStep, velocity.getY() * timeStep);
 			//Calculates net force of current frame
+			acceleration = new Point2D(0, 0);
 			for (Point2D f : forces) {
-				netX += f.getX();
-				netY += f.getY();
+				acceleration = acceleration.add(f);
 			}
-			netX /= mass;    //F = ma
-			netY /= mass;
-			acceleration = new Point2D(netX, netY);
-			Point2D avgAccel = prevAccel.add(acceleration);
+			acceleration = acceleration.multiply(1/mass);
 
-			avgAccel = new Point2D(avgAccel.getX() / 2, avgAccel.getY() / 2);
+			velocity = velocity.add(acceleration);
 
-			velocity = velocity.add(avgAccel);
 			if(allowRotate){
 			    //Prevents bouncing when spin approaches 0
 				if(spin > 0.00001){
@@ -213,8 +203,6 @@ public class RigidBody{
 			else{
 				spin = 0;
 			}
-
-
 
 		}
 	}
@@ -280,7 +268,6 @@ public class RigidBody{
 			Point2D normalDirection = new Point2D(0, 0);			//Normal vector of collison
 			Point2D[] info = {normalDirection, contact};							//Information we need to return
 
-
 			for(int i = 0; i < a.sides*2; i+=2){ //Goes through all a polygon vertices
 				if(b.polygon.contains(aVertices.get(i), aVertices.get(i+1))){ //Checks if vertex is in b.polygon
 					shortestDist = Double.POSITIVE_INFINITY;
@@ -288,7 +275,7 @@ public class RigidBody{
 					normalDirection = new Point2D(0, 0);
 					info[0] = normalDirection; info[1] = contact;
 					for (int j = 0; j < b.sides*2; j += 2){ //Goes through all b polygon vertices
-
+						//Uses vertices and shortest dist formula for vertex to side distance
 						double x0 = aVertices.get(i); double y0 = aVertices.get(i + 1); 														//Vertex hitting polygon
 						double x1 = bVertices.get(j); double y1 = bVertices.get(j + 1); 														//x1, x2, y1, y2 form an edge that we test for collison
 						double x2 = bVertices.get((j+2) % (b.sides*2)); double y2 = bVertices.get((j+3) % (b.sides*2));
@@ -319,7 +306,7 @@ public class RigidBody{
 
 	//Runs all the methods on the rigidbody
 	public void run(double simSpeed, Point2D gravity, ArrayList<RigidBody> rigidBodies, boolean allowRotate){
-		addForce(gravity.multiply(mass));			//Add a constant gravity
+		addForce(gravity.multiply(mass).multiply(simSpeed));			//Add a constant gravity
 		for(RigidBody body : rigidBodies) {
 			if(!body.equals(this) && (!this.fixed || !body.fixed)){
 				isColliding(this, body, simSpeed, allowRotate);
@@ -337,8 +324,6 @@ public class RigidBody{
 	    if(resetPos){
             spin = startSpin;
             velocity = startVel;
-            tmpSpin = 0;
-            tmpVel = new Point2D(0, 0);
             acceleration = new Point2D(0, 0);
             angAccel = 0;
             this.update(startXPoints, startYPoints, startCenter);
@@ -404,6 +389,11 @@ public class RigidBody{
 		return a.getX() * b.getY() - a.getY() * b.getX();
 	}
 
+	public void removeShape(){
+		//Stops the rigidbody from being displayed onscreen
+		root.getChildren().removeAll(polygon, circle);
+	}
+
 	public Point2D getCenter(){
 		return center;
 	}
@@ -458,8 +448,4 @@ public class RigidBody{
 		this.serialNum = n;
 	}
 
-	public void removeShape(){
-		//Stops the rigidbody from being displayed onscreen
-		root.getChildren().removeAll(polygon, circle);
-	}
 }

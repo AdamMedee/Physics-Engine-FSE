@@ -150,8 +150,4 @@ public class MainMenu {
         bg.run();
         return newScene;
     }
-
-    //Displays menu to the screen
-    public void update(){
-    }
 }

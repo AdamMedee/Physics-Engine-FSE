@@ -98,13 +98,9 @@ public class SystemMenu {
         leftPane = new Pane();
         SystemPane = new GridPane();
 
-        TabPane tabs = new TabPane();
-
-        tabs.setTabClosingPolicy(TabPane.TabClosingPolicy.UNAVAILABLE);
-
-        //SystemPane.setPrefSize();
-
         //Tab system to switch between objects and systems
+        TabPane tabs = new TabPane();
+        tabs.setTabClosingPolicy(TabPane.TabClosingPolicy.UNAVAILABLE);
         SystemTab = new Tab();
         SystemTab.setText("System");
         SystemTab.setStyle("-fx-pref-width: 125");
@@ -151,7 +147,6 @@ public class SystemMenu {
         SystemLayout.setRight(tabs);
 
         updateWait = 60;
-
     }
 
     //Creates the system editing menu
@@ -796,7 +791,6 @@ public class SystemMenu {
                                 selectionPane.getChildren().remove(lines.get(lines.size()-1));
 
                                 lines.remove(0);
-                                //lines.remove(lines.size()-1);
 
                                 if (x.size()!=2)
                                 {
@@ -947,15 +941,9 @@ public class SystemMenu {
 
                                     }
                                 }
-                                //System.out.println(getPointIndex(comboBox,comboBox.getValue()));
-                                for (Line x : lines)
-                                {
-                                    //System.out.println(x);
-                                }
+
                                 selectionPane.getChildren().add(tmpPoint);
                                 points.add(tmpPoint);
-
-
                             }
                         });
                     }
@@ -1165,10 +1153,4 @@ public class SystemMenu {
         return index;
     }
 
-
-
-    //Displayes menu to the screen
-    public void update(){
-        environment.update();
-    }
 }

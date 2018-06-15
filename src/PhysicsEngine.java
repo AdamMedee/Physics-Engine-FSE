@@ -90,17 +90,14 @@ public class PhysicsEngine extends Application {
                 switch(currentScreen) {
                     case "MainMenu":
                         currentScreen = mainMenu.run();
-                        mainMenu.update();
                         break;
 
                     case "CreditsMenu":
                         currentScreen = creditsMenu.run();
-                        creditsMenu.update();
                         break;
 
                     case "SystemMenu":
                         currentScreen = systemMenu.run();
-                        systemMenu.update();
                         break;
 
                     default:

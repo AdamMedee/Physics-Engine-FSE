@@ -9,35 +9,27 @@
    	everything
  */
 
-import javafx.animation.AnimationTimer;
-import javafx.application.Application;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Point2D;
-import javafx.geometry.Rectangle2D;
 import javafx.scene.Group;
 import javafx.scene.Scene;
-import javafx.scene.canvas.Canvas;
-import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.Button;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
-import javafx.stage.Stage;
-import java.util.ArrayList;
 
 public class CreditsMenu {
-    public Button back;                 //Button to return to main menu
-    public String newScene;          //Screen that will be displayed next frame
+    public Button back;             //Button to return to main menu
+    public String newScene;         //Screen that will be displayed next frame
     public Scene creditsScene;      //Stores and displays all objects
     public Group creditsLayout;
 
-    private Environment bg;           //The background of the screen
+    private Environment bg;         //The background of the screen
     private Pane bgSim;
 
     //Images displayed in the menu
@@ -147,7 +139,7 @@ public class CreditsMenu {
         bgSim = new Pane();
         bg.setSimulationSpeed(0.05);
         bg.setScale(0.5);
-        bg.setGravity(new Point2D(-0.56, 1.27));
+        bg.setGravity(new Point2D(0, 1.27));
         bg.creditsBG(bgSim);
         creditsLayout.getChildren().add(bgSim);
         bgSim.toBack();
@@ -157,9 +149,5 @@ public class CreditsMenu {
     public String run(){
         bg.run();
         return newScene;
-    }
-
-    public void update(){
-
     }
 }
