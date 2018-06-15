@@ -30,7 +30,6 @@ public class PhysicsEngine extends Application {
     public static MainMenu mainMenu;               //Initialize each menu
     public static SystemMenu systemMenu;
     public static CreditsMenu creditsMenu;
-    public static SelectMenu selectMenu;
 
 
     //--------------------------------------
@@ -65,7 +64,6 @@ public class PhysicsEngine extends Application {
         //Initializing the different menus
         mainMenu = new MainMenu();
         creditsMenu = new CreditsMenu();
-        selectMenu = new SelectMenu();
         systemMenu = new SystemMenu(environmentList.get(0));
 
         String uriString = PhysicsEngine.class.getResource("resources/music/menuSong.wav").toString();
@@ -98,11 +96,6 @@ public class PhysicsEngine extends Application {
                     case "CreditsMenu":
                         currentScreen = creditsMenu.run();
                         creditsMenu.update();
-                        break;
-
-                    case "SelectMenu":
-                        currentScreen = selectMenu.run();
-                        selectMenu.update();
                         break;
 
                     case "SystemMenu":

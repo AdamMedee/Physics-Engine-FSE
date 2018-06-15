@@ -679,6 +679,8 @@ public class SystemMenu {
 
                 ArrayList<Line> lines = new ArrayList<Line>();
 
+                ArrayList<Circle> points = new ArrayList<Circle>();
+
                 ArrayList<Circle> highlights = new ArrayList<Circle>(1);
 
 
@@ -713,6 +715,10 @@ public class SystemMenu {
                 comboBox.setOnAction(new EventHandler<ActionEvent>() {
                     @Override
                     public void handle(ActionEvent actionEvent) {
+                        if (x.size() == 0)
+                        {
+                            return;
+                        }
                         int index = -1; // Initialize to zero b/c java
                         for (int i=0;i<comboBox.getItems().size();i++)
                         {
@@ -746,29 +752,96 @@ public class SystemMenu {
                     public void handle(ActionEvent actionEvent) {
                         int index = getPointIndex(comboBox,comboBox.getValue());
 
-                        Circle tmpPoint = new Circle();
-                        tmpPoint.setLayoutX(x.get(index));
-                        tmpPoint.setLayoutY(y.get(index));
+
+
+
+                        selectionPane.getChildren().remove(points.get(index));
+
+                        points.remove(index);
 
                         x.remove(index);
                         y.remove(index);
 
-                        if (index!=0)
-                        {
-                            selectionPane.getChildren().remove(lines.get(index-1));
-                            selectionPane.getChildren().remove(lines.get(index));
+                        prevX.remove(index);
+                        prevY.remove(index);
 
-                            lines.remove(index-1);
-                            lines.remove(index);
+                        selectionPane.getChildren().remove(highlights.get(0));
+
+                        highlights.remove(0);
+
+
+                        if (x.size()== 0)
+                        {
+
+                            comboBox.getItems().remove(index);
+                            comboBox.setValue("");
+
+                            return;
+                        }
+                        else if (x.size()==1)
+                        {
+                            comboBox.getItems().remove(index);
+                            comboBox.setValue(comboBox.getItems().get(comboBox.getItems().size()-1));
+
+                            selectionPane.getChildren().remove(lines.get(0));
+                            lines.remove(0);
+
+                            return;
                         }
                         else
                         {
-                            lines.remove(index);
-                            lines.remove(lines.size()-1);
+                            if (index == 0)
+                            {
+                                selectionPane.getChildren().remove(0);
+                                selectionPane.getChildren().remove(lines.size()-1);
+
+                                lines.remove(0);
+                                lines.remove(lines.size()-1);
+
+                                if (x.size()!=2)
+                                {
+
+                                    Line tmpLine = new Line(prevX.get(0),prevY.get(0),prevX.get(lines.size()-1),prevY.get(lines.size()-1));
+                                    selectionPane.getChildren().add(tmpLine);
+                                }
+                            }
+                            else
+                            {
+
+                                selectionPane.getChildren().remove(lines.get(index-1));
+                                selectionPane.getChildren().remove(lines.get(index));
+
+
+                                lines.remove(index-1);
+                                lines.remove(index-1);
+
+                                if (x.size()==2)
+                                {
+                                    comboBox.getItems().remove(index);
+                                    comboBox.setValue(comboBox.getItems().get(comboBox.getItems().size()-1));
+
+                                    return;
+                                }
+
+                                Line tmpLine = new Line(prevX.get(index-1),prevY.get(index-1), prevX.get(index%x.size()),prevY.get(index%x.size()));
+                                selectionPane.getChildren().add(tmpLine);
+                                lines.add(index-1,tmpLine);
+
+                            }
+
+                            }
+
+
+                            comboBox.getItems().remove(index);
+
+                            comboBox.setValue(comboBox.getItems().get(comboBox.getItems().size()-1));
+
+
+
+
+
                         }
 
-                        comboBox.getItems().remove(index);
-                    }
                 });
 
                 Button clickMe = new Button("Add");
@@ -880,6 +953,8 @@ public class SystemMenu {
                                     //System.out.println(x);
                                 }
                                 selectionPane.getChildren().add(tmpPoint);
+                                points.add(tmpPoint);
+
 
                             }
                         });
@@ -899,14 +974,16 @@ public class SystemMenu {
                 GridPane.setConstraints(xInput,4,12,4,4);
                 GridPane.setConstraints(yLabel,0,16,4,4);
                 GridPane.setConstraints(yInput,4,16,4,4);
-                GridPane.setConstraints(massLbl,0,20,4,4);
-                GridPane.setConstraints(massInput,4,20,4,4);
-                GridPane.setConstraints(fixed,0,24,4,4);
-                GridPane.setConstraints(colorPicker,4,24,4,4);
-                GridPane.setConstraints(clickMe,0,28,4,4);
+                GridPane.setConstraints(deletePoint,0,20,4,4);
+                GridPane.setConstraints(massLbl,0,24,4,4);
+                GridPane.setConstraints(massInput,4,24,4,4);
+                GridPane.setConstraints(fixed,0,28,4,4);
+                GridPane.setConstraints(colorPicker,4,28,4,4);
+                GridPane.setConstraints(clickMe,0,32,4,4);
 
 
-                createPane.getChildren().addAll(selectionPane,hbox,xLabel,xInput,yLabel,yInput,fixed,massLbl,massInput,colorPicker,clickMe);
+
+                createPane.getChildren().addAll(selectionPane,hbox,xLabel,xInput,yLabel,yInput,fixed,massLbl,massInput,colorPicker,clickMe,deletePoint);
 
                 newObjectWindow.setScene(createScene);
 

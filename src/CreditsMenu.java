@@ -40,6 +40,7 @@ public class CreditsMenu {
     private Environment bg;           //The background of the screen
     private Pane bgSim;
 
+    //Images displayed in the menu
     private Image adam = new Image("resources/images/Adam.png");
     private Image gary = new Image("resources/images/Gary.png");
     private Image leo = new Image("resources/images/Leo.png");
@@ -61,6 +62,7 @@ public class CreditsMenu {
         creditsTitle.setFont(Font.loadFont(getClass().getResourceAsStream("resources/fonts/GiantRobotArmy-Medium.ttf"),30));
         creditsTitle.setFill(Color.RED);
 
+        //Sets the images for credits to proper position
         ImageView iv1 = new ImageView();
         iv1.setImage(leo);
         iv1.setX(350); iv1.setY(300);
@@ -80,6 +82,7 @@ public class CreditsMenu {
         Rectangle cover = new Rectangle(500,300, 300,200);
         cover.setFill(Color.BLACK);
 
+        //Sets descriptions and names for each contributor
         Text leoCaption = new Text("Leo Chen");
         leoCaption.setFont(Font.loadFont(getClass().getResourceAsStream("resources/fonts/GiantRobotArmy-Medium.ttf"),15));
         leoCaption.setX(350 + 62 - leoCaption.getBoundsInLocal().getMaxX() / 2); leoCaption.setY(450);
@@ -157,8 +160,6 @@ public class CreditsMenu {
     }
 
     public void update(){
-
-
 
     }
 }

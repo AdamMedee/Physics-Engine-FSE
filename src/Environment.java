@@ -145,7 +145,7 @@ public class Environment {
     public void BackGroundMenu (Pane src) {
         //Generate environment for the main menu background
         environmentLayout = src;
-        gravity = new Point2D(0, 9.81);
+        gravity = new Point2D(0, 1);
         rigidBodies.clear();
         for (int x = 200; x < 1000; x += 100) {
             for (int y = 150; y < 500; y += 100) {
@@ -185,7 +185,7 @@ public class Environment {
     public void creditsBG(Pane src){
         //Generate background environment for credits menu
         environmentLayout = src;
-        gravity = new Point2D(0, 9.81);
+        gravity = new Point2D(0, 1);
         rigidBodies.clear();
         for (int x = 200; x < 1000; x += 100) {
             for (int y = 150; y < 500; y += 100) {
