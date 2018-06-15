@@ -126,6 +126,7 @@ public class Environment {
         environmentLayout = src;
         gravity = new Point2D(0, 5);
         rigidBodies.clear();
+        simulationSpeed = 0.12;
         //Generates a random number of quadrilaterals
         for (int x = 100; x < 1200; x += 70) {
             for (int y = 50; y < 200; y += 70) {
@@ -168,6 +169,7 @@ public class Environment {
         environmentLayout = src;
         gravity = new Point2D(0, 5);
         rigidBodies.clear();
+        simulationSpeed = 0.12;
         //Generates a random number of quadrilaterals at the top
         for (int x = 100; x < 1200; x += 70) {
             for (int y = 50; y < 200; y += 70) {

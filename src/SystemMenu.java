@@ -90,7 +90,7 @@ public class SystemMenu {
         running = true;
         gravityVal = 1;
         sideForceVal = 0;
-        speedVal = 0.05;
+        speedVal = 0.2;
 
         environment.setGravity(new Point2D(sideForceVal, gravityVal));
         environment.setSimulationSpeed(speedVal);
@@ -205,7 +205,7 @@ public class SystemMenu {
 
         Label speedLabel = new Label("Simulation Speed:");
 
-        TextField speedInput = new TextField("0.05");
+        TextField speedInput = new TextField("0.2");
         speedInput.setPrefWidth(100);
 
         GridPane.setConstraints(speedLabel,0,4);
@@ -444,7 +444,7 @@ public class SystemMenu {
                         if (isDouble(SCMxInput.getText())) tmp.setStartCenter(Double.parseDouble(SCMxInput.getText()), tmp.getStartCenter().getY());
                         if (isDouble(SCMyInput.getText())) tmp.setStartCenter(tmp.getStartCenter().getX(), Double.parseDouble(SCMyInput.getText()));
                         if (isDouble(RestInput.getText())) tmp.setRestitution(Double.parseDouble(RestInput.getText()));
-                        //tmp.setScale(environment.scale);
+
                         Garu.removeShape();
                         environment.rigidBodies.set(Garu.getSerialNum(),tmp);
                         tmp.setSerialNum(Garu.getSerialNum());
@@ -569,7 +569,6 @@ public class SystemMenu {
                     alertPic.setFitWidth(100);
                     alert.setGraphic(alertPic);
 
-
                     ButtonType OKBtn = new ButtonType("OK", ButtonBar.ButtonData.OK_DONE);
                     ButtonType CancelBtn = new ButtonType("Cancel", ButtonBar.ButtonData.CANCEL_CLOSE);
                     alert.getButtonTypes().setAll(OKBtn,CancelBtn);
@@ -612,7 +611,7 @@ public class SystemMenu {
             public void handle(ActionEvent event) {
                 Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
                 alert.setTitle("Are you sure?");
-                alert.setHeaderText("Is it really in your best interest to leave the beautiful world of physics??");
+                alert.setHeaderText("Is it really in your best interest to leave the beautiful world of physics??\nYour simulation will NOT be saved!");
 
                 ImageView alertPic = new ImageView(green);
                 alertPic.setFitHeight(100);
@@ -866,7 +865,9 @@ public class SystemMenu {
                             alert.show();
                             return;
                         }
-                        environment.rigidBodies.add(new RigidBody(tempX,tempY,mass,fixed.isSelected(),leftPane,colorPicker.getValue()));
+                        RigidBody tmp = new RigidBody(tempX,tempY,mass,fixed.isSelected(),leftPane,colorPicker.getValue());
+                        tmp.setSerialNum(environment.rigidBodies.size());
+                        environment.rigidBodies.add(tmp);
                         createBodyPane(environment.rigidBodies.size()-1);
                     }
                 });
@@ -1015,9 +1016,9 @@ public class SystemMenu {
                 clickMe.setOnAction(new EventHandler<ActionEvent>() {
                     @Override
                     public void handle(ActionEvent actionEvent) {
-                        double x = 0;
-                        double y = 0;
-                        double radius = 0;
+                        double x = -999;
+                        double y = -999;
+                        double radius = 1;
                         if (isDouble(xInput.getText())) x = Double.parseDouble(xInput.getText());
                         if (isDouble(yInput.getText())) y = Double.parseDouble(yInput.getText());
                         if (isDouble(radInput.getText())) radius = Double.parseDouble(radInput.getText());
@@ -1025,18 +1026,15 @@ public class SystemMenu {
                         double[] xTmp = new double[40];
                         double[] yTmp = new double[40];
 
-                        for(int i=0; i<40; i++){
+                        for (int i = 0; i < 40; i++) {
                             xTmp[i] = x + radius * Math.cos(2 * i * Math.PI / 40);
                             yTmp[i] = y + radius * Math.sin(2 * i * Math.PI / 40);
                         }
 
                         double mass;
-                        try
-                        {
+                        try {
                             mass = Double.parseDouble(massInput.getText());
-                        }
-                        catch(Exception ex)
-                        {
+                        } catch (Exception ex) {
                             Alert alert = new Alert(Alert.AlertType.WARNING);
                             alert.setTitle("WARNING!");
                             alert.setHeaderText("Mass input is invalid!");
@@ -1044,8 +1042,11 @@ public class SystemMenu {
                             return;
                         }
 
-                        environment.rigidBodies.add(new RigidBody(xTmp, yTmp,mass,fixed.isSelected(),leftPane,colorPicker.getValue()));
-                        createBodyPane(environment.rigidBodies.size()-1);
+                        RigidBody tmp = new RigidBody(xTmp, yTmp, mass, fixed.isSelected(), leftPane, colorPicker.getValue());
+                        tmp.setSerialNum(environment.rigidBodies.size());
+                        environment.rigidBodies.add(tmp);
+                        createBodyPane(environment.rigidBodies.size() - 1);
+
                     }
                 });
 
