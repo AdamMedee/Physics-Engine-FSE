@@ -793,10 +793,10 @@ public class SystemMenu {
                             if (index == 0)
                             {
                                 selectionPane.getChildren().remove(0);
-                                selectionPane.getChildren().remove(lines.size()-1);
+                                selectionPane.getChildren().remove(lines.get(lines.size()-1));
 
                                 lines.remove(0);
-                                lines.remove(lines.size()-1);
+                                //lines.remove(lines.size()-1);
 
                                 if (x.size()!=2)
                                 {
@@ -813,7 +813,7 @@ public class SystemMenu {
 
 
                                 lines.remove(index-1);
-                                lines.remove(index-1);
+                                //lines.remove(index-1);
 
                                 if (x.size()==2)
                                 {
